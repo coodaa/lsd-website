@@ -13,6 +13,8 @@ const menuItems = [
 ];
 ---
 
+import "/src/styles/global.css";
+
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
@@ -23,15 +25,19 @@ const menuItems = [
   <body>
     <header class="mobile-header">
       <div class="logo">LSD</div>
-<button class="menu-toggle" aria-label="Menü öffnen">Menu</button>
+      <button class="menu-toggle" aria-label="Menü öffnen">Menu</button>
     </header>
 
     <div class="layout">
       <nav class="sidebar">
         <ul>
-          {menuItems.map((item) => (
-            <li><a href={item.href}>{item.name}</a></li>
-          ))}
+          {
+            menuItems.map((item) => (
+              <li>
+                <a href={item.href}>{item.name}</a>
+              </li>
+            ))
+          }
         </ul>
       </nav>
 
@@ -41,10 +47,10 @@ const menuItems = [
     </div>
 
     <script>
-      const btn = document.querySelector('.menu-toggle');
-      const nav = document.querySelector('.sidebar');
-      btn.addEventListener('click', () => {
-        nav.classList.toggle('open');
+      const btn = document.querySelector(".menu-toggle");
+      const nav = document.querySelector(".sidebar");
+      btn.addEventListener("click", () => {
+        nav.classList.toggle("open");
       });
     </script>
   </body>
