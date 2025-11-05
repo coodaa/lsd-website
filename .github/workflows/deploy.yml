@@ -24,13 +24,13 @@ jobs:
       - name: Build Astro site
         run: npm run build
 
-      - name: Upload to STRATO via FTPS
+      - name: Upload to STRATO via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ftp.strato.de
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
-          protocol: ftps-legacy
+          protocol: ftp
           local-dir: ./dist/
           server-dir: /htdocs/
