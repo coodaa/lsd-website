@@ -1,20 +1,20 @@
-name: 🚀 Deploy to STRATO
+name: 🚀 Deploy to STRATO via SFTP
 
 on:
   push:
     branches:
-      - main  # immer wenn du auf 'main' pushst
+      - main   # läuft bei jedem Push auf 'main'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Dein Code wird ausgecheckt
+      # 1️⃣ Code auschecken
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Node.js einrichten (falls du Astro, React oder ähnliches nutzt)
+      # 2️⃣ Node.js einrichten
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -24,19 +24,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 4️⃣ Website builden
-      - name: Build site
+      # 4️⃣ Projekt builden
+      - name: Build project
         run: npm run build
 
-      # 5️⃣ Upload auf STRATO via SFTP
+      # 5️⃣ Upload via echtes SFTP (Strato)
       - name: Upload via SFTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
           server: ssh.strato.de
+          port: 22
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: sftp
-          port: 22
-          local-dir: ./dist/
-          server-dir: /www-lsd/
-          log-level: verbose
+          local_path: ./dist/
+          remote_path: /htdocs/    # ggf. /www-lsd/ oder dein Zielordner
+          sftp_only: true
+          delete_remote_files: false
