@@ -3,40 +3,40 @@ name: 🚀 Deploy to STRATO via SFTP
 on:
   push:
     branches:
-      - main
+      - main  # oder dein Produktions-Branch
 
 jobs:
   deploy:
+    name: Deploy to STRATO
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout
+      # 1️⃣ Code auschecken
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Node.js Setup
+      # 2️⃣ Node.js einrichten (für Astro, Next.js, React, usw.)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # 3️⃣ Install dependencies
+      # 3️⃣ Dependencies installieren
       - name: Install dependencies
         run: npm ci
 
-      # 4️⃣ Build project (z. B. Astro)
+      # 4️⃣ Projekt builden (hier: Astro)
       - name: Build project
         run: npm run build
 
-      # 5️⃣ Deploy via SFTP to Strato
+      # 5️⃣ Upload per SFTP zu STRATO
       - name: Upload to STRATO via SFTP
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          server: ssh.strato.de
           port: 22
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local_path: ./dist/        # <--- ggf. anpassen (z. B. ./build/ oder ./public/)
-          remote_path: /htdocs/      # Zielordner bei Strato
-          sftp_only: true
-          delete_remote_files: false
+          local_path: ./dist/         # dein Build-Ordner
+          remote_path: /htdocs/       # Zielordner auf Strato
+          sftp_only: true             # zwingt SFTP-Modus (kein FTP)
