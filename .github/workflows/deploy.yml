@@ -29,13 +29,13 @@ jobs:
       - name: Build project
         run: npm run build
 
-   - name: Upload to STRATO via SFTP
-  uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-  with:
-    server: ssh.strato.de
-    port: 22
-    username: ${{ secrets.FTP_USER }}
-    password: ${{ secrets.FTP_PASSWORD }}
-    local_path: ./dist/
-    remote_path: /htdocs/
-    sftp_only: true
+      - name: Upload to STRATO via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+        server: ssh.strato.de
+        port: 22
+        username: ${{ secrets.FTP_USER }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local_path: ./dist/
+        remote_path: /htdocs/
+        sftp_only: true
