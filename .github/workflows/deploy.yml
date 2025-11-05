@@ -1,37 +1,42 @@
-name: 🚀 Deploy to STRATO via SFTP
+name: 🚀 Deploy to STRATO
 
 on:
   push:
     branches:
-      - main
+      - main  # immer wenn du auf 'main' pushst
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      # 1️⃣ Dein Code wird ausgecheckt
+      - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2️⃣ Node.js einrichten (falls du Astro, React oder ähnliches nutzt)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+      # 3️⃣ Dependencies installieren
       - name: Install dependencies
         run: npm ci
 
-      - name: Build project
+      # 4️⃣ Website builden
+      - name: Build site
         run: npm run build
 
-      - name: Upload to STRATO via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      # 5️⃣ Upload auf STRATO via SFTP
+      - name: Upload via SFTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ssh.strato.de
-          port: 22
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local_path: ./dist/          # oder ./build/, falls Astro das nutzt
-          remote_path: /www-goshawk/   # <--- HIER deinen Ordner eintragen
-          sftp_only: true
-          delete_remote_files: false
+          protocol: sftp
+          port: 22
+          local-dir: ./dist/
+          server-dir: /www-lsd/
+          log-level: verbose
