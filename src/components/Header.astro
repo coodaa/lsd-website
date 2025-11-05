@@ -1,0 +1,145 @@
+---
+let menuOpen = false;
+---
+
+<header class="site-header">
+  <h1 class="logo">LSD</h1>
+
+  <!-- Das Wort "Menu" als klickbarer Trigger -->
+  <button class="menu-toggle" aria-label="Menü öffnen" onClick={() => menuOpen = !menuOpen}>
+    Menu
+  </button>
+
+  <!-- Menü selbst -->
+  <nav class={`main-nav ${menuOpen ? "open" : ""}`}>
+    <div class="nav-links">
+      <a href="/volksbuehne">Volksbühne</a>
+      <a href="/drogen">Drogen</a>
+      <a href="/kunst">Kunst</a>
+      <a href="/theater">Theater</a>
+      <a href="/film">Film</a>
+      <a href="/musik">Musik</a>
+      <a href="/buecher">Bücher/Kataloge</a>
+      <a href="/shop">Shop</a>
+      <a href="/kontakt">Kontakt</a>
+    </div>
+
+    <div class="nav-footer">
+      <a href="/datenschutz">Datenschutz</a>
+      <a href="/impressum">Impressum</a>
+    </div>
+  </nav>
+</header>
+
+<style>
+/* Grundlayout */
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem 2rem;
+  position: relative;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* Logo links */
+.logo {
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+/* Wort "Menu" rechts oben */
+.menu-toggle {
+  all: unset;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: inherit;
+  position: relative;
+  z-index: 1001;
+  transition: opacity 0.2s ease;
+}
+
+.menu-toggle:hover {
+  opacity: 0.7;
+}
+
+/* Hauptmenü */
+.main-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2rem;
+  box-sizing: border-box;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
+
+.main-nav.open {
+  transform: translateX(0);
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #000;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.nav-links a:hover {
+  opacity: 0.7;
+}
+
+.nav-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.nav-footer a {
+  text-decoration: none;
+  color: #444;
+  opacity: 0.8;
+}
+
+.nav-footer a:hover {
+  opacity: 1;
+}
+
+/* Responsive Design */
+@media (min-width: 900px) {
+  .menu-toggle {
+    display: none;
+  }
+
+  .main-nav {
+    position: static;
+    width: 220px;
+    height: auto;
+    transform: none;
+    padding: 0;
+    flex: 1;
+  }
+
+  .site-header {
+    align-items: flex-start;
+  }
+}
+</style>

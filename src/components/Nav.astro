@@ -1,0 +1,26 @@
+---
+const links = [
+  { href: "/", label: "LSD" },
+  { href: "/volksbuehne", label: "Volksbühne" },
+  { href: "/drogen", label: "Drogen" },
+  { href: "/kunst", label: "Kunst" },
+  { href: "/kontakt", label: "Kontakt" },
+];
+---
+
+<nav class="nav">
+  <button class="nav-toggle" aria-label="Menü öffnen">☰</button>
+  <ul class="nav-list">
+    {links.map(link => (
+      <li><a href={link.href}>{link.label}</a></li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const navList = document.querySelector('.nav-list');
+  toggle?.addEventListener('click', () => {
+    navList?.classList.toggle('open');
+  });
+</script>
