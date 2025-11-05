@@ -3,7 +3,7 @@ name: 🚀 Deploy to STRATO via SFTP
 on:
   push:
     branches:
-      - main  # oder dein Deploy-Branch
+      - main  # oder dein Haupt-Branch
 
 jobs:
   deploy:
@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Node.js einrichten (nur falls du ein Build brauchst – z. B. Astro, Next.js, etc.)
+      # 2️⃣ Node.js einrichten (falls du ein Build brauchst, z. B. Astro oder Next.js)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -25,17 +25,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 4️⃣ Build ausführen (passt das ggf. an dein Projekt an)
+      # 4️⃣ Projekt bauen
       - name: Build project
         run: npm run build
 
+      # 5️⃣ Upload zu STRATO per SFTP
       - name: Upload to STRATO via SFTP
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-        server: ssh.strato.de
-        port: 22
-        username: ${{ secrets.FTP_USER }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local_path: ./dist/
-        remote_path: /htdocs/
-        sftp_only: true
+          server: ssh.strato.de
+          port: 22
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local_path: ./dist/
+          remote_path: /htdocs/
+          sftp_only: true
