@@ -29,16 +29,13 @@ jobs:
       - name: Build project
         run: npm run build
 
-      # 5️⃣ Deployment über SFTP (Strato)
-      - name: Upload to STRATO via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          port: 22
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local_path: ./dist/        # hier steht dein fertiger Build-Ordner (z. B. 'build', 'public', etc.)
-          remote_path: /htdocs/      # Zielordner bei Strato (Webroot)
-          sftp_only: true            # erzwingt SFTP-Modus
-          delete_remote_files: false # optional: true = alte Dateien löschen
-
+   - name: Upload to STRATO via SFTP
+  uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+  with:
+    server: ssh.strato.de
+    port: 22
+    username: ${{ secrets.FTP_USER }}
+    password: ${{ secrets.FTP_PASSWORD }}
+    local_path: ./dist/
+    remote_path: /htdocs/
+    sftp_only: true
