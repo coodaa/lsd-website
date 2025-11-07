@@ -1,5 +1,7 @@
 ---
 import DefaultLayout from "../layouts/DefaultLayout.astro";
+const baseUrl = import.meta.env.WP_API || "https://lsd-backend.de/wp-json/wp/v2";
+const apiUrl = `${baseUrl}/pages`;
 
 export async function getStaticPaths() {
   const res = await fetch(`${import.meta.env.WP_API}/pages`);
