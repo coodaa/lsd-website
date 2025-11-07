@@ -1,25 +1,67 @@
 ---
-import DefaultLayout from "../layouts/DefaultLayout.astro";
+/**
+ * Dynamische Seiten aus WordPress laden (mit Fallback, falls ENV fehlt)
+ */
+
+// Basis-URL: erst ENV, dann Fallback
 const baseUrl = import.meta.env.WP_API || "https://lsd-backend.de/wp-json/wp/v2";
-const apiUrl = `${baseUrl}/pages`;
 
+/**
+ * Statische Pfade aus WordPress-Seiten generieren
+ */
 export async function getStaticPaths() {
-  const res = await fetch(`${import.meta.env.WP_API}/pages`);
-  const pages = await res.json();
-  return pages.map((page) => ({
-    params: { slug: page.slug },
-    props: { page },
-  }));
+  try {
+    const apiUrl = `${baseUrl}/pages`;
+    console.log("Fetching pages from:", apiUrl);
+
+    const res = await fetch(apiUrl);
+    if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
+
+    const pages = await res.json();
+
+    return pages.map((page) => ({
+      params: { slug: page.slug },
+      props: { page },
+    }));
+  } catch (err) {
+    console.error("❌ Fehler in getStaticPaths:", err);
+    return []; // verhindert Build-Abbruch bei API-Fehlern
+  }
 }
 
-export async function get({ props }) {
-  return { props };
-}
+/**
+ * Einzelne Seite anhand ihres Slugs laden
+ */
+export async function get({ params }) {
+  try {
+    const apiUrl = `${baseUrl}/pages?slug=${params.slug}`;
+    console.log("Fetching single page:", apiUrl);
 
-const { page } = Astro.props;
+    const res = await fetch(apiUrl);
+    if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
+
+    const data = await res.json();
+    const page = data[0];
+
+    return { props: { page } };
+  } catch (err) {
+    console.error("❌ Fehler in get():", err);
+    return { props: { page: { title: { rendered: "Fehler" }, content: { rendered: "<p>Seite konnte nicht geladen werden.</p>" } } } };
+  }
+}
 ---
 
-<DefaultLayout>
-  <h1 set:html={page.title.rendered}></h1>
-  <div set:html={page.content.rendered}></div>
-</DefaultLayout>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{page.title.rendered}</title>
+  </head>
+
+  <body>
+    <main>
+      <h1 set:html={page.title.rendered}></h1>
+      <div set:html={page.content.rendered}></div>
+    </main>
+  </body>
+</html>

@@ -45,3 +45,9 @@ jobs:
         run: npm run build
         env:
           WP_API: ${{ secrets.WP_API }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      WP_API: ${{ secrets.WP_API }}
