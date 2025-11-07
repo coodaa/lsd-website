@@ -1,8 +1,13 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+import DefaultLayout from "../layouts/DefaultLayout.astro";
+
+// holt die Seite mit Slug "lsd"
+const res = await fetch(`${import.meta.env.WP_API}/pages?slug=lsd`);
+const data = await res.json();
+const page = data[0];
 ---
 
-<BaseLayout>
-  <h1>LSD Berlin</h1>
-  <p>Experimentelle Kunst, Bewusstsein und Subkultur – ein digitales Archiv der Berliner Szene.</p>
-</BaseLayout>
+<DefaultLayout>
+  <h1 set:html={page.title.rendered}></h1>
+  <div set:html={page.content.rendered}></div>
+</DefaultLayout>

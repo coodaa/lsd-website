@@ -1,0 +1,23 @@
+---
+import DefaultLayout from "../layouts/DefaultLayout.astro";
+
+export async function getStaticPaths() {
+  const res = await fetch(`${import.meta.env.WP_API}/pages`);
+  const pages = await res.json();
+  return pages.map((page) => ({
+    params: { slug: page.slug },
+    props: { page },
+  }));
+}
+
+export async function get({ props }) {
+  return { props };
+}
+
+const { page } = Astro.props;
+---
+
+<DefaultLayout>
+  <h1 set:html={page.title.rendered}></h1>
+  <div set:html={page.content.rendered}></div>
+</DefaultLayout>
