@@ -40,3 +40,8 @@ jobs:
           remote_path: /www-lsd/   # ← das ist jetzt korrekt!
           sftp_only: true
           delete_remote_files: false
+
+      - name: Build project
+        run: npm run build
+        env:
+          WP_API: ${{ secrets.WP_API }}
