@@ -1,0 +1,29 @@
+---
+const { page } = Astro.props;
+---
+
+<main class="content">
+  <h1 set:html={page.title.rendered}></h1>
+  <div set:html={page.content.rendered}></div>
+</main>
+
+<style>
+  .content {
+    margin-left: 32%;
+    padding: 2rem;
+    min-height: 100vh;
+    font-family: sans-serif;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .content {
+      margin-left: 0;
+      padding: 1rem;
+    }
+  }
+</style>

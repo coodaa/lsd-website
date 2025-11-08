@@ -1,13 +1,44 @@
 ---
-import DefaultLayout from "../layouts/DefaultLayout.astro";
+import Sidebar from "../components/Sidebar.astro";
+import ContentView from "../components/ContentView.astro";
+import "../styles/global.css";
 
-// holt die Seite mit Slug "lsd"
-const res = await fetch(`${import.meta.env.WP_API}/pages?slug=lsd`);
-const data = await res.json();
-const page = data[0];
+const baseUrl = import.meta.env.WP_API;
+
+// WordPress-Daten laden (ohne export)
+let pages = [];
+let page = null;
+
+try {
+  const res = await fetch(`${baseUrl}/pages`);
+  if (res.ok) {
+    pages = await res.json();
+    if (pages.length > 0) {
+      page = pages[0];
+    }
+  } else {
+    console.error("WP API returned:", res.status);
+  }
+} catch (err) {
+  console.error("Error fetching WP pages:", err);
+}
 ---
-
-<DefaultLayout>
-  <h1 set:html={page.title.rendered}></h1>
-  <div set:html={page.content.rendered}></div>
-</DefaultLayout>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LSD Berlin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    {page ? (
+      <>
+        <Sidebar pages={pages} activeSlug={page.slug} />
+        <ContentView page={page} />
+      </>
+    ) : (
+      <p style="padding:2rem;color:red">
+        Keine Inhalte gefunden. Bitte prüfe deine WordPress-Verbindung ({baseUrl}/pages).
+      </p>
+    )}
+  </body>
+</html>

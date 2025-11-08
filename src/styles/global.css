@@ -1,22 +1,36 @@
+@font-face {
+  font-family: 'Courier Prime';
+  src: url('/fonts/CourierPrime-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Courier Prime', monospace;
+  background: white;
+  color: black;
   margin: 0;
   padding: 0;
 }
+
 header, footer {
   padding: 1rem;
-  background: #f4f4f4;
+  background: white; /* kein Grau mehr */
 }
+
 nav ul {
   display: flex;
   gap: 1rem;
   list-style: none;
   padding: 0;
 }
+
 a {
   color: black;
   text-decoration: none;
 }
+
 main {
   padding: 2rem;
 }
