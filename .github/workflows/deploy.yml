@@ -41,4 +41,4 @@ jobs:
           local_path: ./dist/*          # ✅ nur den Inhalt hochladen
           remote_path: /www-lsd/        # ✅ Zielordner bei Strato
           sftp_only: true
-          delete_remote_files: false    # true = alte Dateien löschen
+          delete_remote_files: false    
