@@ -2,18 +2,14 @@
 /**
  * Dynamische Seiten aus WordPress laden (mit Fallback, falls ENV fehlt)
  */
-
-// Basis-URL: erst ENV, dann Fallback
-const baseUrl = import.meta.env.WP_API || "https://lsd-backend.de/wp-json/wp/v2";
-
-/**
- * Statische Pfade aus WordPress-Seiten generieren
- */
 export async function getStaticPaths() {
-  try {
-    const apiUrl = `${baseUrl}/pages`;
-    console.log("Fetching pages from:", apiUrl);
+  // Fallback direkt innerhalb der Funktion definieren
+  const baseUrl = import.meta.env.WP_API || "https://lsd-backend.de/wp-json/wp/v2";
+  const apiUrl = `${baseUrl}/pages`;
 
+  console.log("Fetching pages from:", apiUrl);
+
+  try {
     const res = await fetch(apiUrl);
     if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
 
@@ -25,18 +21,17 @@ export async function getStaticPaths() {
     }));
   } catch (err) {
     console.error("❌ Fehler in getStaticPaths:", err);
-    return []; // verhindert Build-Abbruch bei API-Fehlern
+    return [];
   }
 }
 
-/**
- * Einzelne Seite anhand ihres Slugs laden
- */
 export async function get({ params }) {
-  try {
-    const apiUrl = `${baseUrl}/pages?slug=${params.slug}`;
-    console.log("Fetching single page:", apiUrl);
+  // Hier ebenfalls wieder baseUrl definieren
+  const baseUrl = import.meta.env.WP_API || "https://lsd-backend.de/wp-json/wp/v2";
+  const apiUrl = `${baseUrl}/pages?slug=${params.slug}`;
+  console.log("Fetching single page:", apiUrl);
 
+  try {
     const res = await fetch(apiUrl);
     if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
 
@@ -46,7 +41,14 @@ export async function get({ params }) {
     return { props: { page } };
   } catch (err) {
     console.error("❌ Fehler in get():", err);
-    return { props: { page: { title: { rendered: "Fehler" }, content: { rendered: "<p>Seite konnte nicht geladen werden.</p>" } } } };
+    return {
+      props: {
+        page: {
+          title: { rendered: "Fehler" },
+          content: { rendered: "<p>Seite konnte nicht geladen werden.</p>" },
+        },
+      },
+    };
   }
 }
 ---
