@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      WP_API: ${{ secrets.WP_API }}   # 🔥 global gesetzt
+      WP_API: ${{ secrets.WP_API }}   # 🔥 WordPress API für Astro
 
     steps:
       # 1️⃣ Code auschecken
@@ -26,11 +26,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 4️⃣ Projekt builden
+      # 4️⃣ Projekt builden (Astro → dist/)
       - name: Build project
         run: npm run build
 
-      # 5️⃣ Upload via echtes SFTP (Strato)
+      # 5️⃣ Upload via SFTP (Strato)
       - name: Upload via SFTP
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
@@ -38,7 +38,7 @@ jobs:
           port: 22
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local_path: ./dist/
-          remote_path: /www-lsd/   # Pfad zu deinem Strato-Webspace
+          local_path: ./dist/*          # ✅ nur den Inhalt hochladen
+          remote_path: /www-lsd/        # ✅ Zielordner bei Strato
           sftp_only: true
-          delete_remote_files: false
+          delete_remote_files: false    # true = alte Dateien löschen
