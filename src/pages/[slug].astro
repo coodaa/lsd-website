@@ -1,83 +1,61 @@
 ---
-/**
- * Dynamische Seiten aus WordPress laden (robuste Version für Static Build)
- */
+import { Astro } from "astro";
+
+const baseUrl = import.meta.env.WP_API || "https://lsd-backend.de/wp-json/wp/v2";
+
+// Statische Routen aus WordPress holen
 export async function getStaticPaths() {
-  const baseUrl = import.meta.env.WP_API || "https://lsd-backend.de/wp-json/wp/v2";
-  const apiUrl = `${baseUrl}/pages`;
-
-  console.log("Fetching pages from:", apiUrl);
-
   try {
-    const res = await fetch(apiUrl);
-    if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
+    const res = await fetch(`${baseUrl}/pages`);
     const pages = await res.json();
 
-    // Wenn keine Seiten gefunden wurden → leeres Array
-    if (!Array.isArray(pages) || pages.length === 0) {
-      console.warn("⚠️ Keine Seiten gefunden!");
-      return [];
-    }
+    // Filter: Nur Seiten mit gültigem Slug
+    const validPages = (pages || []).filter(p => p && p.slug);
 
-    return pages.map((page) => ({
+    return validPages.map(page => ({
       params: { slug: page.slug },
       props: { page },
     }));
   } catch (err) {
-    console.error("❌ Fehler in getStaticPaths:", err);
+    console.error("⚠️ Fehler beim Abrufen der Seiten:", err);
     return [];
   }
 }
 
+// Einzelne Seite abrufen
 export async function get({ params }) {
-  const baseUrl = import.meta.env.WP_API || "https://lsd-backend.de/wp-json/wp/v2";
-  const apiUrl = `${baseUrl}/pages?slug=${params.slug}`;
-
-  console.log("Fetching single page:", apiUrl);
-
   try {
-    const res = await fetch(apiUrl);
-    if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
-
+    const res = await fetch(`${baseUrl}/pages?slug=${params.slug}`);
     const data = await res.json();
-    const page = data && data[0] ? data[0] : null;
 
-    if (!page) {
-      return {
-        props: {
-          page: {
-            title: { rendered: "Seite nicht gefunden" },
-            content: { rendered: "<p>Diese Seite existiert nicht.</p>" },
-          },
-        },
-      };
+    if (!data || !data.length) {
+      console.warn(`⚠️ Keine Seite gefunden für Slug: ${params.slug}`);
+      return { props: { page: null } };
     }
 
-    return { props: { page } };
+    return { props: { page: data[0] } };
   } catch (err) {
-    console.error("❌ Fehler in get():", err);
-    return {
-      props: {
-        page: {
-          title: { rendered: "Fehler beim Laden" },
-          content: { rendered: "<p>Inhalte konnten nicht geladen werden.</p>" },
-        },
-      },
-    };
+    console.error("⚠️ Fehler beim Laden der Seite:", err);
+    return { props: { page: null } };
   }
 }
+
+const { page } = Astro.props;
 ---
 
 <html lang="de">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{page?.title?.rendered || "Seite"}</title>
+    <meta charset="utf-8" />
+    <title>{page?.title?.rendered || "Seite nicht gefunden"}</title>
   </head>
   <body>
-    <main>
-      <h1 set:html={page?.title?.rendered || "Unbekannte Seite"}></h1>
-      <div set:html={page?.content?.rendered || "<p>Kein Inhalt vorhanden.</p>"}></div>
-    </main>
+    {page ? (
+      <>
+        <h1 set:html={page.title.rendered}></h1>
+        <div set:html={page.content.rendered}></div>
+      </>
+    ) : (
+      <h1>404 – Seite nicht gefunden</h1>
+    )}
   </body>
 </html>
