@@ -1,38 +1,61 @@
 ---
-const baseUrl = import.meta.env.WP_API;
+import { Astro } from "astro";
 
+const baseUrl = import.meta.env.WP_API || "https://lsd-backend.de/wp-json/wp/v2";
+
+// Statische Routen aus WordPress holen
 export async function getStaticPaths() {
-  const res = await fetch(`${baseUrl}/pages`);
-  const pages = await res.json();
+  try {
+    const res = await fetch(`${baseUrl}/pages`);
+    const pages = await res.json();
 
-  return pages.map((page) => ({
-    params: { slug: page.slug },
-    props: { page, pages },
-  }));
+    // Filter: Nur Seiten mit gültigem Slug
+    const validPages = (pages || []).filter(p => p && p.slug);
+
+    return validPages.map(page => ({
+      params: { slug: page.slug },
+      props: { page },
+    }));
+  } catch (err) {
+    console.error("⚠️ Fehler beim Abrufen der Seiten:", err);
+    return [];
+  }
 }
 
+// Einzelne Seite abrufen
 export async function get({ params }) {
-  const res = await fetch(`${baseUrl}/pages?slug=${params.slug}`);
-  const data = await res.json();
-  const page = data[0];
-  const allRes = await fetch(`${baseUrl}/pages`);
-  const pages = await allRes.json();
+  try {
+    const res = await fetch(`${baseUrl}/pages?slug=${params.slug}`);
+    const data = await res.json();
 
-  return { props: { page, pages } };
+    if (!data || !data.length) {
+      console.warn(`⚠️ Keine Seite gefunden für Slug: ${params.slug}`);
+      return { props: { page: null } };
+    }
+
+    return { props: { page: data[0] } };
+  } catch (err) {
+    console.error("⚠️ Fehler beim Laden der Seite:", err);
+    return { props: { page: null } };
+  }
 }
 
-import Sidebar from "../components/Sidebar.astro";
-import ContentView from "../components/ContentView.astro";
+const { page } = Astro.props;
 ---
 
 <html lang="de">
   <head>
-    <meta charset="UTF-8" />
-    <title>{page.title.rendered}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <title>{page?.title?.rendered || "Seite nicht gefunden"}</title>
   </head>
   <body>
-    <Sidebar pages={pages} activeSlug={page.slug} />
-    <ContentView page={page} />
+    {page ? (
+      <>
+        <h1 set:html={page.title.rendered}></h1>
+        <div set:html={page.content.rendered}></div>
+      </>
+    ) : (
+      <h1>404 – Seite nicht gefunden</h1>
+    )}
   </body>
 </html>

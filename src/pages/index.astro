@@ -5,40 +5,35 @@ import "../styles/global.css";
 
 const baseUrl = import.meta.env.WP_API;
 
-// WordPress-Daten laden (ohne export)
 let pages = [];
-let page = null;
-
 try {
-  const res = await fetch(`${baseUrl}/pages`);
+  const res = await fetch(`${baseUrl}/pages?per_page=100`);
   if (res.ok) {
     pages = await res.json();
-    if (pages.length > 0) {
-      page = pages[0];
-    }
   } else {
-    console.error("WP API returned:", res.status);
+    console.error("❌ WP fetch error:", res.status);
   }
 } catch (err) {
-  console.error("Error fetching WP pages:", err);
+  console.error("❌ Verbindung fehlgeschlagen:", err);
 }
+
+const firstPage = pages[0];
 ---
+
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <title>LSD Berlin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LSD Berlin</title>
   </head>
   <body>
-    {page ? (
-      <>
-        <Sidebar pages={pages} activeSlug={page.slug} />
-        <ContentView page={page} />
-      </>
+    {pages.length === 0 ? (
+      <p>⚠️ Keine Seiten gefunden. Prüfe bitte die API-URL: {baseUrl}/pages</p>
     ) : (
-      <p style="padding:2rem;color:red">
-        Keine Inhalte gefunden. Bitte prüfe deine WordPress-Verbindung ({baseUrl}/pages).
-      </p>
+      <>
+        <Sidebar pages={pages} activeSlug={firstPage?.slug} />
+        <ContentView page={firstPage} />
+      </>
     )}
   </body>
 </html>

@@ -2,107 +2,72 @@
 const { pages, activeSlug } = Astro.props;
 ---
 
-<nav class="sidebar">
-  <button class="menu-button">Menü</button>
-  <ul>
-    {pages.map((page) => (
-      <li class={page.slug === activeSlug ? "active" : ""}>
-        <a href={`/${page.slug}`}>{page.title.rendered}</a>
-      </li>
-    ))}
-  </ul>
-</nav>
-
 <style>
   .sidebar {
+    width: 240px;
+    padding: 2rem 1rem;
     background: white;
-    color: black;
     position: fixed;
     top: 0;
-    right: 0;
-    height: 100%;
-    width: 250px;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    padding: 2rem;
-    z-index: 10;
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+    font-family: 'Courier Prime', monospace;
   }
 
-  /* Menü-Button */
-  .menu-button {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: none;
-    color: black;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-  }
-
-  /* Mobile aktiv */
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  li {
-    margin-bottom: 1.2rem;
-  }
-
-  a {
+  .sidebar a {
+    display: block;
     text-decoration: none;
     color: black;
-    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
   }
 
-  a:hover {
-    text-decoration: underline;
+  .sidebar a.active {
+    font-weight: bold;
   }
 
-  /* Desktop */
-  @media (min-width: 900px) {
-    .menu-button {
-      display: none; /* Menü-Button ausblenden */
-    }
-
+  @media (max-width: 768px) {
     .sidebar {
-      transform: none;
+      display: none;
+    }
+
+    .sidebar.open {
+      display: block;
       position: static;
-      width: auto;
-      height: auto;
-      display: flex;
-      gap: 2rem;
-      padding: 0;
-      background: white;
+      width: 100%;
+      padding: 1rem;
     }
 
-    ul {
-      display: flex;
-      gap: 2rem;
-    }
-
-    li {
-      margin: 0;
+    .menu-toggle {
+      display: block;
+      text-align: right;
+      padding: 1rem;
+      cursor: pointer;
     }
   }
 
-  /* Alles Weiß, keine Linien oder Grau */
-  html, body {
-    background: white;
+  .menu-toggle {
+    display: none;
   }
 </style>
 
-<script>
-  const menuButton = document.querySelector(".menu-button");
-  const sidebar = document.querySelector(".sidebar");
+<div class="menu-toggle" id="menuToggle">Menü</div>
+<nav class="sidebar" id="sidebar">
+  {pages.map(page => (
+    <a
+      href={`#${page.slug}`}
+      class={page.slug === activeSlug ? 'active' : ''}
+    >
+      {page.title.rendered}
+    </a>
+  ))}
+</nav>
 
-  menuButton?.addEventListener("click", () => {
-    sidebar.classList.toggle("open");
+<script>
+  const toggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  toggle?.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
   });
 </script>
