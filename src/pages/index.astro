@@ -5,6 +5,7 @@ import "../styles/global.css";
 
 const baseUrl = import.meta.env.WP_API;
 
+// Alle Seiten laden
 let pages = [];
 try {
   const res = await fetch(`${baseUrl}/pages?per_page=100`);
@@ -17,22 +18,24 @@ try {
   console.error("❌ Verbindung fehlgeschlagen:", err);
 }
 
-const firstPage = pages[0];
+// Aktuelle Seite anhand Slug aus URL finden
+const { slug } = Astro.params;
+const currentPage = pages.find((p) => p.slug === slug) || pages[0];
 ---
 
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>LSD Berlin</title>
+    <title>{currentPage?.title?.rendered || "LSD Berlin"}</title>
   </head>
   <body>
     {pages.length === 0 ? (
       <p>⚠️ Keine Seiten gefunden. Prüfe bitte die API-URL: {baseUrl}/pages</p>
     ) : (
       <>
-        <Sidebar pages={pages} activeSlug={firstPage?.slug} />
-        <ContentView page={firstPage} />
+        <Sidebar pages={pages} activeSlug={currentPage?.slug} />
+        <ContentView page={currentPage} />
       </>
     )}
   </body>

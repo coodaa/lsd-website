@@ -1,73 +1,67 @@
 ---
-const { pages, activeSlug } = Astro.props;
+const { pages = [], activeSlug } = Astro.props;
 ---
 
-<style>
-  .sidebar {
-    width: 240px;
-    padding: 2rem 1rem;
-    background: white;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    overflow-y: auto;
-    font-family: 'Courier Prime', monospace;
-  }
+<aside class="sidebar">
+  <button class="menu-toggle" id="menuToggle">MENU</button>
+  <button class="close-btn" id="closeMenu">X</button>
 
-  .sidebar a {
-    display: block;
-    text-decoration: none;
-    color: black;
-    margin-bottom: 0.8rem;
-    font-size: 1rem;
-  }
+  <!-- Overlay -->
+  <div class="menu-overlay" id="menuOverlay">
+    <div class="menu-box">
+      <ul>
+        {pages.map((p) => (
+          <li>
+            <a
+              href={`/${p.slug}`}
+              class={p.slug === activeSlug ? "active" : ""}
+            >
+              {p.title.rendered}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
 
-  .sidebar a.active {
-    font-weight: bold;
-  }
+  <ul id="menuList" class="desktop-menu">
+    {pages.map((p) => (
+      <li>
+        <a
+          href={`/${p.slug}`}
+          class={p.slug === activeSlug ? "active" : ""}
+        >
+          {p.title.rendered}
+        </a>
+      </li>
+    ))}
+  </ul>
 
-  @media (max-width: 768px) {
-    .sidebar {
-      display: none;
-    }
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("menuToggle");
+      const close = document.getElementById("closeMenu");
+      const overlay = document.getElementById("menuOverlay");
 
-    .sidebar.open {
-      display: block;
-      position: static;
-      width: 100%;
-      padding: 1rem;
-    }
+      toggle?.addEventListener("click", () => {
+        overlay.classList.add("open");
+        toggle.style.display = "none";
+        close.style.display = "block";
+        document.body.style.overflow = "hidden";
+      });
 
-    .menu-toggle {
-      display: block;
-      text-align: right;
-      padding: 1rem;
-      cursor: pointer;
-    }
-  }
+      const closeMenu = () => {
+        overlay.classList.remove("open");
+        toggle.style.display = "block";
+        close.style.display = "none";
+        document.body.style.overflow = "";
+      };
 
-  .menu-toggle {
-    display: none;
-  }
-</style>
+      close?.addEventListener("click", closeMenu);
 
-<div class="menu-toggle" id="menuToggle">Menü</div>
-<nav class="sidebar" id="sidebar">
-  {pages.map(page => (
-    <a
-      href={`#${page.slug}`}
-      class={page.slug === activeSlug ? 'active' : ''}
-    >
-      {page.title.rendered}
-    </a>
-  ))}
-</nav>
-
-<script>
-  const toggle = document.getElementById('menuToggle');
-  const sidebar = document.getElementById('sidebar');
-  toggle?.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-  });
-</script>
+      overlay?.addEventListener("click", (e) => {
+        if (e.target === overlay) closeMenu();
+      });
+    });
+  </script>
+</aside>

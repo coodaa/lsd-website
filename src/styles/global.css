@@ -1,13 +1,225 @@
-@import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
-
+/* ===== Global Reset ===== */
 body {
   margin: 0;
-  font-family: 'Courier Prime', monospace;
-  background: white;
-  color: black;
+  background: #fff;
+  color: #000;
+  font-family: "Courier Prime", monospace;
 }
 
-h1, h2, h3 {
+/* Entfernt ALLE nativen Listensymbole, auch ::marker */
+ul,
+li {
+  list-style: none !important;
+  list-style-type: none !important;
+  list-style-position: inside !important;
+  padding: 0;
+  margin: 0;
+}
+
+/* Verhindert doppelte Marker in Safari/Chrome */
+li::marker {
+  content: none !important;
+}
+
+/* ===== Grid-Layout (4 Spalten, eingerückt) ===== */
+.grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem 8rem;
+  gap: 2rem;
+}
+
+/* ===== Sidebar links ===== */
+.sidebar {
+  grid-column: 1;
+  position: sticky;
+  top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* rechtsbündig im mobilen Layout */
+}
+
+.sidebar ul {
+  padding: 0;
+  margin: 0;
+}
+
+/* ===== Eckige Punkte erzeugen ===== */
+.sidebar li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin: 0.8rem 0;
+  position: relative;
+}
+
+/* Unser eigener Punkt */
+.sidebar li::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  background: currentColor;
+  display: inline-block;
+  border-radius: 0; /* eckig */
+  flex-shrink: 0;
+  margin-top: 0.3rem;
+}
+
+/* ===== Links ===== */
+.sidebar a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.sidebar a.active {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ===== Inhaltsbereiche (rechte 3 Spalten) ===== */
+.content-area {
+  grid-column: 2 / span 3;
+  max-width: 100%;
+}
+
+.hint {
+  margin-bottom: 1.5rem;
   font-weight: normal;
-  margin-top: 0;
+}
+
+.content img {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.5rem 0;
+}
+
+/* ====== Mobile-Menü-Button ====== */
+.menu-toggle,
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: right;
+  margin-bottom: 1rem;
+  z-index: 1001;
+  position: relative;
+}
+
+/* Close-Button (X) standardmäßig verstecken */
+.close-btn {
+  display: none;
+  font-size: 1.4rem;
+}
+
+/* ===== Overlay-Menü ===== */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.97);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 900;
+}
+
+.menu-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.menu-box {
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.menu-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-box li {
+  margin: 1rem 0;
+  font-size: 1.3rem;
+}
+
+.menu-box a {
+  text-decoration: none;
+  color: #000;
+}
+
+.menu-box a.active {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Responsive (mobile-first Ansatz) ===== */
+@media (max-width: 900px) {
+  .grid-layout {
+    grid-template-columns: 1fr;
+    padding: 2rem;
+  }
+
+  .sidebar {
+    position: static;
+    margin-bottom: 2rem;
+    align-items: flex-end;
+  }
+
+  .content-area {
+    grid-column: 1;
+  }
+
+  /* Standardmäßig Desktop-Menü ausblenden */
+  .desktop-menu {
+    display: none;
+  }
+
+  /* Menü-Overlay sichtbar nur auf Mobile */
+  .menu-toggle {
+    display: block;
+  }
+
+  .menu-overlay {
+    display: flex;
+  }
+}
+
+/* ===== Desktop: Overlay & Buttons ausblenden ===== */
+@media (min-width: 900px) {
+  .menu-overlay {
+    display: none !important;
+  }
+
+  .menu-toggle,
+  .close-btn {
+    display: none !important;
+  }
+
+  .desktop-menu {
+    display: block;
+    margin-top: 1rem;
+  }
 }
