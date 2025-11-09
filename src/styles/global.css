@@ -6,7 +6,7 @@ body {
   font-family: "Courier Prime", monospace;
 }
 
-/* Entfernt ALLE nativen Listensymbole, auch ::marker */
+/* Entfernt ALLE nativen Listensymbole */
 ul,
 li {
   list-style: none !important;
@@ -16,7 +16,6 @@ li {
   margin: 0;
 }
 
-/* Verhindert doppelte Marker in Safari/Chrome */
 li::marker {
   content: none !important;
 }
@@ -31,22 +30,25 @@ li::marker {
   gap: 2rem;
 }
 
-/* ===== Sidebar links ===== */
+/* ===== Sidebar links (zentrierter & eingerückt) ===== */
 .sidebar {
   grid-column: 1;
   position: sticky;
   top: 2rem;
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* rechtsbündig im mobilen Layout */
+  align-items: flex-start;
+  justify-content: center;
+  padding-left: 4rem; /* ✅ Sidebar etwas eingerückt */
 }
 
+/* Menüliste */
 .sidebar ul {
   padding: 0;
   margin: 0;
 }
 
-/* ===== Eckige Punkte erzeugen ===== */
+/* ===== Eckige Punkte ===== */
 .sidebar li {
   display: flex;
   align-items: baseline;
@@ -55,14 +57,13 @@ li::marker {
   position: relative;
 }
 
-/* Unser eigener Punkt */
 .sidebar li::before {
   content: "";
   width: 7px;
   height: 7px;
   background: currentColor;
   display: inline-block;
-  border-radius: 0; /* eckig */
+  border-radius: 0;
   flex-shrink: 0;
   margin-top: 0.3rem;
 }
@@ -78,7 +79,7 @@ li::marker {
   text-underline-offset: 2px;
 }
 
-/* ===== Inhaltsbereiche (rechte 3 Spalten) ===== */
+/* ===== Inhaltsbereich (rechte 3 Spalten) ===== */
 .content-area {
   grid-column: 2 / span 3;
   max-width: 100%;
@@ -96,7 +97,7 @@ li::marker {
   margin: 1.5rem 0;
 }
 
-/* ====== Mobile-Menü-Button ====== */
+/* ===== Menü-Buttons ===== */
 .menu-toggle,
 .close-btn {
   background: none;
@@ -112,7 +113,6 @@ li::marker {
   position: relative;
 }
 
-/* Close-Button (X) standardmäßig verstecken */
 .close-btn {
   display: none;
   font-size: 1.4rem;
@@ -163,7 +163,7 @@ li::marker {
   text-underline-offset: 3px;
 }
 
-/* Animation */
+/* ===== Animation ===== */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -175,7 +175,7 @@ li::marker {
   }
 }
 
-/* ===== Responsive (mobile-first Ansatz) ===== */
+/* ===== Responsive (mobile-first) ===== */
 @media (max-width: 900px) {
   .grid-layout {
     grid-template-columns: 1fr;
@@ -185,19 +185,18 @@ li::marker {
   .sidebar {
     position: static;
     margin-bottom: 2rem;
-    align-items: flex-end;
+    align-items: flex-end; /* nur mobil rechtsbündig */
+    padding-left: 0; /* kein extra Einrücken */
   }
 
   .content-area {
     grid-column: 1;
   }
 
-  /* Standardmäßig Desktop-Menü ausblenden */
   .desktop-menu {
     display: none;
   }
 
-  /* Menü-Overlay sichtbar nur auf Mobile */
   .menu-toggle {
     display: block;
   }
