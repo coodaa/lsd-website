@@ -8,21 +8,31 @@ export async function getStaticPaths() {
   return [];
 }
 
-const baseUrl = "https://lsd-backend.de/wp-json/wp/v2";
-const slug = Astro.params?.slug;
+// Nutzt dynamisch die API-URL aus .env
+const apiBase = import.meta.env.WP_API;
 
-// Seite laden
-const res = await fetch(`${baseUrl}/pages?slug=${slug}`);
-const data = await res.json();
-const page = data?.[0];
+// Slug aus der URL holen
+const slug = Astro.params.slug;
 
-// Alle Seiten fürs Menü
+// Seite anhand des Slugs abrufen
+let page = null;
+try {
+  const res = await fetch(`${apiBase}/pages?slug=${slug}`);
+  if (res.ok) {
+    const data = await res.json();
+    page = data[0];
+  }
+} catch (err) {
+  console.error("❌ Fehler beim Laden der Seite:", err);
+}
+
+// Alle Seiten fürs Menü (geordnet nach Reihenfolge)
 let pages = [];
 try {
-  const resPages = await fetch(`${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc`);
+  const resPages = await fetch(`${apiBase}/pages?per_page=100&orderby=menu_order&order=asc`);
   if (resPages.ok) pages = await resPages.json();
 } catch (err) {
-  console.error("Fehler beim Laden der Seiten:", err);
+  console.error("❌ Fehler beim Laden der Seitenliste:", err);
 }
 ---
 

@@ -1,4 +1,4 @@
-/* ===== Global Reset ===== */
+/* ===== Grundlayout ===== */
 body {
   margin: 0;
   background: #fff;
@@ -6,98 +6,144 @@ body {
   font-family: "Courier Prime", monospace;
 }
 
-/* Entfernt ALLE nativen Listensymbole */
+/* ===== Listen ===== */
 ul,
 li {
-  list-style: none !important;
-  list-style-type: none !important;
-  list-style-position: inside !important;
+  list-style: none;
   padding: 0;
   margin: 0;
 }
 
-li::marker {
-  content: none !important;
-}
-
-/* ===== Grid-Layout (4 Spalten, eingerückt) ===== */
+/* ===== Haupt-Grid ===== */
 .grid-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  max-width: 1400px;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4rem;
   padding: 4rem 8rem;
-  gap: 2rem;
 }
 
-/* ===== Sidebar links (zentrierter & eingerückt) ===== */
+/* ===== Sidebar ===== */
 .sidebar {
-  grid-column: 1;
   position: sticky;
   top: 2rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
-  padding-left: 4rem; /* ✅ Sidebar etwas eingerückt */
+  padding-left: 8rem; /* Weißraum links */
 }
 
-/* Menüliste */
-.sidebar ul {
-  padding: 0;
-  margin: 0;
-}
-
-/* ===== Eckige Punkte ===== */
 .sidebar li {
   display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  margin: 0.8rem 0;
-  position: relative;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1rem 0;
 }
 
 .sidebar li::before {
   content: "";
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   background: currentColor;
   display: inline-block;
-  border-radius: 0;
-  flex-shrink: 0;
-  margin-top: 0.3rem;
+  position: relative;
+  top: 0.5px;
 }
 
-/* ===== Links ===== */
 .sidebar a {
-  text-decoration: none;
   color: inherit;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: opacity 0.2s ease;
 }
 
+/* kein Springen mehr bei aktivem Menüpunkt */
 .sidebar a.active {
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
+  font-weight: 400; /* bleibt gleich – kein Layoutshift */
 }
 
-/* ===== Inhaltsbereich (rechte 3 Spalten) ===== */
+/* ===== Rechte Spalte (stabil & bündig) ===== */
 .content-area {
-  grid-column: 2 / span 3;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  /* zentriert im Viewport */
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 900px;
+  width: 100%;
+  padding: 0;
+}
+
+.content-area * {
+  box-sizing: border-box;
   max-width: 100%;
 }
 
-.hint {
-  margin-bottom: 1.5rem;
-  font-weight: normal;
+/* Textbreite */
+.content {
+  width: 85%;
+  text-align: left;
+  margin: 0;
 }
 
-.content img {
+/* ===== Absätze & Leerzeilen ===== */
+.content p,
+.content .wp-block-paragraph {
+  line-height: 1 !important;
+  margin: 0 0 0.3rem 0 !important;
+  white-space: normal !important;
+}
+
+.content p.wp-empty,
+.content p:has(> br:only-child) {
+  all: unset;
+  display: block;
+  height: 0.6rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  pointer-events: none;
+  color: transparent !important;
+}
+
+/* ===== Bilder & Medien ===== */
+.content img,
+.content figure img,
+.content .wp-block-image img,
+.content .wp-block-gallery img,
+.content video {
+  display: block;
   width: 100%;
   height: auto;
-  display: block;
-  margin: 1.5rem 0;
+  object-fit: contain;
+  object-position: left center;
+  margin: 0.8rem 0 1.2rem 0;
 }
 
-/* ===== Menü-Buttons ===== */
+/* „Klick mich“ nur bei Seiten mit Bild oben */
+.content figure:first-of-type::after {
+  content: "Klick mich";
+  display: block;
+  text-align: center;
+  margin-top: 0.3rem;
+  font-size: 0.9rem;
+  color: #999;
+}
+
+/* Bei Impressum, Datenschutz, Kontakt KEIN „Klick mich“ */
+body.slug-impressum .content figure:first-of-type::after,
+body.slug-datenschutz .content figure:first-of-type::after,
+body.slug-kontakt .content figure:first-of-type::after {
+  content: none;
+}
+
+/* ===== Buttons ===== */
 .menu-toggle,
 .close-btn {
   background: none;
@@ -109,13 +155,8 @@ li::marker {
   font-family: inherit;
   text-align: right;
   margin-bottom: 1rem;
-  z-index: 1001;
   position: relative;
-}
-
-.close-btn {
-  display: none;
-  font-size: 1.4rem;
+  z-index: 1001;
 }
 
 /* ===== Overlay-Menü ===== */
@@ -142,25 +183,9 @@ li::marker {
   animation: fadeIn 0.3s ease;
 }
 
-.menu-box ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
 .menu-box li {
   margin: 1rem 0;
-  font-size: 1.3rem;
-}
-
-.menu-box a {
-  text-decoration: none;
-  color: #000;
-}
-
-.menu-box a.active {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  font-size: 1.5rem;
 }
 
 /* ===== Animation ===== */
@@ -175,43 +200,38 @@ li::marker {
   }
 }
 
-/* ===== Responsive (mobile-first) ===== */
+/* ===== Mobile Layout ===== */
 @media (max-width: 900px) {
   .grid-layout {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     padding: 2rem;
   }
 
   .sidebar {
     position: static;
     margin-bottom: 2rem;
-    align-items: flex-end; /* nur mobil rechtsbündig */
-    padding-left: 0; /* kein extra Einrücken */
+    padding-left: 0;
   }
 
   .content-area {
-    grid-column: 1;
+    width: 100%;
+    transform: none;
+    left: 0;
   }
 
-  .desktop-menu {
-    display: none;
-  }
-
-  .menu-toggle {
-    display: block;
-  }
-
-  .menu-overlay {
-    display: flex;
+  .content,
+  .content img,
+  .content p,
+  .content h1,
+  .content h2,
+  .content h3 {
+    max-width: 100%;
   }
 }
 
-/* ===== Desktop: Overlay & Buttons ausblenden ===== */
+/* ===== Desktop-Menü nur dort sichtbar ===== */
 @media (min-width: 900px) {
-  .menu-overlay {
-    display: none !important;
-  }
-
+  .menu-overlay,
   .menu-toggle,
   .close-btn {
     display: none !important;
@@ -221,4 +241,30 @@ li::marker {
     display: block;
     margin-top: 1rem;
   }
+}
+
+/* ===== Sidebar Links (fix gegen Springen) ===== */
+.sidebar a {
+  color: inherit;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1.4;
+  display: inline-block;
+  padding-bottom: 2px; /* Platz für Unterstreichung reservieren */
+  border-bottom: 1px solid transparent; /* unsichtbare Linie verhindert Sprung */
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Hover */
+.sidebar a:hover {
+  color: #666;
+  border-bottom-color: #999; /* dezente Linie */
+}
+
+/* Aktiv (ohne Springen, gleiche Höhe) */
+.sidebar a.active {
+  border-bottom-color: #000; /* sichtbare Linie */
+  font-weight: 400; /* bleibt gleich */
+  color: #000;
 }
