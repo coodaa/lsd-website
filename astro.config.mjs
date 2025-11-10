@@ -1,10 +1,7 @@
-import { defineConfig } from "astro/config";
-import node from "@astrojs/node";
+import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: "https://www.lsd-berlin.de",
-  output: "server",
-  adapter: node({
-    mode: "standalone",
-  }),
+  site: 'https://www.lsd-berlin.de',
+  outDir: './dist',
+  output: 'static', // ✅ Wichtig! Keine "server"-Angabe
 });
