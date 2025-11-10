@@ -3,42 +3,32 @@ name: 🚀 Deploy to STRATO via SFTP
 on:
   push:
     branches:
-      - main   # läuft bei jedem Push auf 'main'
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      WP_API: ${{ secrets.WP_API }}   # 🔥 WordPress API für Astro
 
     steps:
-      # 1️⃣ Code auschecken
-      - name: Checkout code
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Node.js einrichten
-      - name: Setup Node.js
+      - name: 🧱 Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # 3️⃣ Dependencies installieren
-      - name: Install dependencies
-        run: npm ci
+      - name: 📦 Install Dependencies & Build
+        run: |
+          npm ci
+          npm run build
 
-      # 4️⃣ Projekt builden (Astro → dist/)
-      - name: Build project
-        run: npm run build
-
-      # 5️⃣ Upload via SFTP (Strato)
-      - name: Upload via SFTP
+      - name: 🚀 Upload to STRATO via SFTP
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-          server: ssh.strato.de
-          port: 22
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local_path: ./dist/*          # ✅ nur den Inhalt hochladen
-          remote_path: /www-lsd/        # ✅ Zielordner bei Strato
-          sftp_only: true
-          delete_remote_files: false    
+          username: ${{ secrets.STRATO_USER }}
+          server: ${{ secrets.STRATO_HOST }}
+          password: ${{ secrets.STRATO_PASS }}
+          local_path: ./dist/*
+          remote_path: /www-lsd/
+          sftpArgs: '-o ConnectTimeout=10'
