@@ -1,47 +1,42 @@
 ---
-export const prerender = false;
-
 import Sidebar from "../components/Sidebar.astro";
 import "../styles/global.css";
 
-const baseUrl = import.meta.env.WP_API;
-const { slug } = Astro.params;
+export const prerender = true;
 
-// Seitenliste für Sidebar laden
-let pages = [];
-try {
-  const res = await fetch(`${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc`);
-  if (res.ok) {
-    pages = await res.json();
+// 🔧 Alle Seiten aus der WP-API holen (für Routing + Sidebar)
+export async function getStaticPaths() {
+  const baseUrl = import.meta.env.WP_API;
+
+  try {
+    const res = await fetch(`${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc`);
+    const pages = await res.json();
+
+    return pages.map((page) => ({
+      params: { slug: page.slug },
+      props: { page, pages }, // wir geben die Seite + alle Seiten mit
+    }));
+  } catch (err) {
+    console.error("❌ Fehler in getStaticPaths:", err);
+    return [];
   }
-} catch (err) {
-  console.error("❌ Seitenliste konnte nicht geladen werden:", err);
 }
 
-// Aktuelle Seite laden anhand des Slugs
-let currentPage = null;
-try {
-  const res = await fetch(`${baseUrl}/pages?slug=${slug}`);
-  if (res.ok) {
-    const data = await res.json();
-    currentPage = data[0];
-  }
-} catch (err) {
-  console.error("❌ Fehler beim Laden der Seite:", err);
-}
+const { page, pages } = Astro.props;
+const slug = page?.slug;
 ---
 
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{currentPage?.title?.rendered || "LSD Berlin"}</title>
+    <title>{page?.title?.rendered || "LSD Berlin"}</title>
   </head>
   <body class={`slug-${slug}`}>
     <div class="grid-layout">
-      <Sidebar pages={pages} activeSlug={currentPage?.slug} />
+      <Sidebar pages={pages} activeSlug={slug} />
       <main class="content-area">
-        <div class="content" set:html={currentPage?.content?.rendered}></div>
+        <div class="content" set:html={page?.content?.rendered}></div>
       </main>
     </div>
   </body>
