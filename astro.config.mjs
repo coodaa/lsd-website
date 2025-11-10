@@ -3,5 +3,5 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://www.lsd-berlin.de',
   outDir: './dist',
-  output: 'static', // ✅ notwendig für STRATO
+  output: 'static',
 });

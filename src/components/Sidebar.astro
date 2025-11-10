@@ -1,92 +1,166 @@
 ---
 const { pages = [], activeSlug } = Astro.props;
-
-// Feste Reihenfolge (nur Slugs – die Titel kommen dynamisch aus WP)
-const ORDER = [
-  "lsd",
-  "buecher-kataloge",
-  "film",
-  "theater",
-  "kunst",
-  "drogen",
-  "volksbuehne",
-  "shop",
-  "kontakt",
-];
-
-// Footer-Seiten
-const LEGAL = ["impressum", "datenschutz"];
-
-// Sortieren nach fester Slug-Reihenfolge
-const mainPages = ORDER.map(slug => pages.find(p => p.slug === slug)).filter(Boolean);
-const legalPages = LEGAL.map(slug => pages.find(p => p.slug === slug)).filter(Boolean);
-
-// Helper für active link
-const isActive = slug => slug === activeSlug ? "active" : "";
 ---
 
 <aside class="sidebar">
-  <button class="menu-toggle" id="menuToggle">MENU</button>
-  <button class="close-btn" id="closeMenu">X</button>
+  <!-- Toggle Button -->
+  <button class="menu-toggle" id="menuToggle" aria-label="Menü öffnen">
+    <span class="menu-label">
+      <span class="menu-text">MENÜ</span>
+      <span class="menu-close">×</span>
+    </span>
+  </button>
 
-  <!-- Overlay (mobil) -->
-  <div class="menu-overlay" id="menuOverlay">
-    <div class="menu-box">
-      <ul>
-        {mainPages.map(p => (
-          <li>
-            <a href={`/${p.slug}`} class={isActive(p.slug)} set:html={p.title.rendered} />
-          </li>
-        ))}
-      </ul>
-
-      <div class="legal-footer">
-        {legalPages.map(p => (
-          <a href={`/${p.slug}`} class={isActive(p.slug)} set:html={p.title.rendered} />
-        ))}
-      </div>
-    </div>
-  </div>
-
-  <!-- Desktop-Menü -->
-  <ul class="desktop-menu">
-    {mainPages.map(p => (
+  <!-- Menü-Liste -->
+  <ul id="menuList">
+    {pages.map((p) => (
       <li>
-        <a href={`/${p.slug}`} class={isActive(p.slug)} set:html={p.title.rendered} />
+        <a href={`/${p.slug}`} class={p.slug === activeSlug ? "active" : ""}>
+          {p.title.rendered}
+        </a>
       </li>
     ))}
   </ul>
 
-  <div class="sidebar-footer">
-    <div class="legal-footer">
-      {legalPages.map(p => (
-        <a href={`/${p.slug}`} class={isActive(p.slug)} set:html={p.title.rendered} />
-      ))}
-    </div>
-  </div>
-
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const toggle  = document.getElementById("menuToggle");
-      const close   = document.getElementById("closeMenu");
-      const overlay = document.getElementById("menuOverlay");
+      const btn = document.getElementById("menuToggle");
+      const list = document.getElementById("menuList");
+      if (!btn || !list) return;
 
-      const open = () => {
-        overlay.classList.add("open");
-        toggle.style.display = "none";
-        close.style.display  = "block";
-        document.body.style.overflow = "hidden";
-      };
-      const shut = () => {
-        overlay.classList.remove("open");
-        toggle.style.display = "block";
-        close.style.display  = "none";
-        document.body.style.overflow = "";
-      };
-
-      toggle?.addEventListener("click", open);
-      close?.addEventListener("click", shut);
-      overlay?.addEventListener("click", (e) => { if (e.target === overlay) shut(); });
+      btn.addEventListener("click", () => {
+        const isOpen = list.classList.toggle("open");
+        btn.classList.toggle("open", isOpen);
+        btn.setAttribute("aria-label", isOpen ? "Menü schließen" : "Menü öffnen");
+      });
     });
   </script>
 </aside>
+
+<style>
+/* ===== Basislayout ===== */
+.sidebar {
+  position: relative;
+  z-index: 10;
+}
+
+/* ===== Toggle Button ===== */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 1000;
+  background: none;
+  border: none;
+  color: black;
+  font-family: "Courier Prime", monospace;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Platzhalter sorgt dafür, dass MENÜ und X gleich groß wirken */
+.menu-label {
+  position: relative;
+  display: inline-block;
+  width: 4.5ch;
+  text-align: right;
+}
+
+/* Beide Texte exakt übereinander */
+.menu-text,
+.menu-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Ausgangszustand */
+.menu-text {
+  opacity: 1;
+}
+.menu-close {
+  opacity: 0;
+  font-size: 1.2rem;
+  line-height: 1;
+  transform: rotate(-90deg);
+}
+
+/* Wenn geöffnet */
+.menu-toggle.open .menu-text {
+  opacity: 0;
+}
+.menu-toggle.open .menu-close {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+
+/* ===== Menü-Liste ===== */
+#menuList {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0 0 0;
+}
+
+#menuList li {
+  margin: 0.4rem 0;
+}
+
+#menuList a {
+  color: black;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+
+#menuList a.active {
+  border-bottom: 1px solid black;
+}
+
+/* ===== Mobile Styles ===== */
+@media (max-width: 900px) {
+  .menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #menuList {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: white;
+    padding-top: 6rem;
+    text-align: center;
+    z-index: 999;
+    animation: fadeIn 0.3s ease forwards;
+  }
+
+  #menuList.open {
+    display: block;
+  }
+
+  #menuList li {
+    margin: 1.5rem 0;
+    font-size: 1.6rem;
+  }
+
+  .sidebar {
+    position: static;
+  }
+}
+
+/* ===== Animation ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

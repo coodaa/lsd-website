@@ -1,51 +1,48 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import Sidebar from "../components/Sidebar.astro";
-
 export const prerender = false;
 
-export async function getStaticPaths() {
-  return [];
+import Sidebar from "../components/Sidebar.astro";
+import "../styles/global.css";
+
+const baseUrl = import.meta.env.WP_API;
+const { slug } = Astro.params;
+
+// Seitenliste für Sidebar laden
+let pages = [];
+try {
+  const res = await fetch(`${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc`);
+  if (res.ok) {
+    pages = await res.json();
+  }
+} catch (err) {
+  console.error("❌ Seitenliste konnte nicht geladen werden:", err);
 }
 
-// Nutzt dynamisch die API-URL aus .env
-const apiBase = import.meta.env.WP_API;
-
-// Slug aus der URL holen
-const slug = Astro.params.slug;
-
-// Seite anhand des Slugs abrufen
-let page = null;
+// Aktuelle Seite laden anhand des Slugs
+let currentPage = null;
 try {
-  const res = await fetch(`${apiBase}/pages?slug=${slug}`);
+  const res = await fetch(`${baseUrl}/pages?slug=${slug}`);
   if (res.ok) {
     const data = await res.json();
-    page = data[0];
+    currentPage = data[0];
   }
 } catch (err) {
   console.error("❌ Fehler beim Laden der Seite:", err);
 }
-
-// Alle Seiten fürs Menü (geordnet nach Reihenfolge)
-let pages = [];
-try {
-  const resPages = await fetch(`${apiBase}/pages?per_page=100&orderby=menu_order&order=asc`);
-  if (resPages.ok) pages = await resPages.json();
-} catch (err) {
-  console.error("❌ Fehler beim Laden der Seitenliste:", err);
-}
 ---
 
-<Layout
-  title={page?.yoast_head_json?.title || page?.title?.rendered || "LSD Berlin"}
-  description={page?.yoast_head_json?.description || "Love, Sex & Dreams – LSD Berlin"}
->
-  <div class="grid-layout">
-    <Sidebar pages={pages} activeSlug={slug} />
-
-    <div class="content-area">
-      <p class="hint">Klick mich ↓</p>
-      <div class="content" set:html={page?.content?.rendered}></div>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{currentPage?.title?.rendered || "LSD Berlin"}</title>
+  </head>
+  <body class={`slug-${slug}`}>
+    <div class="grid-layout">
+      <Sidebar pages={pages} activeSlug={currentPage?.slug} />
+      <main class="content-area">
+        <div class="content" set:html={currentPage?.content?.rendered}></div>
+      </main>
     </div>
-  </div>
-</Layout>
+  </body>
+</html>

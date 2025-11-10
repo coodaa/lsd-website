@@ -1,8 +1,7 @@
 /* =====================================================
-   GLOBAL.CSS – LSD Berlin
+   GLOBAL.CSS – LSD Berlin (aufgeräumt)
    ===================================================== */
 
-/* ===== Grundlayout ===== */
 body {
   margin: 0;
   background: #fff;
@@ -10,7 +9,6 @@ body {
   font-family: "Courier Prime", monospace;
 }
 
-/* ===== Listen ===== */
 ul,
 li {
   list-style: none;
@@ -18,7 +16,7 @@ li {
   margin: 0;
 }
 
-/* ===== Haupt-Grid ===== */
+/* ===== Hauptlayout ===== */
 .grid-layout {
   display: flex;
   justify-content: center;
@@ -27,65 +25,12 @@ li {
   padding: 4rem 8rem;
 }
 
-/* ===== Sidebar ===== */
-.sidebar {
-  position: sticky;
-  top: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding-left: 8rem; /* Weißraum links */
-}
-
-/* Stabil gegen Springen */
-.sidebar li {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  margin: 1rem 0;
-  line-height: 1.4;
-}
-
-.sidebar li::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  background: currentColor;
-  display: inline-block;
-  position: relative;
-  top: 0.5px;
-}
-
-/* ===== Sidebar-Links – kein Springen mehr ===== */
-.sidebar a {
-  color: inherit;
-  text-decoration: none;
-  font-size: 1.1rem;
-  font-weight: 400;
-  display: inline-block;
-  line-height: 1.4;
-  padding-bottom: 2px; /* Platz für Border reserviert */
-  border-bottom: 1px solid transparent; /* unsichtbare Linie verhindert Hüpfen */
-  transition: border-color 0.25s ease, color 0.25s ease;
-}
-
-.sidebar a:hover {
-  border-bottom-color: rgba(0, 0, 0, 0.4);
-}
-
-.sidebar a.active {
-  border-bottom-color: #000; /* sichtbare Unterstreichung */
-  color: #000;
-}
-
-/* ===== Rechte Spalte ===== */
 .content-area {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-
   left: 50%;
   transform: translateX(-50%);
   max-width: 900px;
@@ -98,7 +43,6 @@ li {
   max-width: 100%;
 }
 
-/* ===== Inhalt ===== */
 .content {
   width: 85%;
   text-align: left;
@@ -108,9 +52,8 @@ li {
 /* ===== Absätze & Leerzeilen ===== */
 .content p,
 .content .wp-block-paragraph {
-  line-height: 1 !important;
-  margin: 0 0 0.3rem 0 !important;
-  white-space: normal !important;
+  line-height: 1.4 !important;
+  margin: 0 0 0.8rem 0 !important;
 }
 
 .content p.wp-empty,
@@ -139,7 +82,7 @@ li {
   margin: 0.8rem 0 1.2rem 0;
 }
 
-/* ===== “Klick mich” Hinweis ===== */
+/* ===== Klick-mich Hinweis ===== */
 .content figure:first-of-type::after {
   content: "Klick mich";
   display: block;
@@ -149,81 +92,17 @@ li {
   color: #999;
 }
 
-/* Nicht bei Impressum, Datenschutz, Kontakt */
 body.slug-impressum .content figure:first-of-type::after,
 body.slug-datenschutz .content figure:first-of-type::after,
 body.slug-kontakt .content figure:first-of-type::after {
   content: none;
 }
 
-/* ===== Buttons ===== */
-.menu-toggle,
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  cursor: pointer;
-  font-family: inherit;
-  text-align: right;
-  margin-bottom: 1rem;
-  position: relative;
-  z-index: 1001;
-}
-
-/* ===== Overlay-Menü ===== */
-.menu-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.97);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  z-index: 900;
-}
-
-.menu-overlay.open {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.menu-box {
-  text-align: center;
-  animation: fadeIn 0.3s ease;
-}
-
-.menu-box li {
-  margin: 1rem 0;
-  font-size: 1.5rem;
-}
-
-/* ===== Animation ===== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ===== Mobile Layout ===== */
+/* ===== Responsive ===== */
 @media (max-width: 900px) {
   .grid-layout {
     flex-direction: column;
     padding: 2rem;
-  }
-
-  .sidebar {
-    position: static;
-    margin-bottom: 2rem;
-    padding-left: 0;
   }
 
   .content-area {
@@ -241,156 +120,19 @@ body.slug-kontakt .content figure:first-of-type::after {
     max-width: 100%;
   }
 }
-
-/* ===== Desktop-Menü nur dort sichtbar ===== */
-@media (min-width: 900px) {
-  .menu-overlay,
-  .menu-toggle,
-  .close-btn {
-    display: none !important;
-  }
-
-  .desktop-menu {
-    display: block;
-    margin-top: 1rem;
-  }
-}
-
-/* ===== Sidebar-Footer (optional) ===== */
-.sidebar-footer {
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.sidebar-footer ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar-footer li {
-  margin: 0.4rem 0;
-}
-
-.sidebar-footer a {
-  color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s ease;
-}
-
-.sidebar-footer a:hover {
-  border-bottom-color: rgba(0, 0, 0, 0.3);
-}
-
-.sidebar-footer a.active {
-  border-bottom-color: #000;
-}
-
-/* ===== Footer-Bereich für Datenschutz & Impressum ===== */
-.legal-footer {
-  display: flex;
-  gap: 1.5rem;
-  margin-top: 3rem;
-  font-size: 0.95rem;
-}
-
-.legal-footer a {
-  color: inherit;
-  text-decoration: none;
-  position: relative;
-}
-
-.legal-footer a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 0%;
-  height: 1px;
-  background: currentColor;
-  transition: width 0.2s ease;
-}
-
-/* Hover-Effekt – feine Linie statt Doppelunterstreichung */
-.legal-footer a:hover::after,
-.legal-footer a.active::after {
-  width: 100%;
-}
-
-/* ===== Mobile Menü-Korrektur ===== */
 @media (max-width: 900px) {
-  /* Menü-Button sichtbar */
-  .menu-toggle {
-    display: block;
-    position: fixed;
-    top: 2rem;
-    right: 2rem;
-    z-index: 1001;
-    background: none;
-    border: none;
-    font-size: 1.1rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    cursor: pointer;
+  .content {
+    width: 100% !important;
+    padding: 0 1rem; /* etwas Abstand links/rechts */
   }
 
-  /* Wenn offen -> zu „X“ */
-  .menu-toggle.open::after {
-    content: "×";
-    font-size: 1.8rem;
-    line-height: 1;
-  }
-
-  .menu-toggle.open {
-    color: #000;
-  }
-
-  /* Overlay-Menü */
-  .menu-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.97);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 900;
-  }
-
-  .menu-overlay.open {
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  .menu-box {
-    text-align: center;
-    animation: fadeIn 0.3s ease;
-  }
-
-  .menu-box li {
-    margin: 1.2rem 0;
-    font-size: 1.6rem;
-  }
-
-  /* Desktop-Menü ausblenden */
-  .sidebar {
-    display: none;
-  }
-}
-
-/* ===== Desktop-Version wieder korrekt ===== */
-@media (min-width: 900px) {
-  .menu-toggle,
-  .menu-overlay {
-    display: none !important;
-  }
-
-  .sidebar {
-    display: block;
+  .content img,
+  .content figure img,
+  .content .wp-block-image img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto;
+    object-fit: cover; /* füllt mehr Fläche aus */
+    object-position: center;
   }
 }
