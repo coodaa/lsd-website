@@ -1,0 +1,45 @@
+---
+import Sidebar from "../components/Sidebar.astro";
+import "../styles/global.css";
+
+const baseUrl = import.meta.env.WP_API;
+
+// Alle Seiten laden (für Menü)
+let pages = [];
+try {
+  const res = await fetch(`${baseUrl}/pages?per_page=100`);
+  if (res.ok) {
+    pages = await res.json();
+  }
+} catch (err) {
+  console.error("❌ Seiten konnten nicht geladen werden:", err);
+}
+
+// Datenschutz-Seite laden
+let datenschutz = null;
+try {
+  const res = await fetch(`${baseUrl}/pages?slug=datenschutz`);
+  if (res.ok) {
+    const data = await res.json();
+    datenschutz = data[0];
+  }
+} catch (err) {
+  console.error("❌ Fehler beim Laden der Datenschutz-Seite:", err);
+}
+---
+
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{datenschutz?.title?.rendered || "Datenschutz – LSD Berlin"}</title>
+  </head>
+  <body class="datenschutz">
+    <div class="grid-layout">
+      <Sidebar pages={pages} activeSlug={datenschutz?.slug} />
+      <main class="content-area">
+        <div class="content" set:html={datenschutz?.content?.rendered}></div>
+      </main>
+    </div>
+  </body>
+</html>

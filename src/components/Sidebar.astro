@@ -1,67 +1,92 @@
 ---
 const { pages = [], activeSlug } = Astro.props;
+
+// Feste Reihenfolge (nur Slugs – die Titel kommen dynamisch aus WP)
+const ORDER = [
+  "lsd",
+  "buecher-kataloge",
+  "film",
+  "theater",
+  "kunst",
+  "drogen",
+  "volksbuehne",
+  "shop",
+  "kontakt",
+];
+
+// Footer-Seiten
+const LEGAL = ["impressum", "datenschutz"];
+
+// Sortieren nach fester Slug-Reihenfolge
+const mainPages = ORDER.map(slug => pages.find(p => p.slug === slug)).filter(Boolean);
+const legalPages = LEGAL.map(slug => pages.find(p => p.slug === slug)).filter(Boolean);
+
+// Helper für active link
+const isActive = slug => slug === activeSlug ? "active" : "";
 ---
 
 <aside class="sidebar">
   <button class="menu-toggle" id="menuToggle">MENU</button>
   <button class="close-btn" id="closeMenu">X</button>
 
-  <!-- Overlay -->
+  <!-- Overlay (mobil) -->
   <div class="menu-overlay" id="menuOverlay">
     <div class="menu-box">
       <ul>
-        {pages.map((p) => (
+        {mainPages.map(p => (
           <li>
-            <a
-              href={`/${p.slug}`}
-              class={p.slug === activeSlug ? "active" : ""}
-            >
-              {p.title.rendered}
-            </a>
+            <a href={`/${p.slug}`} class={isActive(p.slug)} set:html={p.title.rendered} />
           </li>
         ))}
       </ul>
+
+      <div class="legal-footer">
+        {legalPages.map(p => (
+          <a href={`/${p.slug}`} class={isActive(p.slug)} set:html={p.title.rendered} />
+        ))}
+      </div>
     </div>
   </div>
 
-  <ul id="menuList" class="desktop-menu">
-    {pages.map((p) => (
+  <!-- Desktop-Menü -->
+  <ul class="desktop-menu">
+    {mainPages.map(p => (
       <li>
-        <a
-          href={`/${p.slug}`}
-          class={p.slug === activeSlug ? "active" : ""}
-        >
-          {p.title.rendered}
-        </a>
+        <a href={`/${p.slug}`} class={isActive(p.slug)} set:html={p.title.rendered} />
       </li>
     ))}
   </ul>
 
+  <div class="sidebar-footer">
+    <div class="legal-footer">
+      {legalPages.map(p => (
+        <a href={`/${p.slug}`} class={isActive(p.slug)} set:html={p.title.rendered} />
+      ))}
+    </div>
+  </div>
+
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const toggle = document.getElementById("menuToggle");
-      const close = document.getElementById("closeMenu");
+      const toggle  = document.getElementById("menuToggle");
+      const close   = document.getElementById("closeMenu");
       const overlay = document.getElementById("menuOverlay");
 
-      toggle?.addEventListener("click", () => {
+      const open = () => {
         overlay.classList.add("open");
         toggle.style.display = "none";
-        close.style.display = "block";
+        close.style.display  = "block";
         document.body.style.overflow = "hidden";
-      });
-
-      const closeMenu = () => {
+      };
+      const shut = () => {
         overlay.classList.remove("open");
         toggle.style.display = "block";
-        close.style.display = "none";
+        close.style.display  = "none";
         document.body.style.overflow = "";
       };
 
-      close?.addEventListener("click", closeMenu);
-
-      overlay?.addEventListener("click", (e) => {
-        if (e.target === overlay) closeMenu();
-      });
+      toggle?.addEventListener("click", open);
+      close?.addEventListener("click", shut);
+      overlay?.addEventListener("click", (e) => { if (e.target === overlay) shut(); });
     });
   </script>
 </aside>
