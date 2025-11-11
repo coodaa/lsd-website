@@ -1,29 +1,26 @@
 ---
 const { pages = [], activeSlug } = Astro.props;
 
-// Immer nach menu_order sortieren
+// Seiten exakt nach WordPress-"menu_order" sortieren
 let filteredPages = [...pages].sort((a, b) => {
   const orderA = a.menu_order ?? 0;
   const orderB = b.menu_order ?? 0;
-  if (orderA !== orderB) return orderA - orderB;
-  return a.title.rendered.localeCompare(b.title.rendered);
+  return orderA - orderB;
 });
 
-// Impressum & Datenschutz nur unten anzeigen – aber nicht komplett löschen
-const footerPages = filteredPages.filter(
-  (p) => ["impressum", "datenschutz"].includes(p.slug)
-);
-filteredPages = filteredPages.filter(
-  (p) => !["impressum", "datenschutz"].includes(p.slug)
+// Impressum & Datenschutz nur unten anzeigen – aber nicht doppelt
+// Impressum & Datenschutz unabhängig vom Slug erkennen
+const footerPages = filteredPages.filter(p =>
+  p.title.rendered.toLowerCase().includes("impressum") ||
+  p.title.rendered.toLowerCase().includes("datenschutz")
 );
 
-// Kontakt immer an letzte Position (nur wenn vorhanden)
-const kontaktIndex = filteredPages.findIndex((p) => p.slug === "kontakt");
-if (kontaktIndex > -1 && kontaktIndex !== filteredPages.length - 1) {
-  const [kontaktPage] = filteredPages.splice(kontaktIndex, 1);
-  filteredPages.push(kontaktPage);
-}
+// Entferne sie aus der Hauptliste, damit sie unten stehen
+filteredPages = filteredPages.filter(
+  p => !footerPages.includes(p)
+);
 ---
+
 <aside class="sidebar">
   <button class="menu-toggle" id="menuToggle" aria-label="Menü öffnen">
     <span class="menu-label">
@@ -33,26 +30,30 @@ if (kontaktIndex > -1 && kontaktIndex !== filteredPages.length - 1) {
   </button>
 
   <ul id="menuList">
-    {
-      filteredPages.map((p) => (
-        <li class={p.slug === activeSlug ? "active" : ""}>
-          <a href={`/${p.slug}`} class={p.slug === activeSlug ? "active" : ""}>
-            {p.title.rendered}
-          </a>
-        </li>
-      ))
-    }
+    {filteredPages.map(p => (
+      <li class={p.slug === activeSlug ? "active" : ""}>
+        <a href={`/${p.slug}`} class={p.slug === activeSlug ? "active" : ""}>
+          {p.title.rendered}
+        </a>
+      </li>
+    ))}
     <div class="mobile-footer">
-      <a href="/datenschutz">Datenschutz</a>
-      <span class="dot">·</span>
-      <a href="/impressum">Impressum</a>
+      {footerPages.map((p, i) => (
+        <>
+          <a href={`/${p.slug}`}>{p.title.rendered}</a>
+          {i < footerPages.length - 1 && <span class="dot">·</span>}
+        </>
+      ))}
     </div>
   </ul>
 
   <div class="sidebar-footer" id="sidebarFooter">
-    <a href="/impressum">Impressum</a>
-    <span class="dot">·</span>
-    <a href="/datenschutz">Datenschutz</a>
+    {footerPages.map((p, i) => (
+      <>
+        <a href={`/${p.slug}`}>{p.title.rendered}</a>
+        {i < footerPages.length - 1 && <span class="dot">·</span>}
+      </>
+    ))}
   </div>
 
   <script>
@@ -65,13 +66,8 @@ if (kontaktIndex > -1 && kontaktIndex !== filteredPages.length - 1) {
           const isOpen = list.classList.toggle("open");
           btn.classList.toggle("open", isOpen);
           btn.setAttribute("aria-label", isOpen ? "Menü schließen" : "Menü öffnen");
-          if (isOpen) {
-            body.style.overflow = "hidden";
-            body.style.height = "100vh";
-          } else {
-            body.style.overflow = "";
-            body.style.height = "";
-          }
+          body.style.overflow = isOpen ? "hidden" : "";
+          body.style.height = isOpen ? "100vh" : "";
         });
       }
     });

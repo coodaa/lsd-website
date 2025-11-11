@@ -1,0 +1,15 @@
+---
+const res = await fetch(`${import.meta.env.WP_API}/pages`);
+const pages = await res.json();
+const filtered = pages.filter(p => !["impressum", "datenschutz"].includes(p.slug));
+---
+
+<header>
+  <nav>
+    <ul>
+      {filtered.map(page => (
+        <li><a href={`/${page.slug}`}>{page.title.rendered}</a></li>
+      ))}
+    </ul>
+  </nav>
+</header>

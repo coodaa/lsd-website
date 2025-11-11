@@ -15,17 +15,12 @@ export async function getStaticPaths() {
     );
     const pages = await res.json();
 
-    // Sonderseiten (Impressum, Datenschutz) aus dem Menü ausblenden
-    const visiblePages = pages.filter(
-      (p) => !["impressum", "datenschutz"].includes(p.slug)
-    );
-
     // 🔁 Jede Seite einzeln als Route zurückgeben
     return pages.map((page) => ({
       params: { slug: page.slug },
       props: {
         page,
-        pages: visiblePages,
+        pages, // alle Seiten übergeben, nicht filtern!
       },
     }));
   } catch (err) {
@@ -37,7 +32,7 @@ export async function getStaticPaths() {
 const { page, pages } = Astro.props;
 const slug = page?.slug;
 
-// 👇 Kontakt-Seite ans Ende verschieben (immer)
+// 👇 Kontakt-Seite ans Ende verschieben
 let sortedPages = [...pages];
 const kontaktIndex = sortedPages.findIndex((p) => p.slug === "kontakt");
 if (kontaktIndex > -1) {
@@ -45,6 +40,7 @@ if (kontaktIndex > -1) {
   sortedPages.push(kontaktPage);
 }
 ---
+
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
