@@ -31,6 +31,9 @@ const mainPages = pages.filter((p) => p.parent === 0);
 // Unterseiten der aktuellen Seite (z. B. Kunst → Kindseiten)
 const childPages = pages.filter((p) => p.parent === page.id);
 
+// Prüfen, ob aktuelle Seite selbst eine Unterseite ist
+const parentPage = pages.find((p) => p.id === page.parent);
+
 // Kontakt ans Ende verschieben
 let sortedPages = [...mainPages];
 const kontaktIndex = sortedPages.findIndex((p) => p.slug === "kontakt");
@@ -59,9 +62,16 @@ function getFirstImage(html) {
 
       <main class="content-area">
         <div class="content">
+
+          <!-- 🔹 Falls Unterseite: X anzeigen -->
+          {parentPage && (
+            <a href={`/${parentPage.slug}`} class="close-btn">×</a>
+          )}
+
+          <!-- Hauptinhalt -->
           <div set:html={page?.content?.rendered}></div>
 
-          <!-- Unterseiten direkt im Content -->
+          <!-- Unterseiten mit Vorschaubild -->
           {childPages.length > 0 && (
             <div class="subpages">
               {childPages.map((child) => {
@@ -82,7 +92,47 @@ function getFirstImage(html) {
 </html>
 
 <style>
-  /* minimal, global alignment bleibt erhalten */
+  /* Layout wie global */
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    height: 100vh;
+  }
+
+  .content-area {
+    overflow-y: auto;
+    padding: 2rem;
+    position: relative;
+  }
+
+  .content {
+    position: relative;
+    animation: fadeIn 0.4s ease;
+  }
+
+  /* 🔹 Schließen-Button */
+  .close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 7%;
+    font-size: 2.5rem;
+    text-decoration: none;
+    color: black;
+    z-index: 10;
+    line-height: 1;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    animation: fadeInX 0.6s ease forwards;
+    animation-delay: 0.3s;
+  }
+
+  .close-btn:hover {
+    opacity: 0.5;
+  }
+
+  /* 🔹 Unterseiten */
   .subpages {
     display: flex;
     flex-direction: column;
@@ -93,6 +143,7 @@ function getFirstImage(html) {
   .subpage {
     text-decoration: none;
     color: black;
+    position: relative;
   }
 
   .subpage img {
@@ -106,5 +157,28 @@ function getFirstImage(html) {
     margin-left: 7.5%;
     font-size: 1rem;
     text-align: left;
+  }
+
+  /* 🔹 Animationen */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInX {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 900px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .close-btn {
+      top: 0.8rem;
+      right: 5%;
+      font-size: 2rem;
+    }
   }
 </style>
