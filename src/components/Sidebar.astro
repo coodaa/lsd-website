@@ -1,27 +1,28 @@
 ---
 const { pages = [], activeSlug } = Astro.props;
 
-// Seiten exakt nach WordPress-"menu_order" sortieren
-let filteredPages = [...pages].sort((a, b) => {
-  const orderA = a.menu_order ?? 0;
-  const orderB = b.menu_order ?? 0;
-  return orderA - orderB;
-});
+// 👉 Nur Hauptseiten (ohne Eltern) anzeigen
+let filteredPages = pages
+  .filter((p) => p.parent === 0) // Nur Seiten auf oberster Ebene
+  .sort((a, b) => {
+    const orderA = a.menu_order ?? 0;
+    const orderB = b.menu_order ?? 0;
+    return orderA - orderB;
+  });
 
-// Impressum & Datenschutz nur unten anzeigen – aber nicht doppelt
-// Impressum & Datenschutz unabhängig vom Slug erkennen
-const footerPages = filteredPages.filter(p =>
-  p.title.rendered.toLowerCase().includes("impressum") ||
-  p.title.rendered.toLowerCase().includes("datenschutz")
+// 👉 Impressum & Datenschutz nach unten verschieben
+const footerPages = filteredPages.filter(
+  (p) =>
+    p.title.rendered.toLowerCase().includes("impressum") ||
+    p.title.rendered.toLowerCase().includes("datenschutz")
 );
 
-// Entferne sie aus der Hauptliste, damit sie unten stehen
-filteredPages = filteredPages.filter(
-  p => !footerPages.includes(p)
-);
+// Entferne sie aus der Hauptliste, damit sie nur unten erscheinen
+filteredPages = filteredPages.filter((p) => !footerPages.includes(p));
 ---
 
 <aside class="sidebar">
+  <!-- 🔘 Mobile Menü Button -->
   <button class="menu-toggle" id="menuToggle" aria-label="Menü öffnen">
     <span class="menu-label">
       <span class="menu-text">Menü</span>
@@ -29,14 +30,17 @@ filteredPages = filteredPages.filter(
     </span>
   </button>
 
+  <!-- 🔗 Hauptmenü -->
   <ul id="menuList">
-    {filteredPages.map(p => (
+    {filteredPages.map((p) => (
       <li class={p.slug === activeSlug ? "active" : ""}>
         <a href={`/${p.slug}`} class={p.slug === activeSlug ? "active" : ""}>
           {p.title.rendered}
         </a>
       </li>
     ))}
+
+    <!-- 📱 Mobile Footer -->
     <div class="mobile-footer">
       {footerPages.map((p, i) => (
         <>
@@ -47,6 +51,7 @@ filteredPages = filteredPages.filter(
     </div>
   </ul>
 
+  <!-- 💻 Desktop Footer -->
   <div class="sidebar-footer" id="sidebarFooter">
     {footerPages.map((p, i) => (
       <>
@@ -56,6 +61,7 @@ filteredPages = filteredPages.filter(
     ))}
   </div>
 
+  <!-- 🧠 Script für das mobile Menü -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const btn = document.getElementById("menuToggle");
@@ -65,7 +71,10 @@ filteredPages = filteredPages.filter(
         btn.addEventListener("click", () => {
           const isOpen = list.classList.toggle("open");
           btn.classList.toggle("open", isOpen);
-          btn.setAttribute("aria-label", isOpen ? "Menü schließen" : "Menü öffnen");
+          btn.setAttribute(
+            "aria-label",
+            isOpen ? "Menü schließen" : "Menü öffnen"
+          );
           body.style.overflow = isOpen ? "hidden" : "";
           body.style.height = isOpen ? "100vh" : "";
         });
@@ -116,6 +125,7 @@ filteredPages = filteredPages.filter(
     gap: 0.75rem;
   }
 
+  /* 🔘 Mobile Menü Button */
   .menu-toggle {
     display: none;
     align-items: center;
@@ -164,6 +174,7 @@ filteredPages = filteredPages.filter(
     opacity: 1;
   }
 
+  /* 📱 Mobile Layout */
   @media (max-width: 1200px) {
     .sidebar {
       width: 100%;
