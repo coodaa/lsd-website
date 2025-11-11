@@ -9,12 +9,24 @@ export async function getStaticPaths() {
   const baseUrl = import.meta.env.WP_API;
 
   try {
-    const res = await fetch(`${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc`);
+    // Alle Seiten holen, nach Menü-Reihenfolge sortiert
+    const res = await fetch(
+      `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
+    );
     const pages = await res.json();
 
+    // Sonderseiten (Impressum, Datenschutz) aus dem Menü ausblenden
+    const visiblePages = pages.filter(
+      (p) => !["impressum", "datenschutz"].includes(p.slug)
+    );
+
+    // 🔁 Jede Seite einzeln als Route zurückgeben
     return pages.map((page) => ({
       params: { slug: page.slug },
-      props: { page, pages }, // wir geben die Seite + alle Seiten mit
+      props: {
+        page,
+        pages: visiblePages,
+      },
     }));
   } catch (err) {
     console.error("❌ Fehler in getStaticPaths:", err);
@@ -24,17 +36,28 @@ export async function getStaticPaths() {
 
 const { page, pages } = Astro.props;
 const slug = page?.slug;
----
 
+// 👇 Kontakt-Seite ans Ende verschieben (immer)
+let sortedPages = [...pages];
+const kontaktIndex = sortedPages.findIndex((p) => p.slug === "kontakt");
+if (kontaktIndex > -1) {
+  const [kontaktPage] = sortedPages.splice(kontaktIndex, 1);
+  sortedPages.push(kontaktPage);
+}
+---
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{page?.title?.rendered || "LSD Berlin"}</title>
   </head>
+
   <body class={`slug-${slug}`}>
     <div class="grid-layout">
-      <Sidebar pages={pages} activeSlug={slug} />
+      <!-- 🔗 Seitenmenü -->
+      <Sidebar pages={sortedPages} activeSlug={slug} />
+
+      <!-- 📄 Seiteninhalt -->
       <main class="content-area">
         <div class="content" set:html={page?.content?.rendered}></div>
       </main>

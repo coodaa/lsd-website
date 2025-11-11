@@ -1,14 +1,30 @@
 ---
 const { pages = [], activeSlug } = Astro.props;
 
-// Impressum/Datenschutz NICHT im Menü zeigen
-const filteredPages = pages.filter(
-  (p) => p?.slug !== 'impressum' && p?.slug !== 'datenschutz'
-);
----
+// Immer nach menu_order sortieren
+let filteredPages = [...pages].sort((a, b) => {
+  const orderA = a.menu_order ?? 0;
+  const orderB = b.menu_order ?? 0;
+  if (orderA !== orderB) return orderA - orderB;
+  return a.title.rendered.localeCompare(b.title.rendered);
+});
 
+// Impressum & Datenschutz nur unten anzeigen – aber nicht komplett löschen
+const footerPages = filteredPages.filter(
+  (p) => ["impressum", "datenschutz"].includes(p.slug)
+);
+filteredPages = filteredPages.filter(
+  (p) => !["impressum", "datenschutz"].includes(p.slug)
+);
+
+// Kontakt immer an letzte Position (nur wenn vorhanden)
+const kontaktIndex = filteredPages.findIndex((p) => p.slug === "kontakt");
+if (kontaktIndex > -1 && kontaktIndex !== filteredPages.length - 1) {
+  const [kontaktPage] = filteredPages.splice(kontaktIndex, 1);
+  filteredPages.push(kontaktPage);
+}
+---
 <aside class="sidebar">
-  <!-- Toggle Button (nur mobil) -->
   <button class="menu-toggle" id="menuToggle" aria-label="Menü öffnen">
     <span class="menu-label">
       <span class="menu-text">MENU</span>
@@ -16,18 +32,23 @@ const filteredPages = pages.filter(
     </span>
   </button>
 
-  <!-- Menü-Liste -->
   <ul id="menuList">
-    {filteredPages.map((p) => (
-      <li class={p.slug === activeSlug ? "active" : ""}>
-        <a href={`/${p.slug}`} class={p.slug === activeSlug ? "active" : ""}>
-          {p.title.rendered}
-        </a>
-      </li>
-    ))}
+    {
+      filteredPages.map((p) => (
+        <li class={p.slug === activeSlug ? "active" : ""}>
+          <a href={`/${p.slug}`} class={p.slug === activeSlug ? "active" : ""}>
+            {p.title.rendered}
+          </a>
+        </li>
+      ))
+    }
+    <div class="mobile-footer">
+      <a href="/datenschutz">Datenschutz</a>
+      <span class="dot">·</span>
+      <a href="/impressum">Impressum</a>
+    </div>
   </ul>
 
-  <!-- Footer-Links -->
   <div class="sidebar-footer" id="sidebarFooter">
     <a href="/impressum">Impressum</a>
     <span class="dot">·</span>
@@ -38,168 +59,180 @@ const filteredPages = pages.filter(
     document.addEventListener("DOMContentLoaded", () => {
       const btn = document.getElementById("menuToggle");
       const list = document.getElementById("menuList");
+      const body = document.body;
       if (btn && list) {
         btn.addEventListener("click", () => {
           const isOpen = list.classList.toggle("open");
           btn.classList.toggle("open", isOpen);
           btn.setAttribute("aria-label", isOpen ? "Menü schließen" : "Menü öffnen");
+          if (isOpen) {
+            body.style.overflow = "hidden";
+            body.style.height = "100vh";
+          } else {
+            body.style.overflow = "";
+            body.style.height = "";
+          }
         });
-      }
-
-      // Footer sichtbar am Seitenende
-      const footer = document.getElementById("sidebarFooter");
-      const contentArea = document.querySelector(".content-area");
-      if (footer && contentArea) {
-        const onScroll = () => {
-          const atBottom =
-            contentArea.scrollTop + contentArea.clientHeight >= contentArea.scrollHeight - 2;
-          footer.classList.toggle("visible", atBottom);
-        };
-        contentArea.addEventListener("scroll", onScroll, { passive: true });
-        onScroll();
       }
     });
   </script>
 </aside>
 
 <style>
-/* ===== Grundlayout Sidebar ===== */
-.sidebar {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  width: 250px;
-  padding: 0 0 2rem 1rem;
-  display: flex;
-  flex-direction: column;
-  z-index: 10;
-  font-family: "Courier Prime", monospace;
-}
-
-/* ===== Toggle (mobil) ===== */
-.menu-toggle {
-  display: none;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-  background: none;
-  border: none;
-  color: black;
-  font-size: 1rem;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-}
-.menu-label {
-  position: relative;
-  display: inline-block;
-  width: 5ch;
-  text-align: right;
-}
-.menu-text,
-.menu-close {
-  position: absolute;
-  top: 0;
-  right: 0;
-  transition: opacity 0.2s ease;
-}
-.menu-text {
-  opacity: 1;
-}
-.menu-close {
-  opacity: 0;
-}
-.menu-toggle.open .menu-text {
-  opacity: 0;
-}
-.menu-toggle.open .menu-close {
-  opacity: 1;
-}
-
-/* ===== Liste (Desktop) ===== */
-#menuList {
-  list-style-type: square; /* eckige Bullets */
-  list-style-position: inside;
-  padding-left: 0.5rem;
-  margin: 2rem 0 0 0;
-}
-#menuList li {
-  margin: 1.2rem 0;
-  font-size: 1.4rem;
-  line-height: 1.6;
-}
-#menuList a {
-  color: black;
-  text-decoration: none;
-}
-#menuList a.active {
-  text-decoration: underline; /* nicht fett */
-}
-
-/* ===== Footer-Links unten ===== */
-.sidebar-footer {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-/* ===== Mobile Styles ===== */
-@media (max-width: 900px) {
   .sidebar {
-    height: auto;
-    width: 100%;
-    padding: 1rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 250px;
+    padding: 0 0 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    font-family: "Courier Prime", monospace;
+  }
+
+  #menuList {
+    list-style-type: square;
+    list-style-position: inside;
+    padding-left: 0.5rem;
+    margin: 2rem 0 0 0;
+  }
+
+  #menuList li {
+    margin: 1.2rem 0;
+    font-size: 1.4rem;
+    line-height: 1.6;
+  }
+
+  #menuList a {
+    color: black;
+    text-decoration: none;
+  }
+
+  #menuList a.active {
+    text-decoration: underline;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
   }
 
   .menu-toggle {
-    display: flex;
-  }
-
-  /* Menü Vollbild */
-  #menuList {
     display: none;
-    position: fixed;
-    inset: 0;
-    background: white;
-    padding-top: 6rem;
-    text-align: center;
-    z-index: 999;
-    list-style-type: none;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    background: none;
+    border: none;
+    color: black;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    z-index: 1001;
   }
 
-  #menuList.open {
+  .menu-label {
+    position: relative;
+    width: 3.5rem;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
   }
 
-  #menuList li {
-    margin: .2rem 0;
-    font-size: 1.6rem;
-  }
-
-  /* X oben rechts sichtbar */
-  .menu-toggle {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    z-index: 1000;
-  }
-
-  .menu-label {
-    width: auto;
-  }
-
   .menu-text,
   .menu-close {
-    position: static;
-    font-size: 1.2rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: right;
+    transition: opacity 0.2s ease;
   }
 
-  .sidebar-footer {
-    display: none; /* Footer-Links nur Desktop */
+  .menu-text {
+    opacity: 1;
   }
-}
+
+  .menu-close {
+    opacity: 0;
+  }
+
+  .menu-toggle.open .menu-text {
+    opacity: 0;
+  }
+
+  .menu-toggle.open .menu-close {
+    opacity: 1;
+  }
+
+  @media (max-width: 1200px) {
+    .sidebar {
+      width: 100%;
+      height: auto;
+      padding: 1rem;
+    }
+
+    .menu-toggle {
+      display: flex;
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+    }
+
+    .menu-text,
+    .menu-close {
+      font-size: 1.2rem;
+    }
+
+    #menuList {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: white;
+      z-index: 1000;
+      padding: 4rem 2rem 5rem;
+      list-style-type: square;
+      list-style-position: inside;
+      overflow-y: auto;
+    }
+
+    #menuList.open {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+
+    #menuList li {
+      margin: 0.4rem 0;
+      font-size: 1.5rem;
+    }
+
+    .mobile-footer {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 2rem;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    #menuList:not(.open) .mobile-footer {
+      display: none;
+    }
+
+    .sidebar-footer {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1201px) {
+    .mobile-footer {
+      display: none !important;
+    }
+  }
 </style>
