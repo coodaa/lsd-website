@@ -1,3 +1,6 @@
+/* -----------------------------
+   🎨 Schriftarten
+----------------------------- */
 @font-face {
   font-family: "Courier Prime";
   src: url("/fonts/CourierPrime-Regular.ttf") format("truetype");
@@ -30,6 +33,9 @@
   font-display: swap;
 }
 
+/* -----------------------------
+   🧱 Grundlayout
+----------------------------- */
 body {
   margin: 0;
   background: #fff;
@@ -149,12 +155,16 @@ li {
   margin: 0.8rem auto 1.2rem auto;
 }
 
+/* Keine Overlay-Effekte auf statischen Seiten */
 body.slug-impressum .content figure:first-of-type::after,
 body.slug-datenschutz .content figure:first-of-type::after,
 body.slug-kontakt .content figure:first-of-type::after {
   content: none;
 }
 
+/* -----------------------------
+   💻 Desktop ab 1201px
+----------------------------- */
 @media (min-width: 1201px) {
   .grid-layout {
     display: grid;
@@ -202,7 +212,6 @@ body.slug-kontakt .content figure:first-of-type::after {
   .content video {
     width: 85%;
     max-width: 85%;
-    height: auto;
     object-fit: contain;
     object-position: left center;
     margin-left: 0;
@@ -210,6 +219,9 @@ body.slug-kontakt .content figure:first-of-type::after {
   }
 }
 
+/* -----------------------------
+   🧩 Sidebar Menüliste
+----------------------------- */
 .sidebar ul#menuList {
   list-style-type: square !important;
   list-style-position: outside !important;
@@ -222,19 +234,90 @@ body.slug-kontakt .content figure:first-of-type::after {
   list-style-type: square !important;
 }
 
-@media (max-width: 1200px) {
-  .content img:first-of-type,
-  .content figure:first-of-type img {
-    width: 88vw !important;
-    max-width: 88vw !important;
-    margin-left: 50% !important;
-    transform: translateX(-50%) !important;
-    display: block !important;
-    height: auto !important;
-    object-fit: cover;
+/* -----------------------------
+   🧠 Nur iPad-Fix (901–1200px)
+----------------------------- */
+@media (max-width: 1200px) and (min-width: 901px) {
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 3rem;
+    padding: 3rem 5rem;
+    align-items: flex-start;
   }
 
-  .content img:first-of-type {
-    margin-bottom: 2rem !important;
+  .sidebar {
+    position: sticky;
+    top: 3rem;
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .content-area {
+    padding: 0 2rem;
+    transform: none;
+    max-width: 100%;
+  }
+
+  .content {
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  .content img:first-of-type,
+  .content figure:first-of-type img {
+    width: 90%;
+    max-width: 700px;
+    margin: 0 auto 2rem auto !important;
+    transform: none !important;
+  }
+}
+
+/* -----------------------------
+   📱 Mobile Geräte (max 900px)
+----------------------------- */
+@media (max-width: 900px) {
+  .grid-layout {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1rem;
+  }
+
+  .content-area {
+    padding: 0;
+  }
+
+  .content {
+    width: 92%;
+    margin: 0 auto;
+  }
+
+  .sidebar {
+    margin-bottom: 2rem;
+  }
+
+  .content img,
+  .content figure img {
+    width: 92%;
+    max-width: 92%;
+  }
+}
+
+/* -----------------------------
+   📱 Kleine Smartphones (max 600px)
+----------------------------- */
+@media (max-width: 600px) {
+  .content-area {
+    padding: 0;
+  }
+
+  .content {
+    width: 94%;
+  }
+
+  .content img,
+  .content figure img {
+    width: 94%;
+    max-width: 94%;
   }
 }
