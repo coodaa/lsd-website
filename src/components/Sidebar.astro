@@ -1,20 +1,25 @@
 ---
 const { pages = [], activeSlug } = Astro.props;
+
+// Impressum/Datenschutz NICHT im Menü zeigen
+const filteredPages = pages.filter(
+  (p) => p?.slug !== 'impressum' && p?.slug !== 'datenschutz'
+);
 ---
 
 <aside class="sidebar">
-  <!-- Toggle Button -->
+  <!-- Toggle Button (nur mobil) -->
   <button class="menu-toggle" id="menuToggle" aria-label="Menü öffnen">
     <span class="menu-label">
-      <span class="menu-text">MENÜ</span>
-      <span class="menu-close">×</span>
+      <span class="menu-text">MENU</span>
+      <span class="menu-close">X</span>
     </span>
   </button>
 
   <!-- Menü-Liste -->
   <ul id="menuList">
-    {pages.map((p) => (
-      <li>
+    {filteredPages.map((p) => (
+      <li class={p.slug === activeSlug ? "active" : ""}>
         <a href={`/${p.slug}`} class={p.slug === activeSlug ? "active" : ""}>
           {p.title.rendered}
         </a>
@@ -22,111 +27,136 @@ const { pages = [], activeSlug } = Astro.props;
     ))}
   </ul>
 
+  <!-- Footer-Links -->
+  <div class="sidebar-footer" id="sidebarFooter">
+    <a href="/impressum">Impressum</a>
+    <span class="dot">·</span>
+    <a href="/datenschutz">Datenschutz</a>
+  </div>
+
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const btn = document.getElementById("menuToggle");
       const list = document.getElementById("menuList");
-      if (!btn || !list) return;
+      if (btn && list) {
+        btn.addEventListener("click", () => {
+          const isOpen = list.classList.toggle("open");
+          btn.classList.toggle("open", isOpen);
+          btn.setAttribute("aria-label", isOpen ? "Menü schließen" : "Menü öffnen");
+        });
+      }
 
-      btn.addEventListener("click", () => {
-        const isOpen = list.classList.toggle("open");
-        btn.classList.toggle("open", isOpen);
-        btn.setAttribute("aria-label", isOpen ? "Menü schließen" : "Menü öffnen");
-      });
+      // Footer sichtbar am Seitenende
+      const footer = document.getElementById("sidebarFooter");
+      const contentArea = document.querySelector(".content-area");
+      if (footer && contentArea) {
+        const onScroll = () => {
+          const atBottom =
+            contentArea.scrollTop + contentArea.clientHeight >= contentArea.scrollHeight - 2;
+          footer.classList.toggle("visible", atBottom);
+        };
+        contentArea.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+      }
     });
   </script>
 </aside>
 
 <style>
-/* ===== Basislayout ===== */
+/* ===== Grundlayout Sidebar ===== */
 .sidebar {
-  position: relative;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 250px;
+  padding: 0 0 2rem 1rem;
+  display: flex;
+  flex-direction: column;
   z-index: 10;
+  font-family: "Courier Prime", monospace;
 }
 
-/* ===== Toggle Button ===== */
+/* ===== Toggle (mobil) ===== */
 .menu-toggle {
   display: none;
-  position: fixed;
-  top: 1.5rem;
-  right: 1.5rem;
-  z-index: 1000;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
   background: none;
   border: none;
   color: black;
-  font-family: "Courier Prime", monospace;
   font-size: 1rem;
   letter-spacing: 0.05em;
   cursor: pointer;
-  padding: 0;
+  padding: 0.5rem 1rem;
 }
-
-/* Platzhalter sorgt dafür, dass MENÜ und X gleich groß wirken */
 .menu-label {
   position: relative;
   display: inline-block;
-  width: 4.5ch;
+  width: 5ch;
   text-align: right;
 }
-
-/* Beide Texte exakt übereinander */
 .menu-text,
 .menu-close {
   position: absolute;
   top: 0;
   right: 0;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition: opacity 0.2s ease;
 }
-
-/* Ausgangszustand */
 .menu-text {
   opacity: 1;
 }
 .menu-close {
   opacity: 0;
-  font-size: 1.2rem;
-  line-height: 1;
-  transform: rotate(-90deg);
 }
-
-/* Wenn geöffnet */
 .menu-toggle.open .menu-text {
   opacity: 0;
 }
 .menu-toggle.open .menu-close {
   opacity: 1;
-  transform: rotate(0deg);
 }
 
-/* ===== Menü-Liste ===== */
+/* ===== Liste (Desktop) ===== */
 #menuList {
-  list-style: none;
-  padding: 0;
+  list-style-type: square; /* eckige Bullets */
+  list-style-position: inside;
+  padding-left: 0.5rem;
   margin: 2rem 0 0 0;
 }
-
 #menuList li {
-  margin: 0.4rem 0;
+  margin: 1.2rem 0;
+  font-size: 1.4rem;
+  line-height: 1.6;
 }
-
 #menuList a {
   color: black;
   text-decoration: none;
-  transition: border-color 0.2s;
+}
+#menuList a.active {
+  text-decoration: underline; /* nicht fett */
 }
 
-#menuList a.active {
-  border-bottom: 1px solid black;
+/* ===== Footer-Links unten ===== */
+.sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 /* ===== Mobile Styles ===== */
 @media (max-width: 900px) {
-  .menu-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .sidebar {
+    height: auto;
+    width: 100%;
+    padding: 1rem;
   }
 
+  .menu-toggle {
+    display: flex;
+  }
+
+  /* Menü Vollbild */
   #menuList {
     display: none;
     position: fixed;
@@ -135,32 +165,41 @@ const { pages = [], activeSlug } = Astro.props;
     padding-top: 6rem;
     text-align: center;
     z-index: 999;
-    animation: fadeIn 0.3s ease forwards;
+    list-style-type: none;
   }
 
   #menuList.open {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   #menuList li {
-    margin: 1.5rem 0;
+    margin: .2rem 0;
     font-size: 1.6rem;
   }
 
-  .sidebar {
-    position: static;
+  /* X oben rechts sichtbar */
+  .menu-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
   }
-}
 
-/* ===== Animation ===== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+  .menu-label {
+    width: auto;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .menu-text,
+  .menu-close {
+    position: static;
+    font-size: 1.2rem;
+  }
+
+  .sidebar-footer {
+    display: none; /* Footer-Links nur Desktop */
   }
 }
 </style>

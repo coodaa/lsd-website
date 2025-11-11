@@ -1,5 +1,41 @@
 /* =====================================================
-   GLOBAL.CSS – LSD Berlin (aufgeräumt)
+   FONTS – Courier Prime lokal eingebunden (TTF-Version)
+   ===================================================== */
+
+@font-face {
+  font-family: "Courier Prime";
+  src: url("/fonts/CourierPrime-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Courier Prime";
+  src: url("/fonts/CourierPrime-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Courier Prime";
+  src: url("/fonts/CourierPrime-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Courier Prime";
+  src: url("/fonts/CourierPrime-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* =====================================================
+   BASE STYLES
    ===================================================== */
 
 body {
@@ -9,6 +45,7 @@ body {
   font-family: "Courier Prime", monospace;
 }
 
+/* Standard-Reset für Listen */
 ul,
 li {
   list-style: none;
@@ -16,46 +53,71 @@ li {
   margin: 0;
 }
 
-/* ===== Hauptlayout ===== */
+/* =====================================================
+   MOBILE LAYOUT (Default)
+   ===================================================== */
+
 .grid-layout {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 4rem;
-  padding: 4rem 8rem;
+  padding: 1.5rem 2rem;
+  gap: 2rem;
 }
 
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+.sidebar ul {
+  list-style-type: disc;
+  list-style-position: inside;
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.sidebar li {
+  margin-bottom: 1.2rem;
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+
+.sidebar a {
+  text-decoration: none;
+  color: black;
+}
+
+.sidebar li.active a {
+  text-decoration: underline;
+}
+
+/* ===== Content ===== */
 .content-area {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: flex-start;
-  left: 50%;
-  transform: translateX(-50%);
   max-width: 900px;
   width: 100%;
-  padding: 0;
-}
-
-.content-area * {
-  box-sizing: border-box;
-  max-width: 100%;
+  margin: 0 auto;
 }
 
 .content {
   width: 85%;
+  margin: 0 auto;
   text-align: left;
-  margin: 0;
 }
 
-/* ===== Absätze & Leerzeilen ===== */
 .content p,
 .content .wp-block-paragraph {
   line-height: 1.4 !important;
   margin: 0 0 0.8rem 0 !important;
 }
 
+/* Leerzeilen / WordPress <br> Handling */
 .content p.wp-empty,
 .content p:has(> br:only-child) {
   all: unset;
@@ -68,29 +130,42 @@ li {
   color: transparent !important;
 }
 
-/* ===== Bilder ===== */
+/* Listen */
+.content ul {
+  list-style: disc;
+  list-style-position: outside;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.content ol {
+  list-style: decimal;
+  list-style-position: outside;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.content li {
+  margin-bottom: 0.4rem;
+  line-height: 1.4;
+}
+
+/* Bilder */
 .content img,
 .content figure img,
 .content .wp-block-image img,
 .content .wp-block-gallery img,
 .content video {
   display: block;
-  width: 100%;
+  width: 85%;
+  max-width: 85%;
   height: auto;
-  object-fit: contain;
-  object-position: left center;
-  margin: 0.8rem 0 1.2rem 0;
+  object-fit: cover;
+  object-position: center;
+  margin: 0.8rem auto 1.2rem auto;
 }
 
-/* ===== Klick-mich Hinweis ===== */
-.content figure:first-of-type::after {
-  content: "Klick mich";
-  display: block;
-  text-align: center;
-  margin-top: 0.3rem;
-  font-size: 0.9rem;
-  color: #999;
-}
+
 
 body.slug-impressum .content figure:first-of-type::after,
 body.slug-datenschutz .content figure:first-of-type::after,
@@ -98,41 +173,81 @@ body.slug-kontakt .content figure:first-of-type::after {
   content: none;
 }
 
-/* ===== Responsive ===== */
-@media (max-width: 900px) {
+/* =====================================================
+   DESKTOP LAYOUT – Sidebar fixiert, Content weiter rechts
+   ===================================================== */
+
+@media (min-width: 901px) {
   .grid-layout {
-    flex-direction: column;
-    padding: 2rem;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 6rem;
+    padding: 4rem 12rem 4rem 19rem; /* rechter Einzug größer */
+    align-items: flex-start;
   }
 
+  /* ===== Sidebar bleibt links fixiert ===== */
+  .sidebar {
+    position: sticky;
+    top: 4rem;
+    align-self: start;
+    height: fit-content;
+  }
+
+  /* ===== Content scrollt unabhängig ===== */
   .content-area {
-    width: 100%;
-    transform: none;
-    left: 0;
+    overflow-y: auto;
+    max-height: calc(100vh - 8rem);
+    padding-right: 1rem;
+    transform: translateX(7rem);
   }
 
-  .content,
-  .content img,
-  .content p,
-  .content h1,
-  .content h2,
-  .content h3 {
-    max-width: 100%;
-  }
-}
-@media (max-width: 900px) {
+  /* ===== Text- und Bildbreiten angleichen ===== */
   .content {
-    width: 100% !important;
-    padding: 0 1rem; /* etwas Abstand links/rechts */
+    width: 85%;
+    margin: 0;
   }
 
+  .content p,
+  .content .wp-block-paragraph,
+  .content ul,
+  .content ol {
+    width: 85%;       /* exakt gleich breit wie Bilder */
+    margin-left: 0;
+  }
+
+  .content li {
+    width: 100%;      /* Listenpunkte ohne zusätzlichen Einzug */
+  }
+
+  /* ===== Bilder optisch mittig (leicht nach links) ===== */
   .content img,
   .content figure img,
-  .content .wp-block-image img {
-    width: 100% !important;
-    max-width: 100% !important;
+  .content .wp-block-image img,
+  .content .wp-block-gallery img,
+  .content video {
+    width: 85%;
+    max-width: 85%;
     height: auto;
-    object-fit: cover; /* füllt mehr Fläche aus */
-    object-position: center;
+    object-fit: contain;
+    object-position: left center;
+    margin-left: 0;
+    transform: translateX(-3rem); /* optische Mitte */
   }
+}
+
+/* =====================================================
+   FIX: Sidebar-Listen mit eckigen Punkten wieder aktivieren
+   ===================================================== */
+
+.sidebar ul#menuList {
+  list-style-type: square !important;
+  list-style-position: outside !important;
+  padding-left: 1.5rem !important;
+  margin: 0 !important;
+}
+
+.sidebar ul#menuList li {
+  display: list-item !important;
+  list-style-type: square !important;
 }
