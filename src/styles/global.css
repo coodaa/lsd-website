@@ -225,8 +225,8 @@ body.slug-kontakt .content figure:first-of-type::after {
 @media (max-width: 1200px) {
   .content img:first-of-type,
   .content figure:first-of-type img {
-    width: 85vw !important;
-    max-width: 85vw !important;
+    width: 88vw !important;
+    max-width: 88vw !important;
     margin-left: 50% !important;
     transform: translateX(-50%) !important;
     display: block !important;
