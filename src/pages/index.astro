@@ -31,7 +31,6 @@ if (kontaktIndex > -1) {
   sortedPages.push(kontaktPage);
 }
 
-// 🔹 Erstes Bild aus HTML-Inhalt extrahieren
 function getFirstImage(html) {
   const match = html?.match(/<img[^>]+src="([^">]+)"/i);
   return match ? match[1] : null;
