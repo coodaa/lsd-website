@@ -3,13 +3,13 @@ name: 🚀 Deploy to STRATO via SFTP
 on:
   push:
     branches:
-      - main   # läuft bei jedem Push auf 'main'
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      WP_API: ${{ secrets.WP_API }}   # WordPress API für Astro
+      WP_API: ${{ secrets.WP_API }}
 
     steps:
       - name: 📥 Checkout code
@@ -30,10 +30,10 @@ jobs:
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
           server: ssh.strato.de
-          port: 22
+          port: 2022           # ← WICHTIG: Strato blockt GitHub auf Port 22
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local_path: ./dist/
+          local_path: ./dist/*
           remote_path: /www-lsd/
           sftp_only: true
           delete_remote_files: false
