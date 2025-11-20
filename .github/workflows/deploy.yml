@@ -38,3 +38,5 @@ jobs:
           mirror -R ./dist .
           bye
           EOF
+
+          # sdf
