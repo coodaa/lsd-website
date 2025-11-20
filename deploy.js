@@ -1,25 +1,34 @@
-const { execSync } = require("child_process");
+import { execSync } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const server = "ssh.strato.de";
-const user = "ftp_pk@lsd-berlin.de";
-const password = "LSDBERLIN2025!";
-const remotePath = "/www-lsd"; // Strato Zielordner
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-try {
-  console.log("🚀 Starte Upload zu STRATO via SFTP...");
-
-  execSync(
-    `lftp -e "
-      set sftp:auto-confirm yes;
-      open -u ${user},${password} sftp://${server};
-      mirror -R ./dist ${remotePath};
-      quit
-    "`,
-    { stdio: "inherit" }
-  );
-
-  console.log("✅ Upload erfolgreich abgeschlossen!");
-} catch (error) {
-  console.error("❌ Upload fehlgeschlagen:", error.message);
+function run(cmd) {
+  console.log("👉 ", cmd);
+  execSync(cmd, { stdio: "inherit" });
 }
-// asd/
+
+// 1. Build
+console.log("📦 Building project...");
+run("npm run build");
+
+// 2. Upload via LFTP
+console.log("🚀 Deploying via lftp...");
+
+const distPath = path.join(__dirname, "..", "dist");
+
+const LFTP_COMMAND = `
+open -u ftp_pk@lsd-berlin.de,LSDBERLIN2025! sftp://ssh.strato.de <<EOF
+cd /www-lsd
+rm -rf *
+lcd ${distPath}
+mirror -R .
+bye
+EOF
+`;
+
+run(`bash -c '${LFTP_COMMAND}'`);
+
+console.log("✅ Deployment finished!");
