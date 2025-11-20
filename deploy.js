@@ -1,22 +1,20 @@
 const { execSync } = require("child_process");
 
+const server = "ssh.strato.de";
+const user = "ftp_pk@lsd-berlin.de";
+const password = "LSDBERLIN2025!";
+const remotePath = "/www-lsd"; // Strato Zielordner
+
 try {
-  console.log("🚀 Starte Upload zu Strato via SFTP...");
+  console.log("🚀 Starte Upload zu STRATO via SFTP...");
 
   execSync(
     `lftp -e "
       set sftp:auto-confirm yes;
-      set net:max-retries 2;
-      set net:timeout 20;
-      set net:reconnect-interval-base 5;
-
-      open -u ftp_pk@lsd-berlin.de,LSDBERLIN2025! sftp://ssh.strato.de;
-
-      mirror -R ./dist /www-lsd;
-
+      open -u ${user},${password} sftp://${server};
+      mirror -R ./dist ${remotePath};
       quit
-    "
-    `,
+    "`,
     { stdio: "inherit" }
   );
 
