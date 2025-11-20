@@ -10,28 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: 🧱 Setup Node
+      - name: 🧱 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: 📦 Install
+      - name: 📦 Install dependencies
         run: npm ci
 
-      - name: 🧰 Build
+      - name: 🧰 Build project
         run: npm run build
 
-      - name: 🚀 Upload to STRATO (SFTP)
+      - name: 🚀 Upload to STRATO via SFTP
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
           server: ssh.strato.de
           port: 22
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local_path: ./dist/*
+          local_path: ./dist/       # ← WICHTIG
           remote_path: /www-lsd/
           sftp_only: true
           delete_remote_files: false
