@@ -2,14 +2,14 @@ name: Deploy Astro to Strato
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout
+      - name: 📥 Checkout Repo
         uses: actions/checkout@v4
 
       - name: 🧱 Setup Node
@@ -17,26 +17,26 @@ jobs:
         with:
           node-version: 20
 
-      - name: 📦 Install deps
+      - name: 📦 Install
         run: npm ci
 
-      - name: 🧰 Build Project
+      - name: 🧰 Build Astro
         run: npm run build
+        env:
+          WP_API: "https://lsd-backend.de/wp-json/wp/v2"
 
-      - name: 🔑 Add STRATO host key
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ssh.strato.de >> ~/.ssh/known_hosts
-
-      - name: 📡 Install lftp
+      - name: 🗄️ Install lftp
         run: sudo apt-get install -y lftp
 
-      - name: 🚀 Deploy via lftp
+      - name: 🚀 Upload to Strato
         run: |
-          lftp -u ${{ secrets.STRATO_USER }},${{ secrets.STRATO_PASS }} sftp://ssh.strato.de <<EOF
+          lftp -u "$STRATO_USER","$STRATO_PASS" sftp://ssh.strato.de <<EOF
+          set sftp:auto-confirm yes
           cd /www-lsd
+          rm -rf *
           mirror -R ./dist .
           bye
           EOF
-
-          # sdf
+        env:
+          STRATO_USER: ${{ secrets.STRATO_USER }}
+          STRATO_PASS: ${{ secrets.STRATO_PASS }}
