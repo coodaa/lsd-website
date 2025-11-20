@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: 🧱 Install Node
+      - name: 🧱 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -20,20 +20,18 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
 
-      - name: 🧰 Build project
+      - name: 🛠 Build project
         run: npm run build
 
-      - name: 🛠 Add STRATO host key
+      - name: 💡 Add Strato host key
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ssh.strato.de >> ~/.ssh/known_hosts
 
-      - name: 🚀 Deploy to Strato via SFTP
+      - name: 📤 Deploy via LFTP
         run: |
           lftp -u $STRATO_USER,$STRATO_PASS sftp://ssh.strato.de <<EOF
-          cd /www-lsd
-          rm -rf *
-          lcd dist
-          mirror -R .
+          set sftp:auto-confirm yes
+          mirror -R ./dist /www-lsd
           bye
           EOF
