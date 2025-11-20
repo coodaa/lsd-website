@@ -22,3 +22,4 @@ try {
 } catch (error) {
   console.error("❌ Upload fehlgeschlagen:", error.message);
 }
+// asd/
