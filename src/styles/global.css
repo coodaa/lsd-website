@@ -1,89 +1,73 @@
 /* -------------------------------------
-   🎨 Courier Prime – Full Latin Support (WOFF2)
+   🎨 Courier Prime – Full Latin Support
 -------------------------------------- */
 @font-face {
   font-family: "Courier Prime";
   src: url("/fonts/CourierPrime-Regular.woff2") format("woff2");
   font-weight: 400;
-  font-style: normal;
-  font-display: swap;
 }
-
 @font-face {
   font-family: "Courier Prime";
   src: url("/fonts/CourierPrime-Italic.woff2") format("woff2");
   font-weight: 400;
   font-style: italic;
-  font-display: swap;
 }
-
 @font-face {
   font-family: "Courier Prime";
   src: url("/fonts/CourierPrime-Bold.woff2") format("woff2");
   font-weight: 700;
-  font-style: normal;
-  font-display: swap;
 }
-
 @font-face {
   font-family: "Courier Prime";
   src: url("/fonts/CourierPrime-BoldItalic.woff2") format("woff2");
   font-weight: 700;
   font-style: italic;
-  font-display: swap;
 }
 
 /* -------------------------------------
-   🧱 Grundlayout + Fallback
+   GLOBAL BASE STYLES
 -------------------------------------- */
-body {
-  margin: 0;
-  background: #fff;
-  color: #000;
-  font-family: "Courier Prime", Courier, monospace, sans-serif;
+/* -------------------------------------
+   Einheitliche Schriftgrößen
+-------------------------------------- */
+
+/* ALLES = 1.2rem (Menügröße) */
+body,
+.sidebar,
+#menuList,
+#menuList li,
+#menuList a,
+.content,
+.content p,
+.content li,
+.content span,
+.content a,
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.subpage h2,
+.menu-toggle,
+.close-btn {
+  font-size: 1.2rem !important;
+  font-family: "Courier Prime", monospace !important;
+  line-height: 1.4;
 }
-html, body { overflow-x: hidden; }
+
 
 ul, li {
-  list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 /* -------------------------------------
-   📱 Mobile Grundlayout
+   GRID LAYOUT
 -------------------------------------- */
 .grid-layout {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   padding: 1rem 0.5rem;
-}
-
-.sidebar {
-  width: 100%;
-  margin-bottom: 2rem;
-}
-
-.sidebar ul {
-  list-style-type: disc;
-  list-style-position: inside;
-  padding-left: 1rem;
-}
-
-.sidebar li {
-  margin-bottom: 1.2rem;
-  font-size: 1.25rem;
-  line-height: 1.6;
-}
-
-.sidebar a {
-  color: black;
-  text-decoration: none;
-}
-
-.sidebar li.active a {
-  text-decoration: underline;
 }
 
 .content-area {
@@ -95,57 +79,47 @@ ul, li {
 .content {
   width: 85%;
   margin: 0 auto;
-  text-align: left;
 }
 
 /* -------------------------------------
-   📝 WordPress Content
+   CONTENT TEXT RULES
 -------------------------------------- */
+.content h1,
+.content h2,
+.content h3,
+.content h4 {
+  font-size: 1.2rem !important;   /* Überschriften wie MENU */
+  font-weight: 400;
+  margin: 1.2rem 0 0.6rem 0;
+}
+
+/* Längere Fließtexte → kleiner */
 .content p,
-.content .wp-block-paragraph {
-  line-height: 1.4 !important;
-  margin: 0 0 0.8rem 0 !important;
-}
-
-.content p.wp-empty,
-.content p:has(> br:only-child) {
-  all: unset;
-  display: block;
-  height: 0.6rem !important;
-  margin: 0 !important;
-  color: transparent !important;
-}
-
-.content ul,
-.content ol {
-  padding-left: 1.5rem;
-  margin: 1rem 0;
-}
-
-.content li {
-  margin-bottom: 0.4rem;
+.content .wp-block-paragraph,
+.content li,
+.content span {
+  font-size: 1rem !important;
   line-height: 1.4;
 }
 
+/* Unterstreichung bei Links */
+.content a {
+  text-decoration: underline;
+  color: black;
+}
+
+/* Bilder */
 .content img,
 .content video {
   width: 85%;
   max-width: 85%;
-  height: auto;
-  margin: 0.8rem auto 1.2rem auto;
   display: block;
+  margin: 1rem auto;
   object-fit: cover;
 }
 
-/* Spezielle statische Seiten */
-body.slug-impressum .content figure:first-of-type::after,
-body.slug-datenschutz .content figure:first-of-type::after,
-body.slug-kontakt .content figure:first-of-type::after {
-  content: none;
-}
-
 /* -------------------------------------
-   💻 Desktop 1201px+
+   DESKTOP LAYOUT
 -------------------------------------- */
 @media (min-width: 1201px) {
   .grid-layout {
@@ -155,147 +129,21 @@ body.slug-kontakt .content figure:first-of-type::after {
     padding: 4rem 12rem 4rem 19rem;
   }
 
-  .sidebar {
-    position: sticky;
-    top: 4rem;
-    height: fit-content;
-  }
-
   .content-area {
     overflow-y: auto;
-    transform: translateX(7rem);
     max-height: calc(100vh - 8rem);
-  }
-
-  .content {
-    width: 85%;
+    transform: translateX(7rem);
   }
 
   .content img {
     object-fit: contain;
-    object-position: left center;
     margin-left: 0;
     transform: translateX(-3rem);
   }
 }
 
 /* -------------------------------------
-   🧩 Sidebar Menü-Liste
--------------------------------------- */
-.sidebar ul#menuList {
-  list-style-type: square !important;
-  list-style-position: outside !important;
-  padding-left: 2.5rem !important;
-}
-
-.sidebar ul#menuList li {
-  list-style-type: square !important;
-}
-
-/* -------------------------------------
-   iPad Fix (901–1200px)
--------------------------------------- */
-@media (max-width: 1200px) and (min-width: 901px) {
-  .grid-layout {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 3rem;
-    padding: 3rem 5rem;
-  }
-
-  .sidebar { top: 3rem; }
-
-  .content {
-    width: 90%;
-  }
-
-  .content img:first-of-type {
-    width: 90%;
-    max-width: 700px;
-    margin: 0 auto 2rem auto !important;
-    transform: none !important;
-  }
-}
-
-/* -------------------------------------
-   📱 Mobile ≤900px
--------------------------------------- */
-@media (max-width: 900px) {
-  .grid-layout {
-    padding: 1.5rem 1rem;
-  }
-
-  .content {
-    width: 92%;
-  }
-
-  .sidebar {
-    margin-bottom: 2rem;
-  }
-
-  .content img {
-    width: 92%;
-  }
-}
-
-/* -------------------------------------
-   📱 Small phones ≤600px
--------------------------------------- */
-@media (max-width: 600px) {
-  .content {
-    width: 94%;
-  }
-
-  .content img {
-    width: 94%;
-  }
-}
-
-/* -------------------------------------
-   📄 Statische Seiten (slug/*.astro)
--------------------------------------- */
-.close-btn {
-  position: absolute;
-  right: 20%;
-  font-size: 1.5rem;
-  color: black;
-  opacity: 0;
-  animation: fadeInX 0.6s ease forwards;
-  animation-delay: 0.3s;
-}
-
-.subpages {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-top: 3rem;
-  align-items: center;
-}
-
-.subpage img {
-  width: 85%;
-}
-
-.subpage h2 {
-  width: 85%;
-  font-size: 1rem;
-}
-
-/* -------------------------------------
-   Animation
--------------------------------------- */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeInX {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* -------------------------------------
-   🧩 SIDEBAR + MENÜ (Desktop & Mobile)
+   SIDEBAR + MENU
 -------------------------------------- */
 .sidebar {
   position: sticky;
@@ -305,37 +153,68 @@ body.slug-kontakt .content figure:first-of-type::after {
   padding: 0 0 2rem 1rem;
   display: flex;
   flex-direction: column;
-  z-index: 10;
+  z-index: 100;
+  font-size: 1.2rem;       /* Menu-Größe */
+  font-family: "Courier Prime", monospace;
 }
 
 #menuList {
-  margin-top: 2rem;
   list-style-type: square;
   list-style-position: inside;
+  margin-top: 2rem;
+}
+
+#menuList li {
+  margin: 1.2rem 0;
+}
+
+#menuList a {
+  color: black;
+  text-decoration: none;
+}
+
+#menuList a.active {
+  text-decoration: underline;
 }
 
 /* Footer Desktop */
 .sidebar-footer {
   margin-top: auto;
   display: flex;
-  align-items: center;
   gap: 0.75rem;
+  font-size: 1.2rem;
 }
 
 /* -------------------------------------
-   Mobile Menü Button
+   CLOSE BUTTON (X)
+-------------------------------------- */
+.close-btn {
+  position: fixed;
+  top: 1.2rem;
+  right: 2rem;
+  font-size: 1.2rem !important;
+  font-family: "Courier Prime";
+  color: black;
+  z-index: 10000;
+  text-decoration: none;
+}
+
+/* -------------------------------------
+   MOBILE MENU BUTTON
 -------------------------------------- */
 .menu-toggle {
   display: none;
-  background: none;
-  border: none;
-  color: black;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  z-index: 10000;
   position: fixed;
   top: 1rem;
   right: 1rem;
+  background: none;
+  border: none;
+  color: black;
+  font-family: "Courier Prime";
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  z-index: 10001;
+  cursor: pointer;
 }
 
 .menu-label {
@@ -343,30 +222,28 @@ body.slug-kontakt .content figure:first-of-type::after {
   width: 3.5rem;
 }
 
-.menu-text,
-.menu-close {
+.menu-text, .menu-close {
   position: absolute;
   width: 100%;
   text-align: right;
   transition: opacity 0.2s ease;
 }
-
 .menu-close { opacity: 0; }
 .menu-toggle.open .menu-text { opacity: 0; }
 .menu-toggle.open .menu-close { opacity: 1; }
 
 /* -------------------------------------
-   Mobile Menü Overlay FIXED ABOVE ALL
+   MOBILE OVERLAY MENU
 -------------------------------------- */
 @media (max-width: 1200px) {
+  .menu-toggle {
+    display: flex;
+  }
+
   .sidebar {
     width: 100%;
     height: auto;
     padding: 1rem;
-  }
-
-  .menu-toggle {
-    display: flex;
   }
 
   #menuList {
@@ -375,6 +252,7 @@ body.slug-kontakt .content figure:first-of-type::after {
     inset: 0;
     background: white;
     padding: 4rem 2rem 5rem;
+    font-size: 1.2rem;
     overflow-y: auto;
     z-index: 9999 !important;
   }
@@ -384,25 +262,49 @@ body.slug-kontakt .content figure:first-of-type::after {
     flex-direction: column;
   }
 
+  .sidebar-footer {
+    display: none !important;
+  }
+
   .mobile-footer {
     position: fixed;
     bottom: 1.5rem;
     right: 2rem;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
   }
 
   #menuList:not(.open) .mobile-footer {
     display: none;
   }
-
-  .sidebar-footer {
-    display: none !important;
-  }
 }
 
-/* Desktop: mobile Footer ausblenden */
-@media (min-width: 1201px) {
-  .mobile-footer {
-    display: none !important;
-  }
+/* -------------------------------------
+   SUBPAGES
+-------------------------------------- */
+.subpages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.subpage img {
+  width: 85%;
+}
+
+.subpage h2 {
+  width: 85%;
+  font-size: 1.2rem !important;
+}
+/* Links sichtbar */
+.content a {
+  text-decoration: underline;
+  color: black;
+}
+
+/* Nur falls extrem langer Fließtext → optional kleinere Klasse */
+.long-text p {
+  font-size: 1rem !important;
+  line-height: 1.4;
 }

@@ -4,7 +4,7 @@ const { pages = [], activeSlug } = Astro.props;
 
 // 👉 Nur Hauptseiten (ohne Eltern) anzeigen
 let filteredPages = pages
-  .filter((p) => p.parent === 0) // Nur Seiten auf oberster Ebene
+  .filter((p) => p.parent === 0)
   .sort((a, b) => {
     const orderA = a.menu_order ?? 0;
     const orderB = b.menu_order ?? 0;
@@ -18,7 +18,7 @@ const footerPages = filteredPages.filter(
     p.title.rendered.toLowerCase().includes("datenschutz")
 );
 
-// Entferne sie aus der Hauptliste, damit sie nur unten erscheinen
+// Entferne sie aus der Hauptliste
 filteredPages = filteredPages.filter((p) => !footerPages.includes(p));
 ---
 
