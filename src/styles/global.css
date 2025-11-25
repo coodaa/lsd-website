@@ -1,9 +1,9 @@
-/* -----------------------------
-   🎨 Schriftarten
------------------------------ */
+/* -------------------------------------
+   🎨 Courier Prime – Full Latin Support (WOFF2)
+-------------------------------------- */
 @font-face {
   font-family: "Courier Prime";
-  src: url("/fonts/CourierPrime-Regular.ttf") format("truetype");
+  src: url("/fonts/CourierPrime-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -11,7 +11,7 @@
 
 @font-face {
   font-family: "Courier Prime";
-  src: url("/fonts/CourierPrime-Italic.ttf") format("truetype");
+  src: url("/fonts/CourierPrime-Italic.woff2") format("woff2");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -19,7 +19,7 @@
 
 @font-face {
   font-family: "Courier Prime";
-  src: url("/fonts/CourierPrime-Bold.ttf") format("truetype");
+  src: url("/fonts/CourierPrime-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -27,33 +27,32 @@
 
 @font-face {
   font-family: "Courier Prime";
-  src: url("/fonts/CourierPrime-BoldItalic.ttf") format("truetype");
+  src: url("/fonts/CourierPrime-BoldItalic.woff2") format("woff2");
   font-weight: 700;
   font-style: italic;
   font-display: swap;
 }
 
-/* -----------------------------
-   🧱 Grundlayout
------------------------------ */
+/* -------------------------------------
+   🧱 Grundlayout + Fallback
+-------------------------------------- */
 body {
   margin: 0;
   background: #fff;
   color: #000;
-  font-family: "Courier Prime", monospace;
+  font-family: "Courier Prime", Courier, monospace, sans-serif;
 }
+html, body { overflow-x: hidden; }
 
-html, body {
-  overflow-x: hidden;
-}
-
-ul,
-li {
+ul, li {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
+/* -------------------------------------
+   📱 Mobile Grundlayout
+-------------------------------------- */
 .grid-layout {
   display: flex;
   flex-direction: column;
@@ -69,7 +68,6 @@ li {
 .sidebar ul {
   list-style-type: disc;
   list-style-position: inside;
-  margin: 0;
   padding-left: 1rem;
 }
 
@@ -80,8 +78,8 @@ li {
 }
 
 .sidebar a {
-  text-decoration: none;
   color: black;
+  text-decoration: none;
 }
 
 .sidebar li.active a {
@@ -89,10 +87,6 @@ li {
 }
 
 .content-area {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   max-width: 900px;
   width: 100%;
   margin: 0 auto;
@@ -104,6 +98,9 @@ li {
   text-align: left;
 }
 
+/* -------------------------------------
+   📝 WordPress Content
+-------------------------------------- */
 .content p,
 .content .wp-block-paragraph {
   line-height: 1.4 !important;
@@ -116,22 +113,11 @@ li {
   display: block;
   height: 0.6rem !important;
   margin: 0 !important;
-  padding: 0 !important;
-  line-height: 1 !important;
-  pointer-events: none;
   color: transparent !important;
 }
 
-.content ul {
-  list-style: disc;
-  list-style-position: outside;
-  padding-left: 1.5rem;
-  margin: 1rem 0;
-}
-
+.content ul,
 .content ol {
-  list-style: decimal;
-  list-style-position: outside;
   padding-left: 1.5rem;
   margin: 1rem 0;
 }
@@ -142,76 +128,50 @@ li {
 }
 
 .content img,
-.content figure img,
-.content .wp-block-image img,
-.content .wp-block-gallery img,
 .content video {
-  display: block;
   width: 85%;
   max-width: 85%;
   height: auto;
-  object-fit: cover;
-  object-position: center;
   margin: 0.8rem auto 1.2rem auto;
+  display: block;
+  object-fit: cover;
 }
 
-/* Keine Overlay-Effekte auf statischen Seiten */
+/* Spezielle statische Seiten */
 body.slug-impressum .content figure:first-of-type::after,
 body.slug-datenschutz .content figure:first-of-type::after,
 body.slug-kontakt .content figure:first-of-type::after {
   content: none;
 }
 
-/* -----------------------------
-   💻 Desktop ab 1201px
------------------------------ */
+/* -------------------------------------
+   💻 Desktop 1201px+
+-------------------------------------- */
 @media (min-width: 1201px) {
   .grid-layout {
     display: grid;
     grid-template-columns: 240px 1fr;
     gap: 6rem;
     padding: 4rem 12rem 4rem 19rem;
-    align-items: flex-start;
   }
 
   .sidebar {
     position: sticky;
     top: 4rem;
-    align-self: start;
     height: fit-content;
   }
 
   .content-area {
     overflow-y: auto;
-    max-height: calc(100vh - 8rem);
-    padding-right: 1rem;
     transform: translateX(7rem);
+    max-height: calc(100vh - 8rem);
   }
 
   .content {
     width: 85%;
-    margin: 0;
   }
 
-  .content p,
-  .content .wp-block-paragraph,
-  .content ul,
-  .content ol {
-    width: 85%;
-    margin-left: 0;
-  }
-
-  .content li {
-    width: 100%;
-  }
-
-  .content img,
-  .content figure img,
-  .content .wp-block-image img,
-  .content .wp-block-gallery img,
-  .content video {
-    width: 85%;
-    max-width: 85%;
+  .content img {
     object-fit: contain;
     object-position: left center;
     margin-left: 0;
@@ -219,53 +179,37 @@ body.slug-kontakt .content figure:first-of-type::after {
   }
 }
 
-/* -----------------------------
-   🧩 Sidebar Menüliste
------------------------------ */
+/* -------------------------------------
+   🧩 Sidebar Menü-Liste
+-------------------------------------- */
 .sidebar ul#menuList {
   list-style-type: square !important;
   list-style-position: outside !important;
   padding-left: 2.5rem !important;
-  margin: 0 !important;
 }
 
 .sidebar ul#menuList li {
-  display: list-item !important;
   list-style-type: square !important;
 }
 
-/* -----------------------------
-   🧠 Nur iPad-Fix (901–1200px)
------------------------------ */
+/* -------------------------------------
+   iPad Fix (901–1200px)
+-------------------------------------- */
 @media (max-width: 1200px) and (min-width: 901px) {
   .grid-layout {
     display: grid;
     grid-template-columns: 220px 1fr;
     gap: 3rem;
     padding: 3rem 5rem;
-    align-items: flex-start;
   }
 
-  .sidebar {
-    position: sticky;
-    top: 3rem;
-    width: 100%;
-    margin-bottom: 0;
-  }
-
-  .content-area {
-    padding: 0 2rem;
-    transform: none;
-    max-width: 100%;
-  }
+  .sidebar { top: 3rem; }
 
   .content {
     width: 90%;
-    margin: 0 auto;
   }
 
-  .content img:first-of-type,
-  .content figure:first-of-type img {
+  .content img:first-of-type {
     width: 90%;
     max-width: 700px;
     margin: 0 auto 2rem auto !important;
@@ -273,51 +217,192 @@ body.slug-kontakt .content figure:first-of-type::after {
   }
 }
 
-/* -----------------------------
-   📱 Mobile Geräte (max 900px)
------------------------------ */
+/* -------------------------------------
+   📱 Mobile ≤900px
+-------------------------------------- */
 @media (max-width: 900px) {
   .grid-layout {
-    display: flex;
-    flex-direction: column;
     padding: 1.5rem 1rem;
-  }
-
-  .content-area {
-    padding: 0;
   }
 
   .content {
     width: 92%;
-    margin: 0 auto;
   }
 
   .sidebar {
     margin-bottom: 2rem;
   }
 
-  .content img,
-  .content figure img {
+  .content img {
     width: 92%;
-    max-width: 92%;
   }
 }
 
-/* -----------------------------
-   📱 Kleine Smartphones (max 600px)
------------------------------ */
+/* -------------------------------------
+   📱 Small phones ≤600px
+-------------------------------------- */
 @media (max-width: 600px) {
-  .content-area {
-    padding: 0;
-  }
-
   .content {
     width: 94%;
   }
 
-  .content img,
-  .content figure img {
+  .content img {
     width: 94%;
-    max-width: 94%;
+  }
+}
+
+/* -------------------------------------
+   📄 Statische Seiten (slug/*.astro)
+-------------------------------------- */
+.close-btn {
+  position: absolute;
+  right: 20%;
+  font-size: 1.5rem;
+  color: black;
+  opacity: 0;
+  animation: fadeInX 0.6s ease forwards;
+  animation-delay: 0.3s;
+}
+
+.subpages {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 3rem;
+  align-items: center;
+}
+
+.subpage img {
+  width: 85%;
+}
+
+.subpage h2 {
+  width: 85%;
+  font-size: 1rem;
+}
+
+/* -------------------------------------
+   Animation
+-------------------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInX {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* -------------------------------------
+   🧩 SIDEBAR + MENÜ (Desktop & Mobile)
+-------------------------------------- */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 240px;
+  padding: 0 0 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+#menuList {
+  margin-top: 2rem;
+  list-style-type: square;
+  list-style-position: inside;
+}
+
+/* Footer Desktop */
+.sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* -------------------------------------
+   Mobile Menü Button
+-------------------------------------- */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: black;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  z-index: 10000;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+}
+
+.menu-label {
+  position: relative;
+  width: 3.5rem;
+}
+
+.menu-text,
+.menu-close {
+  position: absolute;
+  width: 100%;
+  text-align: right;
+  transition: opacity 0.2s ease;
+}
+
+.menu-close { opacity: 0; }
+.menu-toggle.open .menu-text { opacity: 0; }
+.menu-toggle.open .menu-close { opacity: 1; }
+
+/* -------------------------------------
+   Mobile Menü Overlay FIXED ABOVE ALL
+-------------------------------------- */
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    padding: 1rem;
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
+
+  #menuList {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: white;
+    padding: 4rem 2rem 5rem;
+    overflow-y: auto;
+    z-index: 9999 !important;
+  }
+
+  #menuList.open {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-footer {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 2rem;
+    font-size: 0.9rem;
+  }
+
+  #menuList:not(.open) .mobile-footer {
+    display: none;
+  }
+
+  .sidebar-footer {
+    display: none !important;
+  }
+}
+
+/* Desktop: mobile Footer ausblenden */
+@media (min-width: 1201px) {
+  .mobile-footer {
+    display: none !important;
   }
 }
