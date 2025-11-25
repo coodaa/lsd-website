@@ -2,32 +2,27 @@
 import Sidebar from "../components/Sidebar.astro";
 import "../styles/global.css";
 
+export const prerender = false;
+
 const baseUrl = import.meta.env.WP_API;
 
-// 🔹 Alle veröffentlichten Seiten laden
-let pages = [];
-try {
-  const res = await fetch(
-    `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
-  );
-  if (res.ok) {
-    pages = await res.json();
-  }
-} catch (err) {
-  console.error("❌ Fehler beim Laden der Seiten:", err);
-}
+// Alle Seiten
+const res = await fetch(
+  `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
+);
+const pages = await res.json();
 
-// 🔹 Erste Hauptseite bestimmen (z. B. LSD)
+// Erste Hauptseite
 const firstPage = pages.find((p) => p.parent === 0);
 
-// 🔹 Unterseiten dieser Seite
+// Unterseiten
 const childPages = pages.filter((p) => p.parent === firstPage?.id);
 
-// 🔹 Menü sortieren (Kontakt ans Ende)
+// Menü sortieren
 let sortedPages = [...pages.filter((p) => p.parent === 0)];
-const kontaktIndex = sortedPages.findIndex((p) => p.slug === "kontakt");
-if (kontaktIndex > -1) {
-  const [kontaktPage] = sortedPages.splice(kontaktIndex, 1);
+const indexKontakt = sortedPages.findIndex((p) => p.slug === "kontakt");
+if (indexKontakt > -1) {
+  const [kontaktPage] = sortedPages.splice(indexKontakt, 1);
   sortedPages.push(kontaktPage);
 }
 
@@ -50,25 +45,23 @@ function getFirstImage(html) {
 
       <main class="content-area">
         <div class="content">
-          <!-- 🔹 Hauptinhalt -->
+
           <div set:html={firstPage?.content?.rendered} />
 
-          <!-- 🔹 Unterseiten mit Bildern -->
-          {
-            childPages.length > 0 && (
-              <div class="subpages">
-                {childPages.map((child) => {
-                  const img = getFirstImage(child.content.rendered);
-                  return (
-                    <a href={`/${child.slug}`} class="subpage">
-                      {img && <img src={img} alt={child.title.rendered} />}
-                      <h2 set:html={child.title.rendered} />
-                    </a>
-                  );
-                })}
-              </div>
-            )
-          }
+          {childPages.length > 0 && (
+            <div class="subpages">
+              {childPages.map((child) => {
+                const img = getFirstImage(child.content.rendered);
+                return (
+                  <a href={`/${child.slug}`} class="subpage">
+                    {img && <img src={img} alt={child.title.rendered} />}
+                    <h2 set:html={child.title.rendered} />
+                  </a>
+                );
+              })}
+            </div>
+          )}
+
         </div>
       </main>
     </div>

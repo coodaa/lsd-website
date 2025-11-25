@@ -2,41 +2,32 @@
 import Sidebar from "../components/Sidebar.astro";
 import "../styles/global.css";
 
-export const prerender = true;
+export const prerender = false;
 
-// 🔧 Alle Seiten aus der WP-API holen
-export async function getStaticPaths() {
-  const baseUrl = import.meta.env.WP_API;
+const baseUrl = import.meta.env.WP_API;
+const slug = Astro.params.slug;
 
-  try {
-    const res = await fetch(
-      `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
-    );
-    const pages = await res.json();
+// Aktuelle Seite laden
+const pageRes = await fetch(`${baseUrl}/pages?slug=${slug}`);
+const pageData = await pageRes.json();
+const page = pageData[0];
 
-    return pages.map((page) => ({
-      params: { slug: page.slug },
-      props: { page, pages },
-    }));
-  } catch (err) {
-    console.error("❌ Fehler in getStaticPaths:", err);
-    return [];
-  }
-}
+// Alle Seiten für Menü
+const allPagesRes = await fetch(
+  `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
+);
+const pages = await allPagesRes.json();
 
-const { page, pages } = Astro.props;
-const slug = page?.slug;
-
-// Nur Hauptseiten im Menü anzeigen
+// Menü → Hauptseiten
 const mainPages = pages.filter((p) => p.parent === 0);
 
-// Unterseiten der aktuellen Seite (z. B. Kunst → Kindseiten)
-const childPages = pages.filter((p) => p.parent === page.id);
+// Unterseiten
+const childPages = pages.filter((p) => p.parent === page?.id);
 
-// Prüfen, ob aktuelle Seite selbst eine Unterseite ist
-const parentPage = pages.find((p) => p.id === page.parent);
+// Elternseite falls vorhanden
+const parentPage = pages.find((p) => p.id === page?.parent);
 
-// Kontakt ans Ende verschieben
+// Kontakt ans Ende
 let sortedPages = [...mainPages];
 const kontaktIndex = sortedPages.findIndex((p) => p.slug === "kontakt");
 if (kontaktIndex > -1) {
@@ -44,7 +35,6 @@ if (kontaktIndex > -1) {
   sortedPages.push(kontaktPage);
 }
 
-// Erstes Bild jeder Unterseite finden
 function getFirstImage(html) {
   const match = html?.match(/<img[^>]+src="([^">]+)"/i);
   return match ? match[1] : null;
@@ -64,33 +54,26 @@ function getFirstImage(html) {
 
       <main class="content-area">
         <div class="content">
-          <!-- 🔹 Falls Unterseite: X anzeigen -->
-          {
-            parentPage && (
-              <a href={`/${parentPage.slug}`} class="close-btn">
-                ×
-              </a>
-            )
-          }
 
-          <!-- Hauptinhalt -->
+          { parentPage && (
+            <a href={`/${parentPage.slug}`} class="close-btn">×</a>
+          )}
+
           <div set:html={page?.content?.rendered} />
 
-          <!-- Unterseiten mit Vorschaubild -->
-          {
-            childPages.length > 0 && (
-              <div class="subpages">
-                {childPages.map((child) => {
-                  const img = getFirstImage(child.content.rendered);
-                  return (
-                    <a href={`/${child.slug}`} class="subpage">
-                      {img && <img src={img} alt={child.title.rendered} />}
-                    </a>
-                  );
-                })}
-              </div>
-            )
-          }
+          {childPages.length > 0 && (
+            <div class="subpages">
+              {childPages.map((child) => {
+                const img = getFirstImage(child.content.rendered);
+                return (
+                  <a href={`/${child.slug}`} class="subpage">
+                    {img && <img src={img} alt={child.title.rendered} />}
+                  </a>
+                );
+              })}
+            </div>
+          )}
+
         </div>
       </main>
     </div>
