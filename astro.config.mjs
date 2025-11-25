@@ -1,8 +1,7 @@
 import { defineConfig } from "astro/config";
-import vercel from "@astrojs/vercel";
+import vercel from "@astrojs/vercel/server";
 
 export default defineConfig({
-  output: "server",         // wichtig für WP-Live-Fetch
+  output: "server",
   adapter: vercel(),
-  site: "https://www.lsd-berlin.de",
 });

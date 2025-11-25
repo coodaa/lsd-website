@@ -7,11 +7,11 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-  "deploy": "node scripts/deploy.js"
-
-},
+    "deploy": "node scripts/deploy.js"
+  },
   "dependencies": {
     "@astrojs/node": "^9.5.0",
+    "@astrojs/vercel": "^9.0.1",
     "astro": "^5.15.5"
   },
   "devDependencies": {
@@ -19,5 +19,4 @@
     "ftp-deploy": "^2.4.7",
     "typescript": "^5.9.3"
   }
-
 }
