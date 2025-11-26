@@ -286,3 +286,46 @@ ul, li {
 .desktop-footer .dot {
   margin: 0 0.4rem;
 }
+
+
+.menu-toggle {
+  display: block;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  position: fixed;
+  top: 0.8rem;
+  right: 0.8rem;
+  z-index: 3000;
+  width: 70px;           /* 👉 feste Breite = springt nie */
+  height: 40px;          /* Höhe stabil */
+  text-align: right;     /* Text rechtsbündig */
+  position: fixed;
+}
+
+.menu-text,
+.menu-close {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 100%;           /* 👉 gleiche Breite für beide */
+  text-align: right;
+  padding-right: 0;      /* kein Verschieben mehr */
+  font-family: "Courier Prime", monospace;
+  font-size: clamp(18px, 5vw, 28px);
+  transition: opacity 0.2s ease;
+}
+
+.menu-close {
+  opacity: 0;
+}
+
+.menu-toggle.open .menu-text {
+  opacity: 0;
+}
+
+.menu-toggle.open .menu-close {
+  opacity: 1;
+}

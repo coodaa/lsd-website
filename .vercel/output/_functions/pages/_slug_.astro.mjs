@@ -1,39 +1,42 @@
-import { e as createComponent, f as createAstro, k as renderHead, h as addAttribute, l as renderComponent, u as unescapeHTML, r as renderTemplate } from '../chunks/astro/server_BDyE-jdM.mjs';
-import { $ as $$Sidebar } from '../chunks/Sidebar_BmsS1ejY.mjs';
-/* empty css                                  */
+import { e as createComponent, f as createAstro, k as renderComponent, r as renderTemplate, m as maybeRenderHead, u as unescapeHTML, h as addAttribute } from '../chunks/astro/server_fE--pbN8.mjs';
+import { f as fix, $ as $$BaseLayout, a as $$Footer, b as $$Sidebar, g as getFirstImage } from '../chunks/Footer_BVevSA5b.mjs';
 export { renderers } from '../renderers.mjs';
 
 const $$Astro = createAstro();
-const prerender = false;
 const $$slug = createComponent(async ($$result, $$props, $$slots) => {
   const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);
   Astro2.self = $$slug;
   const baseUrl = "https://lsd-backend.de/wp-json/wp/v2";
   const slug = Astro2.params.slug;
-  const pageRes = await fetch(`${baseUrl}/pages?slug=${slug}`);
-  const pageData = await pageRes.json();
-  const page = pageData[0];
-  const allPagesRes = await fetch(
+  const res = await fetch(`${baseUrl}/pages?slug=${slug}`);
+  const data = await res.json();
+  const page = data[0] ?? null;
+  const allRes = await fetch(
     `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
   );
-  const pages = await allPagesRes.json();
+  const pages = await allRes.json();
   const mainPages = pages.filter((p) => p.parent === 0);
-  const childPages = pages.filter((p) => p.parent === page?.id);
-  const parentPage = pages.find((p) => p.id === page?.parent);
-  let sortedPages = [...mainPages];
-  const kontaktIndex = sortedPages.findIndex((p) => p.slug === "kontakt");
+  let sortedMainPages = mainPages.filter((p) => {
+    const t = p.title?.rendered?.toLowerCase() || "";
+    return !t.includes("impressum") && !t.includes("datenschutz");
+  });
+  const kontaktIndex = sortedMainPages.findIndex((p) => p.slug === "kontakt");
   if (kontaktIndex > -1) {
-    const [kontaktPage] = sortedPages.splice(kontaktIndex, 1);
-    sortedPages.push(kontaktPage);
+    const [kontakt] = sortedMainPages.splice(kontaktIndex, 1);
+    sortedMainPages.push(kontakt);
   }
-  function getFirstImage(html) {
-    const match = html?.match(/<img[^>]+src="([^">]+)"/i);
-    return match ? match[1] : null;
-  }
-  return renderTemplate`<html lang="de"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${page?.title?.rendered || "LSD Berlin"}</title>${renderHead()}</head> <body${addAttribute(`slug-${slug}`, "class")}> <div class="grid-layout"> ${renderComponent($$result, "Sidebar", $$Sidebar, { "pages": sortedPages, "activeSlug": slug })} <main class="content-area"> <div class="content"> ${parentPage && renderTemplate`<a${addAttribute(`/${parentPage.slug}`, "href")} class="close-btn">×</a>`} <div>${unescapeHTML(page?.content?.rendered)}</div> ${childPages.length > 0 && renderTemplate`<div class="subpages"> ${childPages.map((child) => {
-    const img = getFirstImage(child.content.rendered);
-    return renderTemplate`<a${addAttribute(`/${child.slug}`, "href")} class="subpage"> ${img && renderTemplate`<img${addAttribute(img, "src")}${addAttribute(child.title.rendered, "alt")}>`} </a>`;
-  })} </div>`} </div> </main> </div> </body></html>`;
+  const parent = page ? pages.find((p) => p.id === page.parent) : null;
+  const children = page ? pages.filter((p) => p.parent === page.id) : [];
+  const footerPages = pages.filter((p) => {
+    const t = p.title?.rendered?.toLowerCase() || "";
+    return t.includes("impressum") || t.includes("datenschutz");
+  });
+  return renderTemplate`${renderComponent($$result, "BaseLayout", $$BaseLayout, { "title": fix(page?.title?.rendered || "LSD Berlin") }, { "default": async ($$result2) => renderTemplate` ${maybeRenderHead()}<div class="grid-layout"> ${renderComponent($$result2, "Sidebar", $$Sidebar, { "pages": sortedMainPages, "activeSlug": slug, "footerPages": footerPages })} <main class="content-area"> <div class="content"> <!-- DETAIL WRAPPER: macht X bündig mit dem Bild --> <div class="detail-wrapper"> ${page ? renderTemplate`<div class="detail-content">${unescapeHTML(fix(page.content?.rendered || ""))}</div>` : renderTemplate`<p>(Seite nicht gefunden)</p>`} ${parent && renderTemplate`<a${addAttribute(`/${parent.slug}`, "href")} class="detail-close">
+×
+</a>`} </div> <!-- UNTERSEITEN --> ${children.length > 0 && renderTemplate`<div class="subpages"> ${children.map((c) => {
+    const img = getFirstImage(c.content?.rendered || "");
+    return renderTemplate`<a${addAttribute(`/${c.slug}`, "href")} class="subpage"> ${img && renderTemplate`<img${addAttribute(img, "src")}${addAttribute(fix(c.title?.rendered || ""), "alt")}>`} </a>`;
+  })} </div>`} </div> </main> </div>  `, "footer": async ($$result2) => renderTemplate`${renderComponent($$result2, "Footer", $$Footer, { "slot": "footer", "footerPages": footerPages })}` })}`;
 }, "/Users/florianschneider/code/coodaa/lsd-website/src/pages/[slug].astro", void 0);
 const $$file = "/Users/florianschneider/code/coodaa/lsd-website/src/pages/[slug].astro";
 const $$url = "/[slug]";
@@ -42,7 +45,6 @@ const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
   default: $$slug,
   file: $$file,
-  prerender,
   url: $$url
 }, Symbol.toStringTag, { value: 'Module' }));
 

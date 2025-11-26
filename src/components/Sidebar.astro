@@ -5,8 +5,8 @@ const { pages = [], activeSlug, footerPages = [] } = Astro.props;
 <aside class="sidebar">
   <!-- Mobile Menu Toggle -->
   <button class="menu-toggle" id="menuToggle">
-    <span class="menu-text">Menu</span>
-    <span class="menu-close">×</span>
+    <span class="menu-text">Menü</span>
+    <span class="menu-close">X</span>
   </button>
 
   <!-- Hauptmenü -->
@@ -19,7 +19,7 @@ const { pages = [], activeSlug, footerPages = [] } = Astro.props;
       ))
     }
 
-    <!-- Footer-Links: werden mobil NUR im offenen Menü angezeigt -->
+    <!-- Mobile Footer links: nur im offenen Menü sichtbar -->
     <li class="mobile-footer-links">
       {
         footerPages.map((p, i) => (
@@ -39,10 +39,28 @@ const { pages = [], activeSlug, footerPages = [] } = Astro.props;
   const toggle = document.getElementById("menuToggle");
   const list = document.getElementById("menuList");
 
+  function lockScroll() {
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+  }
+
+  function unlockScroll() {
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.width = "";
+  }
+
   toggle?.addEventListener("click", () => {
+    const open = list.classList.toggle("open");
     toggle.classList.toggle("open");
-    list.classList.toggle("open");
+
+    if (open) {
+      lockScroll();
+    } else {
+      unlockScroll();
+    }
   });
 </script>
-
-
