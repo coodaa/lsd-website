@@ -38,19 +38,12 @@
 }
 
 /* -------------------------------------
-   Base
+   BASE
 -------------------------------------- */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  min-height: 100%;
   background: #fff;
   color: #000;
   font-family: "Courier Prime", monospace;
@@ -58,32 +51,33 @@ body {
   line-height: 1.45;
 }
 
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 a {
   color: inherit;
   text-decoration: none;
 }
 
-ul,
-li {
+ul, li {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 /* -------------------------------------
-   Mobile first Layout
+   MOBILE LAYOUT
 -------------------------------------- */
 .grid-layout {
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  padding: 1rem;
-  width: 100%;
 }
 
-/* -------------------------------------
-   Sidebar (mobile)
--------------------------------------- */
 .sidebar {
   width: 100%;
   padding-bottom: 2rem;
@@ -96,7 +90,7 @@ li {
 }
 
 #menuList li {
-  margin: .8rem 0;
+  margin: 0.8rem 0;
 }
 
 #menuList li.active > a {
@@ -104,85 +98,10 @@ li {
 }
 
 /* -------------------------------------
-   Mobile Menü Button
--------------------------------------- */
-.menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 2000;
-}
-
-.menu-label {
-  width: 3.5rem;
-  position: relative;
-  display: inline-block;
-}
-
-.menu-text,
-.menu-close {
-  position: absolute;
-  width: 100%;
-  text-align: right;
-  transition: opacity 0.2s ease;
-}
-
-.menu-close {
-  opacity: 0;
-}
-
-.menu-toggle.open .menu-text {
-  opacity: 0;
-}
-
-.menu-toggle.open .menu-close {
-  opacity: 1;
-}
-
-/* -------------------------------------
-   Mobile Overlay Menü
--------------------------------------- */
-@media (max-width: 1200px) {
-  .menu-toggle {
-    display: block;
-  }
-
-  #menuList {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: white;
-    padding: 4rem 2rem 6rem;
-    overflow-y: auto;
-    z-index: 1500;
-  }
-
-  #menuList.open {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .mobile-footer {
-    margin-top: 3rem;
-    font-size: 0.9em;
-  }
-
-  .mobile-footer .dot {
-    margin: 0 0.3rem;
-  }
-}
-
-/* -------------------------------------
-   Content
+   CONTENT
 -------------------------------------- */
 .content-area {
   width: 100%;
-  margin: 0 auto;
 }
 
 .content {
@@ -191,48 +110,24 @@ li {
   text-align: left;
 }
 
+/* Mobile Bilder */
 .content img {
   display: block;
-  width: 70%;
+  width: 100%;
   height: auto;
-  margin: -1rem auto;
+  margin: 1.5rem 0;
 }
 
-/* Subpages */
+/* Subpages Mobile */
 .subpages {
   display: grid;
-  grid-template-columns: 1fr !important;
   gap: 1.5rem;
   margin-top: 2rem;
 }
 
-.subpage h2 {
-  margin-top: 0.5rem;
-  font-size: 1em;
-}
-
-/* Close Button */
-.close-btn {
-  display: inline-block;
-  font-size: 1.5em;
-  margin-bottom: 1rem;
-}
-
 /* -------------------------------------
-   Desktop Footer
+   DESKTOP LAYOUT
 -------------------------------------- */
-.desktop-footer {
-  width: 100%;
-  padding: 4rem 2rem;
-  max-width: 1400px;
-  margin: 4rem auto 0 auto;
-  font-family: "Courier Prime", monospace;
-  font-size: clamp(16px, 1.4vw, 24px);
-}
-
-.desktop-footer .dot {
-  margin: 0 0.4rem;
-}
 @media (min-width: 1201px) {
 
   .grid-layout {
@@ -240,31 +135,92 @@ li {
     grid-template-columns: 300px minmax(0, 1fr);
     max-width: 1600px;
     margin: 0 auto;
-    padding: 4rem 0;
-
-    /* Content weiter nach rechts */
-    column-gap: 300px;
-    position: relative;
+    padding: 3rem 0;
+    column-gap: 220px;
   }
 
   .sidebar {
     width: 300px;
     position: fixed;
     top: 4rem;
-    left: calc(50% - 420px); /* unverändert */
+    left: calc(50% - 420px);
   }
 
   .content-area {
     grid-column: 2;
-    max-width: 900px;
+    max-width: 1000px;
   }
 
   .content {
-    width: 75%;
+    width: auto;
     margin: 0;
+  }
+
+  /* Bilder fix auf einheitliche Größe */
+  .content img {
+    width: 360px;
+    max-width: 360px;
+    height: auto;
+    margin: 1.5rem 0;
+  }
+
+  .subpages img {
+    width: 360px !important;
+    max-width: 360px !important;
+    height: auto;
   }
 
   .mobile-footer {
     display: none !important;
+  }
+}
+
+/* -------------------------------------
+   FOOTER DESKTOP
+-------------------------------------- */
+.desktop-footer {
+  margin-top: auto;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  padding-left: calc(50% - 420px);
+  font-size: clamp(16px, 1.4vw, 22px);
+}
+
+.desktop-footer .dot {
+  margin: 0 0.4rem;
+}
+
+/* -------------------------------------
+   DETAILSEITEN: X RECHTS NEBEN BILD
+-------------------------------------- */
+
+.page-header {
+  display: none; /* wird nicht mehr verwendet */
+}
+
+.page-meta {
+  display: none !important;
+}
+
+/* Wrapper um Inhalt + X */
+.detail-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* X Button */
+.detail-close {
+  position: absolute;
+  top: 0;
+  right: -40px;
+  font-family: "Courier Prime", monospace;
+  font-size: clamp(22px, 2.5vw, 32px);
+  cursor: pointer;
+  line-height: 1;
+}
+
+@media (min-width: 1400px) {
+  .detail-close {
+    right: -60px;
   }
 }

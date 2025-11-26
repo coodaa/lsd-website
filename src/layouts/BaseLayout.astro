@@ -1,11 +1,10 @@
 ---
 import "../styles/global.css";
 
-// Props für jede Seite
 const {
   title = "LSD Berlin – Künstlerkollektiv für experimentelle Theater- und Performancearbeit",
-  description = "LSD Berlin ist ein Künstlerkollektiv und Plattform für experimentelle Theater-, Performance- und Raumarbeiten an der Schnittstelle von Kunst, Technik und Gesellschaft.",
-  image = "/og-default.jpg", // 👈 Fallback auf dein OG-Image
+  description = "LSD Berlin ist ein Künstlerkollektiv ...",
+  image = "/og-default.jpg",
   url = "https://www.lsd-berlin.de",
 } = Astro.props;
 ---
@@ -39,23 +38,13 @@ const {
     <!-- Icons -->
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
-    <!-- JSON-LD Schema -->
-    <script type="application/ld+json">
-      {{
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "LSD Berlin",
-        "url": "https://www.lsd-berlin.de",
-        "logo": "https://www.lsd-berlin.de/favicon.png",
-        "description": description,
-        "sameAs": [
-          "https://www.instagram.com/lsdberlin"
-        ]
-      }}
-    </script>
   </head>
+
   <body>
-    <slot /> <!-- hier wird die eigentliche Seite gerendert -->
+    <!-- Seite (Sidebar + Content) -->
+    <slot />
+
+    <!-- Footer separat unten -->
+    <slot name="footer" />
   </body>
 </html>

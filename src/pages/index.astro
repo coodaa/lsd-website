@@ -1,26 +1,27 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
 import Footer from "../components/Footer.astro";
-import "../styles/global.css";
-
-export const prerender = false;
+import { fix, getFirstImage } from "../components/utils/fix.js";
 
 const baseUrl = import.meta.env.WP_API;
 
-// Alle Seiten laden
+// alle Seiten laden
 const res = await fetch(
   `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
 );
 const pages = await res.json();
 
-// Erste Hauptseite (Startseite)
+// Hauptseiten
 const mainPages = pages.filter((p) => p.parent === 0);
-const firstPage = mainPages[0] ?? pages[0];
+
+// erste Seite = Startseite
+const home = mainPages[0] ?? pages[0];
 
 // Kindseiten der Startseite
-const childPages = pages.filter((p) => p.parent === firstPage?.id);
+const children = pages.filter((p) => p.parent === home?.id);
 
-// Hauptnavigation sortieren + "Kontakt" ans Ende
+// Navigation sortieren: "Kontakt" ans Ende
 let sortedMainPages = [...mainPages];
 const kontaktIndex = sortedMainPages.findIndex((p) => p.slug === "kontakt");
 if (kontaktIndex > -1) {
@@ -28,97 +29,45 @@ if (kontaktIndex > -1) {
   sortedMainPages.push(kontaktPage);
 }
 
-// Footer-Seiten (Impressum / Datenschutz)
-const footerPages = sortedMainPages.filter((p) =>
-  ["impressum", "datenschutz"].some((term) =>
-    p.title?.rendered?.toLowerCase().includes(term)
-  )
-);
-
-// Hilfsfunktion: HTML-Entities und Umlaute sauber decodieren
-function fix(str = "") {
-  if (!str) return "";
-  let s = String(str);
-
-  const entityMap = {
-    "&auml;": "ä",
-    "&ouml;": "ö",
-    "&uuml;": "ü",
-    "&Auml;": "Ä",
-    "&Ouml;": "Ö",
-    "&Uuml;": "Ü",
-    "&szlig;": "ß",
-    "&quot;": '"',
-    "&amp;": "&",
-    "&lt;": "<",
-    "&gt;": ">",
-    "&nbsp;": " ",
-  };
-
-  s = s.replace(
-    /&(auml|ouml|uuml|Auml|Ouml|Uuml|szlig|quot|amp|lt|gt|nbsp);/g,
-    (match) => entityMap[match] ?? match
-  );
-
-  // numerische Entities (dezimal)
-  s = s.replace(/&#(\d+);/g, (_, dec) =>
-    String.fromCharCode(parseInt(dec, 10))
-  );
-
-  // numerische Entities (hex)
-  s = s.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
-    String.fromCharCode(parseInt(hex, 16))
-  );
-
-  return s;
-}
-
-// Erstes Bild aus einem HTML-String holen
-function getFirstImage(html = "") {
-  const match = html.match(/<img[^>]+src="([^">]+)"/i);
-  return match ? match[1] : null;
-}
+// Footer-Seiten global (Impressum / Datenschutz)
+const footerPages = pages.filter((p) => {
+  const t = p.title?.rendered?.toLowerCase() || "";
+  return t.includes("impressum") || t.includes("datenschutz");
+});
 ---
 
-<html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
+<BaseLayout title={fix(home?.title?.rendered || "LSD Berlin")}>
+  <div class="grid-layout">
+    <Sidebar
+      pages={sortedMainPages}
+      activeSlug={home?.slug}
+      footerPages={footerPages}
     />
-    <title>{fix(firstPage?.title?.rendered || "LSD Berlin")}</title>
-  </head>
 
-  <body class={`slug-${firstPage?.slug || "home"}`}>
-    <div class="grid-layout">
-      <Sidebar pages={sortedMainPages} activeSlug={firstPage?.slug} />
+    <main class="content-area">
+      <div class="content">
+        <div set:html={fix(home?.content?.rendered || "")} />
 
-      <main class="content-area">
-        <div class="content">
-          <div set:html={fix(firstPage?.content?.rendered || "")} />
+        {
+          children.length > 0 && (
+            <div class="subpages">
+              {children.map((c) => {
+                const img = getFirstImage(c.content?.rendered || "");
+                return (
+                  <a href={`/${c.slug}`} class="subpage">
+                    {img && (
+                      <img src={img} alt={fix(c.title?.rendered || "")} />
+                    )}
+                    <h2 set:html={fix(c.title?.rendered || "")} />
+                  </a>
+                );
+              })}
+            </div>
+          )
+        }
+      </div>
+    </main>
+  </div>
 
-          {
-            childPages.length > 0 && (
-              <div class="subpages">
-                {childPages.map((child) => {
-                  const img = getFirstImage(child.content?.rendered || "");
-                  return (
-                    <a href={`/${child.slug}`} class="subpage">
-                      {img && (
-                        <img src={img} alt={fix(child.title?.rendered || "")} />
-                      )}
-                      <h2 set:html={fix(child.title?.rendered || "")} />
-                    </a>
-                  );
-                })}
-              </div>
-            )
-          }
-        </div>
-      </main>
-    </div>
-
-    <Footer footerPages={footerPages} />
-  </body>
-</html>
+  <Footer slot="footer" footerPages={footerPages} />
+</BaseLayout>

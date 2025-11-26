@@ -1,130 +1,97 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
 import Footer from "../components/Footer.astro";
-import "../styles/global.css";
-
-export const prerender = false;
+import { fix, getFirstImage } from "../components/utils/fix.js";
 
 const baseUrl = import.meta.env.WP_API;
 const slug = Astro.params.slug;
 
-// Aktuelle Seite
-const pageRes = await fetch(`${baseUrl}/pages?slug=${slug}`);
-const pageData = await pageRes.json();
-const page = pageData[0];
+// Seite laden
+const res = await fetch(`${baseUrl}/pages?slug=${slug}`);
+const data = await res.json();
+const page = data[0] ?? null;
 
-// Alle Seiten für Navigation & Footer
-const allPagesRes = await fetch(
+// alle Seiten (Navigation + Footer)
+const allRes = await fetch(
   `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
 );
-const pages = await allPagesRes.json();
+const pages = await allRes.json();
 
+// Hauptnavigation
 const mainPages = pages.filter((p) => p.parent === 0);
-const childPages = pages.filter((p) => p.parent === page?.id);
-const parentPage = pages.find((p) => p.id === page?.parent);
 
-// Hauptnavigation sortieren + "Kontakt" ans Ende
+// Kontakt ans Ende schieben
 let sortedMainPages = [...mainPages];
 const kontaktIndex = sortedMainPages.findIndex((p) => p.slug === "kontakt");
 if (kontaktIndex > -1) {
-  const [kontaktPage] = sortedMainPages.splice(kontaktIndex, 1);
-  sortedMainPages.push(kontaktPage);
+  const [kontakt] = sortedMainPages.splice(kontaktIndex, 1);
+  sortedMainPages.push(kontakt);
 }
 
-// Footer-Seiten (Impressum / Datenschutz)
-const footerPages = sortedMainPages.filter((p) =>
-  ["impressum", "datenschutz"].some((term) =>
-    p.title?.rendered?.toLowerCase().includes(term)
-  )
-);
+// Parent + Children
+const parent = page ? pages.find((p) => p.id === page.parent) : null;
+const children = page ? pages.filter((p) => p.parent === page.id) : [];
 
-// Helper: Umlaute & Entities fixen
-function fix(str = "") {
-  if (!str) return "";
-  let s = String(str);
-
-  const entityMap = {
-    "&auml;": "ä",
-    "&ouml;": "ö",
-    "&uuml;": "ü",
-    "&Auml;": "Ä",
-    "&Ouml;": "Ö",
-    "&Uuml;": "Ü",
-    "&szlig;": "ß",
-    "&quot;": '"',
-    "&amp;": "&",
-    "&lt;": "<",
-    "&gt;": ">",
-    "&nbsp;": " ",
-  };
-
-  s = s.replace(
-    /&(auml|ouml|uuml|Auml|Ouml|Uuml|szlig|quot|amp|lt|gt|nbsp);/g,
-    (match) => entityMap[match] ?? match
-  );
-
-  s = s.replace(/&#(\d+);/g, (_, dec) =>
-    String.fromCharCode(parseInt(dec, 10))
-  );
-  s = s.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
-    String.fromCharCode(parseInt(hex, 16))
-  );
-
-  return s;
-}
-
-function getFirstImage(html = "") {
-  const match = html.match(/<img[^>]+src="([^">]+)"/i);
-  return match ? match[1] : null;
-}
+// Footer Seiten
+const footerPages = pages.filter((p) => {
+  const t = p.title?.rendered?.toLowerCase() || "";
+  return t.includes("impressum") || t.includes("datenschutz");
+});
 ---
 
-<html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
+<BaseLayout title={fix(page?.title?.rendered || "LSD Berlin")}>
+  <div class="grid-layout">
+    <Sidebar
+      pages={sortedMainPages}
+      activeSlug={slug}
+      footerPages={footerPages}
     />
-    <title>{fix(page?.title?.rendered || "LSD Berlin")}</title>
-  </head>
 
-  <body class={`slug-${slug}`}>
-    <div class="grid-layout">
-      <Sidebar pages={sortedMainPages} activeSlug={slug} />
-
-      <main class="content-area">
-        <div class="content">
+    <main class="content-area">
+      <div class="content">
+        <!-- DETAIL WRAPPER: macht X bündig mit dem Bild -->
+        <div class="detail-wrapper">
           {
-            parentPage && (
-              <a href={`/${parentPage.slug}`} class="close-btn">
+            page ? (
+              <div
+                class="detail-content"
+                set:html={fix(page.content?.rendered || "")}
+              />
+            ) : (
+              <p>(Seite nicht gefunden)</p>
+            )
+          }
+
+          {
+            parent && (
+              <a href={`/${parent.slug}`} class="detail-close">
                 ×
               </a>
             )
           }
-
-          <div set:html={fix(page?.content?.rendered || "")} />
-
-          {
-            childPages.length > 0 && (
-              <div class="subpages">
-                {childPages.map((child) => {
-                  const img = getFirstImage(child.content?.rendered || "");
-                  return (
-                    <a href={`/${child.slug}`} class="subpage">
-                      {img && (
-                        <img src={img} alt={fix(child.title?.rendered || "")} />
-                      )}
-                    </a>
-                  );
-                })}
-              </div>
-            )
-          }
         </div>
-      </main>
-    </div>
 
-    <Footer footerPages={footerPages} />
-  </body>
-</html>
+        <!-- UNTERSEITEN -->
+        {
+          children.length > 0 && (
+            <div class="subpages">
+              {children.map((c) => {
+                const img = getFirstImage(c.content?.rendered || "");
+                return (
+                  <a href={`/${c.slug}`} class="subpage">
+                    {img && (
+                      <img src={img} alt={fix(c.title?.rendered || "")} />
+                    )}
+                  </a>
+                );
+              })}
+            </div>
+          )
+        }
+      </div>
+    </main>
+  </div>
+
+  <Footer slot="footer" footerPages={footerPages} />
+</BaseLayout>
