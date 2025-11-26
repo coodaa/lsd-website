@@ -3,5 +3,7 @@ import vercel from "@astrojs/vercel";
 
 export default defineConfig({
   output: "server",
-  adapter: vercel({ edge: false }), // explicit server mode
+  adapter: vercel({
+    runtime: "edge", // modern, stabil, kein entry.mjs
+  }),
 });
