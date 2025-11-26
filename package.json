@@ -2,6 +2,9 @@
   "name": "lsd-website",
   "type": "module",
   "version": "0.0.1",
+  "engines": {
+    "node": "22"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -10,13 +13,11 @@
     "deploy": "node scripts/deploy.js"
   },
   "dependencies": {
-    "@astrojs/node": "^9.5.0",
     "@astrojs/vercel": "^9.0.1",
     "astro": "^5.15.5"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.5",
-    "ftp-deploy": "^2.4.7",
     "typescript": "^5.9.3"
   }
 }
