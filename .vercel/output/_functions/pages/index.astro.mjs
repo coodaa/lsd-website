@@ -1,5 +1,6 @@
-import { e as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead, u as unescapeHTML, h as addAttribute } from '../chunks/astro/server_fE--pbN8.mjs';
-import { f as fix, $ as $$BaseLayout, a as $$Footer, b as $$Sidebar, g as getFirstImage } from '../chunks/Footer_BVevSA5b.mjs';
+import { e as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead, u as unescapeHTML, h as addAttribute } from '../chunks/astro/server_Di-6DRhC.mjs';
+import 'piccolore';
+import { f as fix, $ as $$BaseLayout, a as $$Footer, b as $$Sidebar, g as getFirstImage } from '../chunks/Footer_Brj0C3yC.mjs';
 export { renderers } from '../renderers.mjs';
 
 const $$Index = createComponent(async ($$result, $$props, $$slots) => {

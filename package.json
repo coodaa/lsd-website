@@ -13,7 +13,7 @@
     "deploy": "node scripts/deploy.js"
   },
   "dependencies": {
-    "@astrojs/vercel": "^9.0.1",
+    "@astrojs/vercel": "^9.0.2",
     "astro": "^5.15.5"
   },
   "devDependencies": {
