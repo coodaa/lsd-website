@@ -1,22 +1,58 @@
 ---
 import "../styles/global.css";
+
 const { pages = [], activeSlug } = Astro.props;
 
-let filteredPages = pages
-  .filter((p) => p.parent === 0)
-  .sort((a, b) => (a.menu_order ?? 0) - (b.menu_order ?? 0));
+// Wir vertrauen der Reihenfolge von `pages` (Kontakt etc. schon sortiert)
+let filteredPages = pages.filter((p) => p.parent === 0);
 
-const footerPages = filteredPages.filter(
-  (p) =>
-    p.title.rendered.toLowerCase().includes("impressum") ||
-    p.title.rendered.toLowerCase().includes("datenschutz")
+// Footer-Seiten aus der Sidebar-Quelle bestimmen
+const footerPages = filteredPages.filter((p) =>
+  ["impressum", "datenschutz"].some((term) =>
+    p.title?.rendered?.toLowerCase().includes(term)
+  )
 );
 
+// Diese Seiten NICHT im Hauptmenü anzeigen
 filteredPages = filteredPages.filter((p) => !footerPages.includes(p));
+
+function fix(str = "") {
+  if (!str) return "";
+  let s = String(str);
+
+  const entityMap = {
+    "&auml;": "ä",
+    "&ouml;": "ö",
+    "&uuml;": "ü",
+    "&Auml;": "Ä",
+    "&Ouml;": "Ö",
+    "&Uuml;": "Ü",
+    "&szlig;": "ß",
+    "&quot;": '"',
+    "&amp;": "&",
+    "&lt;": "<",
+    "&gt;": ">",
+    "&nbsp;": " ",
+  };
+
+  s = s.replace(
+    /&(auml|ouml|uuml|Auml|Ouml|Uuml|szlig|quot|amp|lt|gt|nbsp);/g,
+    (match) => entityMap[match] ?? match
+  );
+
+  s = s.replace(/&#(\d+);/g, (_, dec) =>
+    String.fromCharCode(parseInt(dec, 10))
+  );
+  s = s.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
+    String.fromCharCode(parseInt(hex, 16))
+  );
+
+  return s;
+}
 ---
 
 <aside class="sidebar">
-  <button class="menu-toggle" id="menuToggle" aria-label="Menü öffnen">
+  <button class="menu-toggle" id="menuToggle" aria-label="Menü öffnen/schließen">
     <span class="menu-label">
       <span class="menu-text">Menü</span>
       <span class="menu-close">X</span>
@@ -27,8 +63,8 @@ filteredPages = filteredPages.filter((p) => !footerPages.includes(p));
     {
       filteredPages.map((p) => (
         <li class={p.slug === activeSlug ? "active" : ""}>
-          <a href={`/${p.slug}`} class={p.slug === activeSlug ? "active" : ""}>
-            <span set:html={p.title.rendered} />
+          <a href={`/${p.slug}`}>
+            {fix(p.title?.rendered || "")}
           </a>
         </li>
       ))
@@ -38,9 +74,7 @@ filteredPages = filteredPages.filter((p) => !footerPages.includes(p));
       {
         footerPages.map((p, i) => (
           <>
-            <a href={`/${p.slug}`}>
-              <span set:html={p.title.rendered} />
-            </a>
+            <a href={`/${p.slug}`}>{fix(p.title?.rendered || "")}</a>
             {i < footerPages.length - 1 && <span class="dot">·</span>}
           </>
         ))
@@ -48,33 +82,20 @@ filteredPages = filteredPages.filter((p) => !footerPages.includes(p));
     </div>
   </ul>
 
-  <div class="sidebar-footer" id="sidebarFooter">
-    {
-      footerPages.map((p, i) => (
-        <>
-          <a href={`/${p.slug}`}>
-            <span set:html={p.title.rendered} />
-          </a>
-          {i < footerPages.length - 1 && <span class="dot">·</span>}
-        </>
-      ))
-    }
-  </div>
-
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const btn = document.getElementById("menuToggle");
       const list = document.getElementById("menuList");
       const body = document.body;
 
-      if (btn && list) {
-        btn.addEventListener("click", () => {
-          const isOpen = list.classList.toggle("open");
-          btn.classList.toggle("open", isOpen);
-          body.style.overflow = isOpen ? "hidden" : "";
-          body.style.height = isOpen ? "100vh" : "";
-        });
-      }
+      if (!btn || !list) return;
+
+      btn.addEventListener("click", () => {
+        const isOpen = list.classList.toggle("open");
+        btn.classList.toggle("open", isOpen);
+        body.style.overflow = isOpen ? "hidden" : "";
+        body.style.height = isOpen ? "100vh" : "";
+      });
     });
   </script>
 </aside>

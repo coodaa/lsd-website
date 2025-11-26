@@ -1,10 +1,10 @@
-/* -------------------------------------
-   🎨 Courier Prime – Full Latin Support
-   → FIX: nutzt WOFF statt WOFF2 (vollständige Latin-Range)
--------------------------------------- */
+/* ---------------------------
+   COURIER PRIME – Fonts
+---------------------------- */
 @font-face {
   font-family: "Courier Prime";
-  src: url("/fonts/CourierPrime-Regular.woff") format("woff");
+  src: url("/fonts/CourierPrime-Regular.woff2") format("woff2"),
+       url("/fonts/CourierPrime-Regular.woff") format("woff");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -12,7 +12,8 @@
 
 @font-face {
   font-family: "Courier Prime";
-  src: url("/fonts/CourierPrime-Italic.woff") format("woff");
+  src: url("/fonts/CourierPrime-Italic.woff2") format("woff2"),
+       url("/fonts/CourierPrime-Italic.woff") format("woff");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -20,7 +21,8 @@
 
 @font-face {
   font-family: "Courier Prime";
-  src: url("/fonts/CourierPrime-Bold.woff") format("woff");
+  src: url("/fonts/CourierPrime-Bold.woff2") format("woff2"),
+       url("/fonts/CourierPrime-Bold.woff") format("woff");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -28,43 +30,56 @@
 
 @font-face {
   font-family: "Courier Prime";
-  src: url("/fonts/CourierPrime-BoldItalic.woff") format("woff");
+  src: url("/fonts/CourierPrime-BoldItalic.woff2") format("woff2"),
+       url("/fonts/CourierPrime-BoldItalic.woff") format("woff");
   font-weight: 700;
   font-style: italic;
   font-display: swap;
 }
 
-
 /* -------------------------------------
-   Base + Dynamische Schriftgröße
+   Base
 -------------------------------------- */
-html, body {
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
   background: #fff;
   color: #000;
   font-family: "Courier Prime", monospace;
-
-  /* 🔥 Dynamische Schriftgröße:
-     min 16px – optimal – max 22px */
-  font-size: clamp(16px, 1.7vw, 22px);
-
+  font-size: clamp(16px, 1.8vw, 24px);
   line-height: 1.45;
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
 
+ul,
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
 
 /* -------------------------------------
-   Layout – Mobile First
+   Mobile first Layout
 -------------------------------------- */
 .grid-layout {
   display: flex;
   flex-direction: column;
+  gap: 2rem;
   padding: 1rem;
+  width: 100%;
 }
-
-
 
 /* -------------------------------------
    Sidebar (mobile)
@@ -72,28 +87,21 @@ html, body {
 .sidebar {
   width: 100%;
   padding-bottom: 2rem;
+  font-size: clamp(16px, 1.4vw, 22px);
 }
 
 #menuList {
   list-style-type: square;
   list-style-position: inside;
-  padding-left: 1rem;
 }
 
 #menuList li {
-  margin: 1.2rem 0;
+  margin: .8rem 0;
 }
 
-#menuList a {
-  color: black;
-  text-decoration: none;
-}
-
-#menuList a.active {
+#menuList li.active > a {
   text-decoration: underline;
 }
-
-
 
 /* -------------------------------------
    Mobile Menü Button
@@ -103,18 +111,17 @@ html, body {
   background: none;
   border: none;
   cursor: pointer;
-  color: black;
   padding: 0.5rem 1rem;
   position: fixed;
   top: 1rem;
   right: 1rem;
-  z-index: 1000;
-  font-size: inherit;
+  z-index: 2000;
 }
 
 .menu-label {
   width: 3.5rem;
   position: relative;
+  display: inline-block;
 }
 
 .menu-text,
@@ -122,15 +129,20 @@ html, body {
   position: absolute;
   width: 100%;
   text-align: right;
-  transition: opacity .2s ease;
+  transition: opacity 0.2s ease;
 }
 
-.menu-close { opacity: 0; }
+.menu-close {
+  opacity: 0;
+}
 
-.menu-toggle.open .menu-text { opacity: 0; }
-.menu-toggle.open .menu-close { opacity: 1; }
+.menu-toggle.open .menu-text {
+  opacity: 0;
+}
 
-
+.menu-toggle.open .menu-close {
+  opacity: 1;
+}
 
 /* -------------------------------------
    Mobile Overlay Menü
@@ -145,9 +157,9 @@ html, body {
     position: fixed;
     inset: 0;
     background: white;
-    padding: 4rem 2rem;
+    padding: 4rem 2rem 6rem;
     overflow-y: auto;
-    z-index: 999;
+    z-index: 1500;
   }
 
   #menuList.open {
@@ -155,86 +167,104 @@ html, body {
     flex-direction: column;
   }
 
-  .sidebar-footer {
-    display: none;
+  .mobile-footer {
+    margin-top: 3rem;
+    font-size: 0.9em;
+  }
+
+  .mobile-footer .dot {
+    margin: 0 0.3rem;
   }
 }
-
-
 
 /* -------------------------------------
    Content
 -------------------------------------- */
 .content-area {
   width: 100%;
-  max-width: 900px;
   margin: 0 auto;
 }
 
 .content {
-  width: 85%;
+  width: 70%;
   margin: 0 auto;
+  text-align: left;
 }
 
-
-
-/* -------------------------------------
-   WordPress Content
--------------------------------------- */
-.content p {
-  margin: 0 0 0.8rem;
-}
-
-.content ul,
-.content ol {
-  padding-left: 1.5rem;
-  margin: 1rem 0;
-}
-
-.content img,
-.content video {
-  width: 100%;
-  height: auto;
+.content img {
   display: block;
-  margin: 1rem auto;
-  object-fit: cover;
+  width: 70%;
+  height: auto;
+  margin: -1rem auto;
 }
 
+/* Subpages */
+.subpages {
+  display: grid;
+  grid-template-columns: 1fr !important;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
 
+.subpage h2 {
+  margin-top: 0.5rem;
+  font-size: 1em;
+}
+
+/* Close Button */
+.close-btn {
+  display: inline-block;
+  font-size: 1.5em;
+  margin-bottom: 1rem;
+}
 
 /* -------------------------------------
-   Desktop (1201px+)
+   Desktop Footer
 -------------------------------------- */
+.desktop-footer {
+  width: 100%;
+  padding: 4rem 2rem;
+  max-width: 1400px;
+  margin: 4rem auto 0 auto;
+  font-family: "Courier Prime", monospace;
+  font-size: clamp(16px, 1.4vw, 24px);
+}
+
+.desktop-footer .dot {
+  margin: 0 0.4rem;
+}
 @media (min-width: 1201px) {
 
-  /* perfekt zentriert → Sidebar links, Content rechts */
   .grid-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* echte Mitte */
-    padding: 4rem 10vw;
-    column-gap: 6rem;
-    align-items: flex-start;
+    grid-template-columns: 300px minmax(0, 1fr);
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 4rem 0;
+
+    /* Content weiter nach rechts */
+    column-gap: 300px;
+    position: relative;
   }
 
-  /* Sidebar exakt mittig ausgerichtet */
   .sidebar {
-    position: sticky;
+    width: 300px;
+    position: fixed;
     top: 4rem;
-    width: 240px;
-    justify-self: end; /* schiebt Sidebar an die Mitte */
+    left: calc(50% - 420px); /* unverändert */
   }
 
-  /* Content */
   .content-area {
-    justify-self: start; /* rechter Bereich beginnt exakt an der Mitte */
+    grid-column: 2;
+    max-width: 900px;
   }
-}
 
+  .content {
+    width: 75%;
+    margin: 0;
+  }
 
-
-/* -------------------------------------
-   Small Phones
--------------------------------------- */
-@media (max-width: 600px) {
-  .content { width: 94%; }
+  .mobile-footer {
+    display: none !important;
+  }
 }

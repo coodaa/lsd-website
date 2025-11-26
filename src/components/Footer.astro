@@ -1,0 +1,48 @@
+---
+const { footerPages = [] } = Astro.props;
+
+function fix(str = "") {
+  if (!str) return "";
+  let s = String(str);
+
+  const entityMap = {
+    "&auml;": "ä",
+    "&ouml;": "ö",
+    "&uuml;": "ü",
+    "&Auml;": "Ä",
+    "&Ouml;": "Ö",
+    "&Uuml;": "Ü",
+    "&szlig;": "ß",
+    "&quot;": '"',
+    "&amp;": "&",
+    "&lt;": "<",
+    "&gt;": ">",
+    "&nbsp;": " ",
+  };
+
+  s = s.replace(
+    /&(auml|ouml|uuml|Auml|Ouml|Uuml|szlig|quot|amp|lt|gt|nbsp);/g,
+    (match) => entityMap[match] ?? match
+  );
+
+  s = s.replace(/&#(\d+);/g, (_, dec) =>
+    String.fromCharCode(parseInt(dec, 10))
+  );
+  s = s.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
+    String.fromCharCode(parseInt(hex, 16))
+  );
+
+  return s;
+}
+---
+
+<footer class="desktop-footer">
+  {
+    footerPages.map((p, i) => (
+      <>
+        <a href={`/${p.slug}`}>{fix(p.title?.rendered || "")}</a>
+        {i < footerPages.length - 1 && <span class="dot">·</span>}
+      </>
+    ))
+  }
+</footer>
