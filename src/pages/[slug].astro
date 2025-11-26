@@ -22,7 +22,13 @@ const pages = await allRes.json();
 const mainPages = pages.filter((p) => p.parent === 0);
 
 // Kontakt ans Ende schieben
-let sortedMainPages = [...mainPages];
+// Hauptnavigation bereinigen (KEIN Impressum, KEIN Datenschutz)
+let sortedMainPages = mainPages.filter((p) => {
+  const t = p.title?.rendered?.toLowerCase() || "";
+  return !t.includes("impressum") && !t.includes("datenschutz");
+});
+
+// "Kontakt" ans Ende schieben
 const kontaktIndex = sortedMainPages.findIndex((p) => p.slug === "kontakt");
 if (kontaktIndex > -1) {
   const [kontakt] = sortedMainPages.splice(kontaktIndex, 1);

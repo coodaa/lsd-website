@@ -3,20 +3,46 @@ const { pages = [], activeSlug, footerPages = [] } = Astro.props;
 ---
 
 <aside class="sidebar">
-  <ul id="menuList">
-    {pages.map((p) => (
-      <li class={p.slug === activeSlug ? "active" : ""}>
-        <a href={`/${p.slug}`}>{p.title.rendered}</a>
-      </li>
-    ))}
-  </ul>
+  <!-- Mobile Menu Toggle -->
+  <button class="menu-toggle" id="menuToggle">
+    <span class="menu-text">Menu</span>
+    <span class="menu-close">×</span>
+  </button>
 
-  <div class="mobile-footer">
-    {footerPages.map((p, i) => (
-      <>
-        <a href={`/${p.slug}`}>{p.title.rendered}</a>
-        {i < footerPages.length - 1 && <span class="dot">·</span>}
-      </>
-    ))}
-  </div>
+  <!-- Hauptmenü -->
+  <ul id="menuList">
+    {
+      pages.map((p) => (
+        <li class={p.slug === activeSlug ? "active" : ""}>
+          <a href={`/${p.slug}`}>{p.title?.rendered}</a>
+        </li>
+      ))
+    }
+
+    <!-- Footer-Links: werden mobil NUR im offenen Menü angezeigt -->
+    <li class="mobile-footer-links">
+      {
+        footerPages.map((p, i) => (
+          <>
+            <a class="footer-link" href={`/${p.slug}`}>
+              {p.title.rendered}
+            </a>
+            {i < footerPages.length - 1 && <span class="dot">·</span>}
+          </>
+        ))
+      }
+    </li>
+  </ul>
 </aside>
+
+<script>
+  const toggle = document.getElementById("menuToggle");
+  const list = document.getElementById("menuList");
+
+  toggle?.addEventListener("click", () => {
+    toggle.classList.toggle("open");
+    list.classList.toggle("open");
+  });
+</script>
+
+

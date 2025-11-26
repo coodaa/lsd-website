@@ -22,11 +22,17 @@ const home = mainPages[0] ?? pages[0];
 const children = pages.filter((p) => p.parent === home?.id);
 
 // Navigation sortieren: "Kontakt" ans Ende
-let sortedMainPages = [...mainPages];
+// Hauptnavigation bereinigen (KEIN Impressum, KEIN Datenschutz)
+let sortedMainPages = mainPages.filter((p) => {
+  const t = p.title?.rendered?.toLowerCase() || "";
+  return !t.includes("impressum") && !t.includes("datenschutz");
+});
+
+// "Kontakt" ans Ende schieben
 const kontaktIndex = sortedMainPages.findIndex((p) => p.slug === "kontakt");
 if (kontaktIndex > -1) {
-  const [kontaktPage] = sortedMainPages.splice(kontaktIndex, 1);
-  sortedMainPages.push(kontaktPage);
+  const [kontakt] = sortedMainPages.splice(kontaktIndex, 1);
+  sortedMainPages.push(kontakt);
 }
 
 // Footer-Seiten global (Impressum / Datenschutz)
