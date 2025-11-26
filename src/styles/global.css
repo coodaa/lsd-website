@@ -1,9 +1,10 @@
 /* -------------------------------------
-   🎨 Courier Prime – Full Latin Support (WOFF2)
+   🎨 Courier Prime – Full Latin Support
+   → FIX: nutzt WOFF statt WOFF2 (vollständige Latin-Range)
 -------------------------------------- */
 @font-face {
   font-family: "Courier Prime";
-  src: url("/fonts/CourierPrime-Regular.woff2") format("woff2");
+  src: url("/fonts/CourierPrime-Regular.woff") format("woff");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -11,7 +12,7 @@
 
 @font-face {
   font-family: "Courier Prime";
-  src: url("/fonts/CourierPrime-Italic.woff2") format("woff2");
+  src: url("/fonts/CourierPrime-Italic.woff") format("woff");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -19,7 +20,7 @@
 
 @font-face {
   font-family: "Courier Prime";
-  src: url("/fonts/CourierPrime-Bold.woff2") format("woff2");
+  src: url("/fonts/CourierPrime-Bold.woff") format("woff");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -27,435 +28,56 @@
 
 @font-face {
   font-family: "Courier Prime";
-  src: url("/fonts/CourierPrime-BoldItalic.woff2") format("woff2");
+  src: url("/fonts/CourierPrime-BoldItalic.woff") format("woff");
   font-weight: 700;
   font-style: italic;
   font-display: swap;
 }
+
 
 /* -------------------------------------
-   🧱 Grundlayout + Fallback
+   Base + Dynamische Schriftgröße
 -------------------------------------- */
-body {
+html, body {
   margin: 0;
+  padding: 0;
+  overflow-x: hidden;
   background: #fff;
   color: #000;
-  font-family: "Courier Prime", Courier, monospace, sans-serif;
+  font-family: "Courier Prime", monospace;
+
+  /* 🔥 Dynamische Schriftgröße:
+     min 16px – optimal – max 22px */
+  font-size: clamp(16px, 1.7vw, 22px);
+
+  line-height: 1.45;
 }
 
-html,
-body {
-  overflow-x: hidden;
-}
 
-ul,
-li {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
 
 /* -------------------------------------
-   📱 Mobile Grundlayout
+   Layout – Mobile First
 -------------------------------------- */
 .grid-layout {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  padding: 1rem 0.5rem;
+  padding: 1rem;
 }
 
+
+
+/* -------------------------------------
+   Sidebar (mobile)
+-------------------------------------- */
 .sidebar {
   width: 100%;
-  margin-bottom: 2rem;
+  padding-bottom: 2rem;
 }
 
-.sidebar ul {
-  list-style-type: disc;
+#menuList {
+  list-style-type: square;
   list-style-position: inside;
   padding-left: 1rem;
-}
-
-.sidebar li {
-  margin-bottom: 1.2rem;
-  font-size: 1.25rem;
-  line-height: 1.6;
-}
-
-.sidebar a {
-  color: black;
-  text-decoration: none;
-}
-
-.sidebar li.active a {
-  text-decoration: underline;
-}
-
-.content-area {
-  max-width: 900px;
-  width: 100%;
-  margin: 0 auto;
-}
-
-.content {
-  width: 85%;
-  margin: 0 auto;
-  text-align: left;
-}
-
-/* -------------------------------------
-   📝 WordPress Content
--------------------------------------- */
-.content p,
-.content .wp-block-paragraph {
-  line-height: 1.4 !important;
-  margin: 0 0 0.8rem 0 !important;
-}
-
-.content p.wp-empty,
-.content p:has(> br:only-child) {
-  all: unset;
-  display: block;
-  height: 0.6rem !important;
-  margin: 0 !important;
-  color: transparent !important;
-}
-
-.content ul,
-.content ol {
-  padding-left: 1.5rem;
-  margin: 1rem 0;
-}
-
-.content li {
-  margin-bottom: 0.4rem;
-  line-height: 1.4;
-}
-
-.content img,
-.content video {
-  width: 85%;
-  max-width: 85%;
-  height: auto;
-  margin: 0.8rem auto 1.2rem auto;
-  display: block;
-  object-fit: cover;
-}
-
-/* Spezielle statische Seiten */
-body.slug-impressum .content figure:first-of-type::after,
-body.slug-datenschutz .content figure:first-of-type::after,
-body.slug-kontakt .content figure:first-of-type::after {
-  content: none;
-}
-
-/* -------------------------------------
-   💻 Desktop 1201px+
--------------------------------------- */
-@media (min-width: 1201px) {
-  .grid-layout {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 6rem;
-    padding: 4rem 12rem 4rem 19rem;
-  }
-
-  .sidebar {
-    position: sticky;
-    top: 4rem;
-    height: fit-content;
-  }
-
-  .content-area {
-    overflow-y: auto;
-    transform: translateX(7rem);
-    max-height: calc(100vh - 8rem);
-  }
-
-  .content {
-    width: 85%;
-  }
-
-  .content img {
-    object-fit: contain;
-    object-position: left center;
-    margin-left: 0;
-    transform: translateX(-3rem);
-  }
-}
-
-/* -------------------------------------
-   🧩 Sidebar Menü-Liste
--------------------------------------- */
-.sidebar ul#menuList {
-  list-style-type: square !important;
-  list-style-position: outside !important;
-  padding-left: 2.5rem !important;
-}
-
-.sidebar ul#menuList li {
-  list-style-type: square !important;
-}
-
-/* -------------------------------------
-   iPad Fix (901–1200px)
--------------------------------------- */
-@media (max-width: 1200px) and (min-width: 901px) {
-  .grid-layout {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 3rem;
-    padding: 3rem 5rem;
-  }
-
-  .sidebar {
-    top: 3rem;
-  }
-
-  .content {
-    width: 90%;
-  }
-
-  .content img:first-of-type {
-    width: 90%;
-    max-width: 700px;
-    margin: 0 auto 2rem auto !important;
-    transform: none !important;
-  }
-}
-
-/* -------------------------------------
-   📱 Mobile ≤900px
--------------------------------------- */
-@media (max-width: 900px) {
-  .grid-layout {
-    padding: 1.5rem 1rem;
-  }
-
-  .content {
-    width: 92%;
-  }
-
-  .sidebar {
-    margin-bottom: 2rem;
-  }
-
-  .content img {
-    width: 92%;
-  }
-}
-
-/* -------------------------------------
-   📱 Small phones ≤600px
--------------------------------------- */
-@media (max-width: 600px) {
-  .content {
-    width: 94%;
-  }
-
-  .content img {
-    width: 94%;
-  }
-}
-
-/* -------------------------------------
-   📄 Statische Seiten
--------------------------------------- */
-.close-btn {
-  position: fixed;
-  top: 1.2rem;
-  right: 2rem;
-  font-size: 1.6rem;
-  color: black;
-  z-index: 10000;
-  text-decoration: none;
-}
-
-/* Unterseiten */
-.subpages {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-top: 3rem;
-  align-items: center;
-}
-
-.subpage img {
-  width: 85%;
-}
-
-.subpage h2 {
-  width: 85%;
-  font-size: 1.2rem;
-}
-
-/* Animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInX {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* -------------------------------------
-   🧩 SIDEBAR + MENÜ (Desktop & Mobile)
--------------------------------------- */
-.sidebar {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  width: 240px;
-  padding: 0 0 2rem 1rem;
-  display: flex;
-  flex-direction: column;
-  z-index: 100;
-}
-
-.sidebar-footer {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-#menuList {
-  margin-top: 2rem;
-  list-style-type: square;
-  list-style-position: inside;
-}
-
-/* -------------------------------------
-   Mobile Menü Button
--------------------------------------- */
-.menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  color: black;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  z-index: 10001;
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-}
-
-.menu-label {
-  position: relative;
-  width: 3.5rem;
-}
-
-.menu-text,
-.menu-close {
-  position: absolute;
-  width: 100%;
-  text-align: right;
-  transition: opacity 0.2s ease;
-}
-
-.menu-close {
-  opacity: 0;
-}
-
-.menu-toggle.open .menu-text {
-  opacity: 0;
-}
-
-.menu-toggle.open .menu-close {
-  opacity: 1;
-}
-
-/* -------------------------------------
-   Mobile Menü Overlay
--------------------------------------- */
-@media (max-width: 1200px) {
-  .sidebar {
-    width: 100%;
-    height: auto;
-    padding: 1rem;
-  }
-
-  .menu-toggle {
-    display: flex;
-  }
-
-  #menuList {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: white;
-    padding: 4rem 2rem 5rem;
-    overflow-y: auto;
-    z-index: 9999 !important;
-  }
-
-  #menuList.open {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .mobile-footer {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 2rem;
-    font-size: 0.9rem;
-  }
-
-  #menuList:not(.open) .mobile-footer {
-    display: none;
-  }
-
-  .sidebar-footer {
-    display: none !important;
-  }
-}
-
-/* Desktop: mobile Footer ausblenden */
-@media (min-width: 1201px) {
-  .mobile-footer {
-    display: none !important;
-  }
-}
-
-
-/* ------------------------- */
-/* Sidebar – Layout + Fonts  */
-/* ------------------------- */
-
-.sidebar {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  width: 240px;
-  padding: 0 0 2rem 1rem;
-  display: flex;
-  flex-direction: column;
-  z-index: 100;
-  font-family: "Courier Prime", monospace;
-  font-size: 1.2rem;       /* 👈 Auftraggeber-Vorgabe */
-  line-height: 1.4;
-}
-
-/* Menü-Liste */
-#menuList {
-  margin-top: 2rem;
-  list-style-type: square;
-  list-style-position: inside;
 }
 
 #menuList li {
@@ -471,13 +93,7 @@ body.slug-kontakt .content figure:first-of-type::after {
   text-decoration: underline;
 }
 
-/* Desktop Footer */
-.sidebar-footer {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
+
 
 /* -------------------------------------
    Mobile Menü Button
@@ -486,20 +102,19 @@ body.slug-kontakt .content figure:first-of-type::after {
   display: none;
   background: none;
   border: none;
-  color: black;
   cursor: pointer;
+  color: black;
   padding: 0.5rem 1rem;
-  z-index: 10001;
   position: fixed;
   top: 1rem;
   right: 1rem;
-  font-family: "Courier Prime", monospace;
-  font-size: 1.2rem;   /* same size as menu */
+  z-index: 1000;
+  font-size: inherit;
 }
 
 .menu-label {
-  position: relative;
   width: 3.5rem;
+  position: relative;
 }
 
 .menu-text,
@@ -507,32 +122,22 @@ body.slug-kontakt .content figure:first-of-type::after {
   position: absolute;
   width: 100%;
   text-align: right;
-  transition: opacity 0.2s ease;
+  transition: opacity .2s ease;
 }
 
-.menu-close {
-  opacity: 0;
-}
+.menu-close { opacity: 0; }
 
-.menu-toggle.open .menu-text {
-  opacity: 0;
-}
-.menu-toggle.open .menu-close {
-  opacity: 1;
-}
+.menu-toggle.open .menu-text { opacity: 0; }
+.menu-toggle.open .menu-close { opacity: 1; }
+
+
 
 /* -------------------------------------
-   Mobile Menü Overlay
+   Mobile Overlay Menü
 -------------------------------------- */
 @media (max-width: 1200px) {
-  .sidebar {
-    width: 100%;
-    height: auto;
-    padding: 1rem;
-  }
-
   .menu-toggle {
-    display: flex;
+    display: block;
   }
 
   #menuList {
@@ -540,11 +145,9 @@ body.slug-kontakt .content figure:first-of-type::after {
     position: fixed;
     inset: 0;
     background: white;
-    padding: 4rem 2rem 5rem;
+    padding: 4rem 2rem;
     overflow-y: auto;
-    z-index: 9999 !important;
-    font-family: "Courier Prime", monospace;
-    font-size: 1.2rem;     /* mobile menu font */
+    z-index: 999;
   }
 
   #menuList.open {
@@ -552,25 +155,86 @@ body.slug-kontakt .content figure:first-of-type::after {
     flex-direction: column;
   }
 
-  .mobile-footer {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 2rem;
-    font-size: 1.2rem;
-  }
-
-  #menuList:not(.open) .mobile-footer {
+  .sidebar-footer {
     display: none;
   }
-
-  .sidebar-footer {
-    display: none !important;
-  }
 }
 
+
+
+/* -------------------------------------
+   Content
+-------------------------------------- */
+.content-area {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.content {
+  width: 85%;
+  margin: 0 auto;
+}
+
+
+
+/* -------------------------------------
+   WordPress Content
+-------------------------------------- */
+.content p {
+  margin: 0 0 0.8rem;
+}
+
+.content ul,
+.content ol {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.content img,
+.content video {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 1rem auto;
+  object-fit: cover;
+}
+
+
+
+/* -------------------------------------
+   Desktop (1201px+)
+-------------------------------------- */
 @media (min-width: 1201px) {
-  .mobile-footer {
-    display: none !important;
+
+  /* perfekt zentriert → Sidebar links, Content rechts */
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* echte Mitte */
+    padding: 4rem 10vw;
+    column-gap: 6rem;
+    align-items: flex-start;
+  }
+
+  /* Sidebar exakt mittig ausgerichtet */
+  .sidebar {
+    position: sticky;
+    top: 4rem;
+    width: 240px;
+    justify-self: end; /* schiebt Sidebar an die Mitte */
+  }
+
+  /* Content */
+  .content-area {
+    justify-self: start; /* rechter Bereich beginnt exakt an der Mitte */
   }
 }
 
+
+
+/* -------------------------------------
+   Small Phones
+-------------------------------------- */
+@media (max-width: 600px) {
+  .content { width: 94%; }
+}

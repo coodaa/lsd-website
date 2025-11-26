@@ -6,24 +6,19 @@ export const prerender = false;
 
 const baseUrl = import.meta.env.WP_API;
 
-// Alle Seiten
 const res = await fetch(
   `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
 );
 const pages = await res.json();
 
-// Erste Hauptseite
 const firstPage = pages.find((p) => p.parent === 0);
-
-// Unterseiten
 const childPages = pages.filter((p) => p.parent === firstPage?.id);
 
-// Menü sortieren
-let sortedPages = [...pages.filter((p) => p.parent === 0)];
-const indexKontakt = sortedPages.findIndex((p) => p.slug === "kontakt");
-if (indexKontakt > -1) {
-  const [kontaktPage] = sortedPages.splice(indexKontakt, 1);
-  sortedPages.push(kontaktPage);
+let sortedPages = pages.filter((p) => p.parent === 0);
+const idx = sortedPages.findIndex((p) => p.slug === "kontakt");
+if (idx > -1) {
+  const [item] = sortedPages.splice(idx, 1);
+  sortedPages.push(item);
 }
 
 function getFirstImage(html) {
@@ -33,35 +28,26 @@ function getFirstImage(html) {
 ---
 
 <html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{firstPage?.title?.rendered || "LSD Berlin"}</title>
-  </head>
-
-  <body class={`slug-${firstPage?.slug || "home"}`}>
+  <body class={`slug-${firstPage.slug}`}>
     <div class="grid-layout">
-      <Sidebar pages={sortedPages} activeSlug={firstPage?.slug} />
+      <Sidebar pages={sortedPages} activeSlug={firstPage.slug} />
 
       <main class="content-area">
         <div class="content">
-
-          <div set:html={firstPage?.content?.rendered} />
+          <div set:html={firstPage.content.rendered} />
 
           {childPages.length > 0 && (
             <div class="subpages">
-              {childPages.map((child) => {
-                const img = getFirstImage(child.content.rendered);
-                return (
-                  <a href={`/${child.slug}`} class="subpage">
-                    {img && <img src={img} alt={child.title.rendered} />}
-                    <h2 set:html={child.title.rendered} />
-                  </a>
-                );
-              })}
+              {childPages.map((child) => (
+                <a href={`/${child.slug}`} class="subpage">
+                  {getFirstImage(child.content.rendered) && (
+                    <img src={getFirstImage(child.content.rendered)} />
+                  )}
+                  <h2 set:html={child.title.rendered} />
+                </a>
+              ))}
             </div>
           )}
-
         </div>
       </main>
     </div>

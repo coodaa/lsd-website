@@ -2,28 +2,20 @@
 import "../styles/global.css";
 const { pages = [], activeSlug } = Astro.props;
 
-// 👉 Nur Hauptseiten (ohne Eltern) anzeigen
 let filteredPages = pages
   .filter((p) => p.parent === 0)
-  .sort((a, b) => {
-    const orderA = a.menu_order ?? 0;
-    const orderB = b.menu_order ?? 0;
-    return orderA - orderB;
-  });
+  .sort((a, b) => (a.menu_order ?? 0) - (b.menu_order ?? 0));
 
-// 👉 Impressum & Datenschutz nach unten verschieben
 const footerPages = filteredPages.filter(
   (p) =>
     p.title.rendered.toLowerCase().includes("impressum") ||
     p.title.rendered.toLowerCase().includes("datenschutz")
 );
 
-// Entferne sie aus der Hauptliste
 filteredPages = filteredPages.filter((p) => !footerPages.includes(p));
 ---
 
 <aside class="sidebar">
-  <!-- 🔘 Mobile Menü Button -->
   <button class="menu-toggle" id="menuToggle" aria-label="Menü öffnen">
     <span class="menu-label">
       <span class="menu-text">Menü</span>
@@ -31,51 +23,54 @@ filteredPages = filteredPages.filter((p) => !footerPages.includes(p));
     </span>
   </button>
 
-  <!-- 🔗 Hauptmenü -->
   <ul id="menuList">
-    {filteredPages.map((p) => (
-      <li class={p.slug === activeSlug ? "active" : ""}>
-        <a href={`/${p.slug}`} class={p.slug === activeSlug ? "active" : ""}>
-          {p.title.rendered}
-        </a>
-      </li>
-    ))}
+    {
+      filteredPages.map((p) => (
+        <li class={p.slug === activeSlug ? "active" : ""}>
+          <a href={`/${p.slug}`} class={p.slug === activeSlug ? "active" : ""}>
+            <span set:html={p.title.rendered} />
+          </a>
+        </li>
+      ))
+    }
 
-    <!-- 📱 Mobile Footer -->
     <div class="mobile-footer">
-      {footerPages.map((p, i) => (
-        <>
-          <a href={`/${p.slug}`}>{p.title.rendered}</a>
-          {i < footerPages.length - 1 && <span class="dot">·</span>}
-        </>
-      ))}
+      {
+        footerPages.map((p, i) => (
+          <>
+            <a href={`/${p.slug}`}>
+              <span set:html={p.title.rendered} />
+            </a>
+            {i < footerPages.length - 1 && <span class="dot">·</span>}
+          </>
+        ))
+      }
     </div>
   </ul>
 
-  <!-- 💻 Desktop Footer -->
   <div class="sidebar-footer" id="sidebarFooter">
-    {footerPages.map((p, i) => (
-      <>
-        <a href={`/${p.slug}`}>{p.title.rendered}</a>
-        {i < footerPages.length - 1 && <span class="dot">·</span>}
-      </>
-    ))}
+    {
+      footerPages.map((p, i) => (
+        <>
+          <a href={`/${p.slug}`}>
+            <span set:html={p.title.rendered} />
+          </a>
+          {i < footerPages.length - 1 && <span class="dot">·</span>}
+        </>
+      ))
+    }
   </div>
 
-  <!-- 🧠 Script für das mobile Menü -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const btn = document.getElementById("menuToggle");
       const list = document.getElementById("menuList");
       const body = document.body;
+
       if (btn && list) {
         btn.addEventListener("click", () => {
           const isOpen = list.classList.toggle("open");
           btn.classList.toggle("open", isOpen);
-          btn.setAttribute(
-            "aria-label",
-            isOpen ? "Menü schließen" : "Menü öffnen"
-          );
           body.style.overflow = isOpen ? "hidden" : "";
           body.style.height = isOpen ? "100vh" : "";
         });
