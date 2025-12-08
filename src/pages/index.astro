@@ -6,7 +6,7 @@ import { fix, getFirstImage } from "../components/utils/fix.js";
 
 const baseUrl = import.meta.env.WP_API;
 
-// alle Seiten laden
+// Seiten laden
 const res = await fetch(
   `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
 );
@@ -15,14 +15,14 @@ const pages = await res.json();
 // Hauptseiten
 const mainPages = pages.filter((p) => p.parent === 0);
 
-// erste Seite = Startseite
+// Startseite
 const home = mainPages[0] ?? pages[0];
 const homeSlug = home?.slug || "home";
 
-// Kindseiten der Startseite
+// Kinder der Startseite
 const children = pages.filter((p) => p.parent === home?.id);
 
-// Navigation sortieren (ohne Impressum/Datenschutz)
+// Navigation sortieren
 let sortedMainPages = mainPages.filter((p) => {
   const t = p.title?.rendered?.toLowerCase() || "";
   return !t.includes("impressum") && !t.includes("datenschutz");
@@ -35,14 +35,17 @@ if (kontaktIndex > -1) {
   sortedMainPages.push(kontakt);
 }
 
-// Footer-Seiten global
+// Footer
 const footerPages = pages.filter((p) => {
   const t = p.title?.rendered?.toLowerCase() || "";
   return t.includes("impressum") || t.includes("datenschutz");
 });
 ---
 
-<BaseLayout title={fix(home?.title?.rendered || "LSD Berlin")}>
+<BaseLayout
+  title={fix(home?.title?.rendered || "LSD Berlin")}
+  bodyClass="home-page"
+>
   <div class="grid-layout">
     <Sidebar
       pages={sortedMainPages}
