@@ -112,7 +112,7 @@ ul, li {
   max-width: 420px;
   height: auto;
   display: block;
-  margin: 1.5rem auto;
+  margin: .5rem auto;
 }
 
 /* -------------------------------------
@@ -120,8 +120,8 @@ ul, li {
 -------------------------------------- */
 .subpages {
   display: grid;
-  gap: 1.2rem;
-  margin-top: 2rem;
+  /* gap: 1.2rem; */
+  /* margin-top: 2rem; */
 }
 
 /* -------------------------------------
@@ -140,7 +140,7 @@ ul, li {
 .detail-close {
   position: absolute;
   top: .5em;
-  right: -40px;
+  right: 0px;
   font-family: inherit !important;
   font-size: inherit !important;
   cursor: pointer;
@@ -309,4 +309,46 @@ ul, li {
   .desktop-footer {
     display: none !important;
   }
+}
+
+
+/* ALLE WordPress-Überschriften und fetten Texte neutralisieren */
+.detail-content h1,
+.detail-content h2,
+.detail-content h3,
+.detail-content h4,
+.detail-content h5,
+.detail-content h6,
+.detail-content strong,
+.detail-content b {
+  font-weight: normal !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+  margin: 1em 0 !important;
+}
+
+/* Damit Überschriften sicher wie normaler Text aussehen */
+.detail-content h1,
+.detail-content h2,
+.detail-content h3,
+.detail-content h4,
+.detail-content h5,
+.detail-content h6 {
+  display: block !important;
+}
+
+/* WordPress-Empty-Paragraphs entfernen (wichtig für Impressum + Datenschutz) */
+.detail-content p.wp-empty,
+.detail-content p:empty,
+.detail-content p:has(br),
+.detail-content p:has(&nbsp;) {
+  display: none !important;
+}
+
+/* Listen auch neutral halten */
+.detail-content ul,
+.detail-content li {
+  font-size: inherit !important;
+  font-weight: normal !important;
+  line-height: inherit !important;
 }

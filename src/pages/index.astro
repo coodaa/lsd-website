@@ -64,7 +64,6 @@ const footerPages = pages.filter((p) => {
                     {img && (
                       <img src={img} alt={fix(c.title?.rendered || "")} />
                     )}
-                    <h2 set:html={fix(c.title?.rendered || "")} />
                   </a>
                 );
               })}
