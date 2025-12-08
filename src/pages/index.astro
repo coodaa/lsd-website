@@ -17,25 +17,25 @@ const mainPages = pages.filter((p) => p.parent === 0);
 
 // erste Seite = Startseite
 const home = mainPages[0] ?? pages[0];
+const homeSlug = home?.slug || "home";
 
 // Kindseiten der Startseite
 const children = pages.filter((p) => p.parent === home?.id);
 
-// Navigation sortieren: "Kontakt" ans Ende
-// Hauptnavigation bereinigen (KEIN Impressum, KEIN Datenschutz)
+// Navigation sortieren (ohne Impressum/Datenschutz)
 let sortedMainPages = mainPages.filter((p) => {
   const t = p.title?.rendered?.toLowerCase() || "";
   return !t.includes("impressum") && !t.includes("datenschutz");
 });
 
-// "Kontakt" ans Ende schieben
+// Kontakt ans Ende
 const kontaktIndex = sortedMainPages.findIndex((p) => p.slug === "kontakt");
 if (kontaktIndex > -1) {
   const [kontakt] = sortedMainPages.splice(kontaktIndex, 1);
   sortedMainPages.push(kontakt);
 }
 
-// Footer-Seiten global (Impressum / Datenschutz)
+// Footer-Seiten global
 const footerPages = pages.filter((p) => {
   const t = p.title?.rendered?.toLowerCase() || "";
   return t.includes("impressum") || t.includes("datenschutz");
@@ -46,7 +46,7 @@ const footerPages = pages.filter((p) => {
   <div class="grid-layout">
     <Sidebar
       pages={sortedMainPages}
-      activeSlug={home?.slug}
+      activeSlug={homeSlug}
       footerPages={footerPages}
     />
 

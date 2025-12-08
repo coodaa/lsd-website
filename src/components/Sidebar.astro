@@ -1,66 +1,43 @@
 ---
-const { pages = [], activeSlug, footerPages = [] } = Astro.props;
+import { fix } from "./utils/fix.js";
+const { pages = [], activeSlug = "", footerPages = [] } = Astro.props;
 ---
 
-<aside class="sidebar">
-  <!-- Mobile Menu Toggle -->
+<div class="sidebar">
+  <!-- Mobile Toggle -->
   <button class="menu-toggle" id="menuToggle">
-    <span class="menu-text">Menü</span>
-    <span class="menu-close">X</span>
+    <span class="menu-text">Menu</span>
+    <span class="menu-close">Close</span>
   </button>
 
-  <!-- Hauptmenü -->
-  <ul id="menuList">
-    {
-      pages.map((p) => (
-        <li class={p.slug === activeSlug ? "active" : ""}>
-          <a href={`/${p.slug}`}>{p.title?.rendered}</a>
+  <!-- Mobile + Desktop Menu -->
+  <nav id="menuList">
+    <ul>
+      {pages.map((p) => (
+        <li class={activeSlug && p.slug === activeSlug ? "active" : ""}>
+          <a href={`/${p.slug}`}>{fix(p.title?.rendered || "")}</a>
         </li>
-      ))
-    }
+      ))}
+    </ul>
 
-    <!-- Mobile Footer links: nur im offenen Menü sichtbar -->
-    <li class="mobile-footer-links">
-      {
-        footerPages.map((p, i) => (
-          <>
-            <a class="footer-link" href={`/${p.slug}`}>
-              {p.title.rendered}
-            </a>
-            {i < footerPages.length - 1 && <span class="dot">·</span>}
-          </>
-        ))
-      }
-    </li>
-  </ul>
-</aside>
+    <!-- MOBILE: Impressum + Datenschutz unten -->
+    <div class="mobile-footer-links">
+      {footerPages.map((p, i) => (
+        <>
+          <a href={`/${p.slug}`}>{fix(p.title?.rendered || "")}</a>
+          {i < footerPages.length - 1 && <span class="dot">·</span>}
+        </>
+      ))}
+    </div>
+  </nav>
+</div>
 
 <script>
   const toggle = document.getElementById("menuToggle");
-  const list = document.getElementById("menuList");
+  const menu = document.getElementById("menuList");
 
-  function lockScroll() {
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.width = "100%";
-  }
-
-  function unlockScroll() {
-    document.documentElement.style.overflow = "";
-    document.body.style.overflow = "";
-    document.body.style.position = "";
-    document.body.style.width = "";
-  }
-
-  toggle?.addEventListener("click", () => {
-    const open = list.classList.toggle("open");
+  toggle.addEventListener("click", () => {
     toggle.classList.toggle("open");
-
-    if (open) {
-      lockScroll();
-    } else {
-      unlockScroll();
-    }
+    menu.classList.toggle("open");
   });
 </script>

@@ -44,8 +44,12 @@ html, body {
   background: #fff;
   color: #000;
   font-family: "Courier Prime", monospace;
-  font-size: clamp(20px, 1.5vw, 28px); /* NEU – WIE FIGMA */
+  font-size: clamp(20px, 1.5vw, 28px);
   line-height: 2;
+}
+
+*, *::before, *::after {
+  font-family: "Courier Prime", monospace !important;
 }
 
 body {
@@ -93,6 +97,7 @@ ul, li {
 -------------------------------------- */
 .content-area {
   width: 100%;
+  margin-top: 2em;
 }
 
 .content {
@@ -142,14 +147,6 @@ ul, li {
   line-height: 1;
 }
 
-/* EINHEITLICHE SCHRIFTGRÖSSE — WP CONTENT */
-.detail-content,
-.detail-content * {
-  font-size: inherit !important;
-  line-height: inherit !important;
-  font-family: inherit !important;
-}
-
 /* -------------------------------------
    MOBILE MENU TOGGLE
 -------------------------------------- */
@@ -177,6 +174,8 @@ ul, li {
   width: 100%;
   text-align: right;
   transition: opacity 0.2s ease;
+  font-size: 1.7em;
+  font-weight: lighter;
 }
 
 .menu-close {
@@ -186,7 +185,6 @@ ul, li {
 .menu-toggle.open .menu-text {
   opacity: 0;
 }
-
 .menu-toggle.open .menu-close {
   opacity: 1;
 }
@@ -199,9 +197,10 @@ ul, li {
   position: fixed;
   inset: 0;
   background: white;
-  padding: 5rem 2rem 3rem;
+  padding: 5rem 2rem 6rem; /* unten Platz für Footer-Links */
   overflow-y: auto;
   z-index: 2000;
+  font-size: 1.1em;
 }
 
 #menuList.open {
@@ -211,15 +210,19 @@ ul, li {
 }
 
 /* -------------------------------------
-   MOBILE FOOTER LINKS
+   MOBILE FOOTER LINKS (KORREKT)
 -------------------------------------- */
 .mobile-footer-links {
   display: none;
   position: fixed;
-  bottom: 5rem;
-  right: 2rem;
+  bottom: 1.5rem;
+  left: 0;
+  right: 0;
+    margin-right: 1em;
+
   text-align: right;
   z-index: 2500;
+  font-size: .9em;
 }
 
 #menuList.open .mobile-footer-links {
@@ -280,26 +283,6 @@ ul, li {
   .mobile-footer-links {
     display: none !important;
   }
-
-
-
-   .detail-content img {
-    width: 300%;
-    /* max-width: 520px;      */
-    margin: 0rem -2em !important;  /* statt auto */
-    display: block;
-  }
-
-  /* Unterseiten-Bilder */
-  .subpages img {
-    width: 100%;
-    max-width: 460px;       /* 👉 sichtbar größer */
-    margin: 1.5rem 0;
-  }
-
-
-
-
 }
 
 @media (min-width: 1400px) {
@@ -319,4 +302,11 @@ ul, li {
 
 .desktop-footer .dot {
   margin: 0 0.4rem;
+}
+
+/* Footer mobil ausblenden */
+@media (max-width: 1200px) {
+  .desktop-footer {
+    display: none !important;
+  }
 }

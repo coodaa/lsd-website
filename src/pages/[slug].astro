@@ -12,30 +12,29 @@ const res = await fetch(`${baseUrl}/pages?slug=${slug}`);
 const data = await res.json();
 const page = data[0] ?? null;
 
-// alle Seiten (Navigation + Footer)
+// alle Seiten für Navigation + Footer
 const allRes = await fetch(
   `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
 );
 const pages = await allRes.json();
 
-// Hauptnavigation
+// Navigation
 const mainPages = pages.filter((p) => p.parent === 0);
 
-// Kontakt ans Ende schieben
-// Hauptnavigation bereinigen (KEIN Impressum, KEIN Datenschutz)
+// Navigation bereinigen
 let sortedMainPages = mainPages.filter((p) => {
   const t = p.title?.rendered?.toLowerCase() || "";
   return !t.includes("impressum") && !t.includes("datenschutz");
 });
 
-// "Kontakt" ans Ende schieben
+// Kontakt ans Ende
 const kontaktIndex = sortedMainPages.findIndex((p) => p.slug === "kontakt");
 if (kontaktIndex > -1) {
   const [kontakt] = sortedMainPages.splice(kontaktIndex, 1);
   sortedMainPages.push(kontakt);
 }
 
-// Parent + Children
+// Eltern- & Kindseiten
 const parent = page ? pages.find((p) => p.id === page.parent) : null;
 const children = page ? pages.filter((p) => p.parent === page.id) : [];
 
@@ -56,8 +55,8 @@ const footerPages = pages.filter((p) => {
 
     <main class="content-area">
       <div class="content">
-        <!-- DETAIL WRAPPER: macht X bündig mit dem Bild -->
         <div class="detail-wrapper">
+
           {
             page ? (
               <div
@@ -65,20 +64,17 @@ const footerPages = pages.filter((p) => {
                 set:html={fix(page.content?.rendered || "")}
               />
             ) : (
-              <p>(Seite nicht gefunden)</p>
+              <p>Seite nicht gefunden</p>
             )
           }
 
           {
             parent && (
-              <a href={`/${parent.slug}`} class="detail-close">
-                X
-              </a>
+              <a href={`/${parent.slug}`} class="detail-close">X</a>
             )
           }
         </div>
 
-        <!-- UNTERSEITEN -->
         {
           children.length > 0 && (
             <div class="subpages">
@@ -86,9 +82,7 @@ const footerPages = pages.filter((p) => {
                 const img = getFirstImage(c.content?.rendered || "");
                 return (
                   <a href={`/${c.slug}`} class="subpage">
-                    {img && (
-                      <img src={img} alt={fix(c.title?.rendered || "")} />
-                    )}
+                    {img && <img src={img} alt={fix(c.title?.rendered || "")} />}
                   </a>
                 );
               })}
