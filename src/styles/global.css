@@ -212,7 +212,6 @@ img {
 }
 
 .content {
-  width: 92%;
   margin: 0 auto;
   text-align: left;
 }
@@ -313,4 +312,42 @@ img {
 .detail-content a {
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+/* Mobile: Content-Spalte schmaler (auch Datenschutz & Impressum) */
+@media (max-width: 600px) {
+  .content {
+    max-width: clamp(90vw, 82vw, 360px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Bilder orientieren sich an der Content-Spalte */
+  .content img,
+  .subpages img,
+  .detail-content img {
+    max-width: clamp(90vw, 82vw, 360px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+
+/* Mobile: Content-Spalte schmaler (gilt für ALLE Seiten inkl. Slug/Unterseiten, Datenschutz, Impressum) */
+@media (max-width: 600px) {
+  .content {
+    width: 100%;
+    max-width: clamp(90vw, 82vw, 360px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Bilder immer innerhalb der Content-Spalte */
+  .content img,
+  .subpages img,
+  .detail-content img {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
