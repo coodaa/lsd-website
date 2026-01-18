@@ -35,7 +35,7 @@
 }
 
 /* -------------------------------------
-   BASE STYLES
+   BASE TYPOGRAPHY
 -------------------------------------- */
 html, body {
   margin: 0;
@@ -43,13 +43,14 @@ html, body {
   min-height: 100%;
   background: #fff;
   color: #000;
+
   font-family: "Courier Prime", monospace;
   font-size: clamp(20px, 1.5vw, 28px);
   line-height: 2;
 }
 
 *, *::before, *::after {
-  font-family: "Courier Prime", monospace !important;
+  font-family: inherit;
 }
 
 body {
@@ -62,14 +63,14 @@ a {
   text-decoration: none;
 }
 
-ul, li {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 /* -------------------------------------
-   GRID LAYOUT
+   GRID
 -------------------------------------- */
 .grid-layout {
   display: flex;
@@ -84,12 +85,122 @@ ul, li {
   width: 100%;
 }
 
-#menuList li {
-  margin: 0.4rem 0;
+/* -------------------------------------
+   MENU TOGGLE (MOBILE)
+-------------------------------------- */
+.menu-toggle {
+  position: fixed;
+  top: 0.8rem;
+  right: 0.8rem;
+  z-index: 3000;
+
+  background: transparent;   /* ❗ kein Button-Background */
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  font-size: inherit;
+  line-height: inherit;
 }
 
-#menuList li.active > a {
-  text-decoration: underline;
+/* Text & X – HIER ist der weiße Hintergrund */
+.menu-toggle .toggle-text,
+.menu-toggle .toggle-close {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+
+  display: inline-block;
+  background: #fff;          /* ✅ nur hinter dem Wort */
+  padding: 0 0.25em;         /* minimaler Weißraum */
+
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: lighter;
+
+  transition: opacity 0.2s ease;
+}
+
+.menu-toggle .toggle-close { opacity: 0; }
+.menu-toggle.open .toggle-text { opacity: 0; }
+.menu-toggle.open .toggle-close { opacity: 1; }
+
+/* -------------------------------------
+   MENU OVERLAY
+-------------------------------------- */
+#menuList {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  padding: 5rem 2rem 6rem;
+  overflow-y: auto;
+  z-index: 2000;
+}
+
+#menuList.open {
+  display: flex;
+  flex-direction: column;
+}
+
+/* -------------------------------------
+   MENU LIST
+-------------------------------------- */
+#menuList ul.menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#menuList li.menu-item {
+  display: block;
+  margin: 0.4em 0;
+}
+
+#menuList .menu-link {
+  display: inline-flex;
+  align-items: center;
+  line-height: inherit;
+}
+
+#menuList .menu-bullet {
+  display: inline-block;
+}
+
+#menuList .menu-label {
+  display: inline-block;
+}
+
+/* Active: Linie nur unter dem Wort */
+#menuList li.menu-item.active .menu-label {
+  border-bottom: 2px solid currentColor;
+  line-height: 1;
+  padding-bottom: 0.08em;
+}
+
+/* -------------------------------------
+   MOBILE FOOTER LINKS
+-------------------------------------- */
+.mobile-footer-links {
+  display: none;
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1rem;
+  text-align: right;
+  z-index: 2500;
+}
+
+#menuList.open .mobile-footer-links {
+  display: block;
+}
+
+.mobile-footer-links a {
+  margin: 0 0.35rem;
+}
+
+.mobile-footer-links .dot {
+  margin: 0 0.2rem;
 }
 
 /* -------------------------------------
@@ -108,140 +219,29 @@ ul, li {
 
 .content img,
 .subpages img {
-  width: 100%;
   max-width: 420px;
-  height: auto;
-  display: block;
-  margin: .5rem auto;
-}
-
-/* -------------------------------------
-   SUBPAGES
--------------------------------------- */
-.subpages {
-  display: grid;
-  /* gap: 1.2rem; */
-  /* margin-top: 2rem; */
+  margin: 0.5em auto;
 }
 
 /* -------------------------------------
    DETAIL VIEW
 -------------------------------------- */
-.page-header,
-.page-meta {
-  display: none;
-}
-
 .detail-wrapper {
   position: relative;
-  width: 100%;
 }
 
 .detail-close {
   position: absolute;
-  top: .5em;
-  right: 0px;
-  font-family: inherit !important;
-  font-size: inherit !important;
-  cursor: pointer;
-  line-height: 1;
-}
-
-/* -------------------------------------
-   MOBILE MENU TOGGLE
--------------------------------------- */
-.menu-toggle {
-  display: block;
-  background: none;
-  border: none;
-  width: 70px;
-  height: 40px;
-  cursor: pointer;
-  padding: 0.2rem 0.5rem;
-  position: fixed;
-  top: 0.8rem;
-  right: 0.8rem;
-  z-index: 3000;
-  text-align: right;
-}
-
-.menu-text,
-.menu-close {
-  position: absolute;
-  top: 50%;
+  top: 0.5em;
   right: 0;
-  transform: translateY(-50%);
-  width: 100%;
-  text-align: right;
-  transition: opacity 0.2s ease;
-  font-size: 1.7em;
-  font-weight: lighter;
-}
-
-.menu-close {
-  opacity: 0;
-}
-
-.menu-toggle.open .menu-text {
-  opacity: 0;
-}
-.menu-toggle.open .menu-close {
-  opacity: 1;
-}
-
-/* -------------------------------------
-   MENU OVERLAY
--------------------------------------- */
-#menuList {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: white;
-  padding: 5rem 2rem 6rem; /* unten Platz für Footer-Links */
-  overflow-y: auto;
-  z-index: 2000;
-  font-size: 1.1em;
-}
-
-#menuList.open {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-/* -------------------------------------
-   MOBILE FOOTER LINKS (KORREKT)
--------------------------------------- */
-.mobile-footer-links {
-  display: none;
-  position: fixed;
-  bottom: 1.5rem;
-  left: 0;
-  right: 0;
-    margin-right: 1em;
-
-  text-align: right;
-  z-index: 2500;
-  font-size: .9em;
-}
-
-#menuList.open .mobile-footer-links {
-  display: block;
-}
-
-.mobile-footer-links a {
-  margin: 0 0.35rem;
-}
-
-.mobile-footer-links .dot {
-  margin: 0 0.2rem;
+  cursor: pointer;
+  line-height: inherit;
 }
 
 /* -------------------------------------
    DESKTOP
 -------------------------------------- */
 @media (min-width: 1201px) {
-
   .grid-layout {
     display: grid;
     grid-template-columns: 300px minmax(0, 1fr);
@@ -263,15 +263,8 @@ ul, li {
     max-width: 1000px;
   }
 
-  .content img,
-  .subpages img {
-    width: 360px;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-  }
-
   .menu-toggle {
-    display: none !important;
+    display: none;
   }
 
   #menuList {
@@ -281,38 +274,13 @@ ul, li {
   }
 
   .mobile-footer-links {
-    display: none !important;
-  }
-}
-
-@media (min-width: 1400px) {
-  .detail-close {
-    right: -60px;
+    display: none;
   }
 }
 
 /* -------------------------------------
-   DESKTOP FOOTER
+   WORDPRESS CONTENT
 -------------------------------------- */
-.desktop-footer {
-  margin-top: auto;
-  padding: 4rem 0;
-  padding-left: calc(50% - 420px);
-}
-
-.desktop-footer .dot {
-  margin: 0 0.4rem;
-}
-
-/* Footer mobil ausblenden */
-@media (max-width: 1200px) {
-  .desktop-footer {
-    display: none !important;
-  }
-}
-
-
-/* ALLE WordPress-Überschriften und fetten Texte neutralisieren */
 .detail-content h1,
 .detail-content h2,
 .detail-content h3,
@@ -321,34 +289,28 @@ ul, li {
 .detail-content h6,
 .detail-content strong,
 .detail-content b {
-  font-weight: normal !important;
-  font-size: inherit !important;
-  line-height: inherit !important;
-  margin: 1em 0 !important;
+  font-weight: normal;
+  font-size: inherit;
+  line-height: inherit;
+  margin: 1em 0;
 }
 
-/* Damit Überschriften sicher wie normaler Text aussehen */
-.detail-content h1,
-.detail-content h2,
-.detail-content h3,
-.detail-content h4,
-.detail-content h5,
-.detail-content h6 {
-  display: block !important;
+.detail-content p {
+  margin: 1em 0;
 }
 
-/* WordPress-Empty-Paragraphs entfernen (wichtig für Impressum + Datenschutz) */
-.detail-content p.wp-empty,
-.detail-content p:empty,
-.detail-content p:has(br),
-.detail-content p:has(&nbsp;) {
-  display: none !important;
-}
-
-/* Listen auch neutral halten */
 .detail-content ul,
+.detail-content ol {
+  margin: 1em 0;
+  padding-left: 0;
+  list-style: none;
+}
+
 .detail-content li {
-  font-size: inherit !important;
-  font-weight: normal !important;
-  line-height: inherit !important;
+  margin: 0.35em 0;
+}
+
+.detail-content a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }

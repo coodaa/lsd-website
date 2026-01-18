@@ -1,33 +1,50 @@
 ---
-import { fix } from "./utils/fix.js";
+import { fix, splitMenuTitle } from "./utils/fix.js";
 const { pages = [], activeSlug = "", footerPages = [] } = Astro.props;
 ---
 
 <div class="sidebar">
   <!-- Mobile Toggle -->
-  <button class="menu-toggle" id="menuToggle">
-    <span class="menu-text">Menu</span>
-    <span class="menu-close">Close</span>
+  <button
+    class="menu-toggle"
+    id="menuToggle"
+    type="button"
+    aria-label="Toggle menu"
+  >
+    <span class="toggle-text">Menu</span>
+    <span class="toggle-close">X</span>
   </button>
 
   <!-- Mobile + Desktop Menu -->
-  <nav id="menuList">
-    <ul>
-      {pages.map((p) => (
-        <li class={activeSlug && p.slug === activeSlug ? "active" : ""}>
-          <a href={`/${p.slug}`}>{fix(p.title?.rendered || "")}</a>
-        </li>
-      ))}
+  <nav id="menuList" aria-label="Main navigation">
+    <ul class="menu">
+      {
+        pages.map((p) => {
+          const { bullet, text } = splitMenuTitle(p.title?.rendered || "");
+          const isActive = !!activeSlug && p.slug === activeSlug;
+
+          return (
+            <li class={`menu-item ${isActive ? "active" : ""}`}>
+              <a href={`/${p.slug}`} class="menu-link">
+                {bullet && <span class="menu-bullet">{bullet}&nbsp;</span>}
+                <span class="menu-label">{text}</span>
+              </a>
+            </li>
+          );
+        })
+      }
     </ul>
 
     <!-- MOBILE: Impressum + Datenschutz unten -->
     <div class="mobile-footer-links">
-      {footerPages.map((p, i) => (
-        <>
-          <a href={`/${p.slug}`}>{fix(p.title?.rendered || "")}</a>
-          {i < footerPages.length - 1 && <span class="dot">·</span>}
-        </>
-      ))}
+      {
+        footerPages.map((p, i) => (
+          <>
+            <a href={`/${p.slug}`}>{fix(p.title?.rendered || "")}</a>
+            {i < footerPages.length - 1 && <span class="dot">·</span>}
+          </>
+        ))
+      }
     </div>
   </nav>
 </div>
@@ -36,7 +53,7 @@ const { pages = [], activeSlug = "", footerPages = [] } = Astro.props;
   const toggle = document.getElementById("menuToggle");
   const menu = document.getElementById("menuList");
 
-  toggle.addEventListener("click", () => {
+  toggle?.addEventListener("click", () => {
     toggle.classList.toggle("open");
     menu.classList.toggle("open");
   });

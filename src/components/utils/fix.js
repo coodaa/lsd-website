@@ -46,3 +46,22 @@ export function getFirstImage(html = "") {
   const match = html.match(/<img[^>]+src="([^">]+)"/i);
   return match ? match[1] : null;
 }
+
+/**
+ * Menü-Titel aufteilen: Bullet (z.B. "•") getrennt vom Text,
+ * damit nur der Text unterstrichen werden kann.
+ */
+export function splitMenuTitle(str = "") {
+  const cleaned = fix(str)
+    .replace(/<[^>]*>/g, "")
+    .trim();
+
+  // Erlaubte "Bullet"-Zeichen am Anfang (inkl. gängigen Varianten)
+  const match = cleaned.match(/^\s*([•·▪▫◦‣∙])\s*(.+)$/u);
+
+  if (match) {
+    return { bullet: match[1], text: match[2] };
+  }
+
+  return { bullet: "", text: cleaned };
+}
