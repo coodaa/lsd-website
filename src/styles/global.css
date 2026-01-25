@@ -112,11 +112,11 @@ img {
   transform: translateY(-50%);
 
   display: inline-block;
-  background: #fff;          /* ✅ nur hinter dem Wort */
-  padding: 0 0.25em;         /* minimaler Weißraum */
+  background: #fff;
 
-  font-size: inherit;
-  line-height: inherit;
+  /* nur seitlich + minimal unten/oben */
+  padding: 0.25em 0.25em 0;   /* unten fast 0 */
+  line-height: 1;             /* wichtig: NICHT inherit */
   font-weight: lighter;
 
   transition: opacity 0.2s ease;
@@ -208,7 +208,7 @@ img {
 -------------------------------------- */
 .content-area {
   width: 100%;
-  margin-top: 2em;
+  margin-top: .5em;
 }
 
 .content {
@@ -235,6 +235,10 @@ img {
   right: 0;
   cursor: pointer;
   line-height: inherit;
+}
+
+.desktop-footer {
+  display: none;
 }
 
 /* -------------------------------------
@@ -275,7 +279,11 @@ img {
   .mobile-footer-links {
     display: none;
   }
+    .desktop-footer { display: block; }
+
 }
+
+
 
 /* -------------------------------------
    WORDPRESS CONTENT
@@ -314,26 +322,7 @@ img {
   text-underline-offset: 2px;
 }
 
-/* Mobile: Content-Spalte schmaler (auch Datenschutz & Impressum) */
-@media (max-width: 600px) {
-  .content {
-    max-width: clamp(90vw, 82vw, 360px);
-    margin-left: auto;
-    margin-right: auto;
-  }
 
-  /* Bilder orientieren sich an der Content-Spalte */
-  .content img,
-  .subpages img,
-  .detail-content img {
-    max-width: clamp(90vw, 82vw, 360px);
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-
-/* Mobile: Content-Spalte schmaler (gilt für ALLE Seiten inkl. Slug/Unterseiten, Datenschutz, Impressum) */
 @media (max-width: 600px) {
   .content {
     width: 100%;
@@ -342,7 +331,6 @@ img {
     margin-right: auto;
   }
 
-  /* Bilder immer innerhalb der Content-Spalte */
   .content img,
   .subpages img,
   .detail-content img {

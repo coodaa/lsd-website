@@ -12,13 +12,13 @@ const res = await fetch(`${baseUrl}/pages?slug=${slug}`);
 const data = await res.json();
 const page = data[0] ?? null;
 
-// Alle Seiten
+// Alle Seiten (für Navigation, Footer, Kinder/Eltern)
 const allRes = await fetch(
-  `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
+  `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`,
 );
 const pages = await allRes.json();
 
-// Navigation
+// Navigation (Hauptseiten ohne Impressum/Datenschutz)
 const mainPages = pages.filter((p) => p.parent === 0);
 
 let sortedMainPages = mainPages.filter((p) => {
@@ -37,7 +37,7 @@ if (kontaktIndex > -1) {
 const parent = page ? pages.find((p) => p.id === page.parent) : null;
 const children = page ? pages.filter((p) => p.parent === page.id) : [];
 
-// Footer
+// Footerseiten
 const footerPages = pages.filter((p) => {
   const t = p.title?.rendered?.toLowerCase() || "";
   return t.includes("impressum") || t.includes("datenschutz");
@@ -46,7 +46,7 @@ const footerPages = pages.filter((p) => {
 
 <BaseLayout
   title={fix(page?.title?.rendered || "LSD Berlin")}
-  bodyClass="detail-page"
+  bodyClass="home-page"
 >
   <div class="grid-layout">
     <Sidebar
@@ -57,26 +57,21 @@ const footerPages = pages.filter((p) => {
 
     <main class="content-area">
       <div class="content">
-        <div class="detail-wrapper">
-          {
-            page ? (
-              <div
-                class="detail-content"
-                set:html={fix(page.content?.rendered || "")}
-              />
-            ) : (
-              <p>Seite nicht gefunden</p>
-            )
-          }
+        {
+          parent && (
+            <a href={`/${parent.slug}`} class="detail-close">
+              X
+            </a>
+          )
+        }
 
-          {
-            parent && (
-              <a href={`/${parent.slug}`} class="detail-close">
-                X
-              </a>
-            )
-          }
-        </div>
+        {
+          page ? (
+            <div set:html={fix(page.content?.rendered || "")} />
+          ) : (
+            <p>Seite nicht gefunden</p>
+          )
+        }
 
         {
           children.length > 0 && (
