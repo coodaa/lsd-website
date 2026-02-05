@@ -1,12 +1,18 @@
 ---
 import "../styles/global.css";
 
-const {
-  title = "LSD Berlin – Künstlerkollektiv für experimentelle Theater- und Performancearbeit",
-  description = "LSD Berlin ist ein Künstlerkollektiv ...",
-  image = "/og-default.jpg",
-  url = "https://www.lsd-berlin.de",
-} = Astro.props;
+const props = Astro.props ?? {};
+
+const title =
+  props.title ??
+  "LSD Berlin – Künstlerkollektiv für experimentelle Theater- und Performancearbeit";
+
+const description =
+  props.description ?? "LSD Berlin ist ein Künstlerkollektiv.";
+
+const image = props.image ?? "/og-default.jpg";
+const url = props.url ?? "https://www.lsd-berlin.de";
+const bodyClass = props.bodyClass ?? "";
 ---
 
 <html lang="de">
@@ -15,36 +21,20 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
 
-    <!-- SEO -->
     <meta name="description" content={description} />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href={url} />
 
-    <!-- Open Graph -->
-    <meta property="og:locale" content="de_DE" />
-    <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={`${url}${image}`} />
     <meta property="og:url" content={url} />
-    <meta property="og:site_name" content="LSD Berlin" />
 
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={`${url}${image}`} />
-
-    <!-- Icons -->
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="/favicon.png" />
   </head>
 
-  <body>
-    <!-- Seite (Sidebar + Content) -->
+  <body class={bodyClass}>
     <slot />
-
-    <!-- Footer separat unten -->
     <slot name="footer" />
   </body>
 </html>

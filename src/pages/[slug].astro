@@ -7,18 +7,18 @@ import { fix, getFirstImage } from "../components/utils/fix.js";
 const baseUrl = import.meta.env.WP_API;
 const slug = Astro.params.slug;
 
-// Seite laden
-const res = await fetch(`${baseUrl}/pages?slug=${slug}`);
-const data = await res.json();
-const page = data[0] ?? null;
-
-// Alle Seiten (für Navigation, Footer, Kinder/Eltern)
+// Alle Seiten (Navigation/Footer/Parent/Children)
 const allRes = await fetch(
   `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`,
 );
 const pages = await allRes.json();
 
-// Navigation (Hauptseiten ohne Impressum/Datenschutz)
+// Seite laden (kann leer sein!)
+const res = await fetch(`${baseUrl}/pages?slug=${slug}&status=publish`);
+const data = await res.json();
+const page = data?.[0] ?? null;
+
+// Navigation
 const mainPages = pages.filter((p) => p.parent === 0);
 
 let sortedMainPages = mainPages.filter((p) => {
@@ -33,11 +33,11 @@ if (kontaktIndex > -1) {
   sortedMainPages.push(kontakt);
 }
 
-// Eltern + Kinder
+// Parent/Children nur wenn page existiert
 const parent = page ? pages.find((p) => p.id === page.parent) : null;
 const children = page ? pages.filter((p) => p.parent === page.id) : [];
 
-// Footerseiten
+// Footer
 const footerPages = pages.filter((p) => {
   const t = p.title?.rendered?.toLowerCase() || "";
   return t.includes("impressum") || t.includes("datenschutz");
@@ -46,7 +46,7 @@ const footerPages = pages.filter((p) => {
 
 <BaseLayout
   title={fix(page?.title?.rendered || "LSD Berlin")}
-  bodyClass="home-page"
+  bodyClass={parent ? "detail-page has-detail-close" : "detail-page"}
 >
   <div class="grid-layout">
     <Sidebar
@@ -67,9 +67,14 @@ const footerPages = pages.filter((p) => {
 
         {
           page ? (
-            <div set:html={fix(page.content?.rendered || "")} />
+            <div
+              class="wp-content"
+              set:html={fix(page.content?.rendered || "")}
+            />
           ) : (
-            <p>Seite nicht gefunden</p>
+            <div class="wp-content">
+              <p>Seite nicht gefunden.</p>
+            </div>
           )
         }
 

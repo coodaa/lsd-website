@@ -6,46 +6,29 @@ import { fix, getFirstImage } from "../components/utils/fix.js";
 
 const baseUrl = import.meta.env.WP_API;
 
-// Seiten laden
-const res = await fetch(
-  `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
-);
+const res = await fetch(`${baseUrl}/pages?per_page=100`);
 const pages = await res.json();
 
-// Hauptseiten
 const mainPages = pages.filter((p) => p.parent === 0);
-
-// Startseite
 const home = mainPages[0] ?? pages[0];
-const homeSlug = home?.slug || "home";
+const homeSlug = home.slug;
 
-// Kinder der Startseite
-const children = pages.filter((p) => p.parent === home?.id);
+const children = pages.filter((p) => p.parent === home.id);
 
-// Navigation sortieren
-let sortedMainPages = mainPages.filter((p) => {
-  const t = p.title?.rendered?.toLowerCase() || "";
-  return !t.includes("impressum") && !t.includes("datenschutz");
-});
+let sortedMainPages = mainPages.filter(
+  (p) =>
+    !p.title.rendered.toLowerCase().includes("impressum") &&
+    !p.title.rendered.toLowerCase().includes("datenschutz"),
+);
 
-// Kontakt ans Ende
-const kontaktIndex = sortedMainPages.findIndex((p) => p.slug === "kontakt");
-if (kontaktIndex > -1) {
-  const [kontakt] = sortedMainPages.splice(kontaktIndex, 1);
-  sortedMainPages.push(kontakt);
-}
-
-// Footer
-const footerPages = pages.filter((p) => {
-  const t = p.title?.rendered?.toLowerCase() || "";
-  return t.includes("impressum") || t.includes("datenschutz");
-});
+const footerPages = pages.filter((p) =>
+  ["impressum", "datenschutz"].some((k) =>
+    p.title.rendered.toLowerCase().includes(k),
+  ),
+);
 ---
 
-<BaseLayout
-  title={fix(home?.title?.rendered || "LSD Berlin")}
-  bodyClass="home-page"
->
+<BaseLayout title={fix(home.title.rendered)} bodyClass="home-page">
   <div class="grid-layout">
     <Sidebar
       pages={sortedMainPages}
@@ -55,24 +38,20 @@ const footerPages = pages.filter((p) => {
 
     <main class="content-area">
       <div class="content">
-        <div set:html={fix(home?.content?.rendered || "")} />
+        <div class="wp-content" set:html={fix(home.content.rendered)} />
 
-        {
-          children.length > 0 && (
-            <div class="subpages">
-              {children.map((c) => {
-                const img = getFirstImage(c.content?.rendered || "");
-                return (
-                  <a href={`/${c.slug}`} class="subpage">
-                    {img && (
-                      <img src={img} alt={fix(c.title?.rendered || "")} />
-                    )}
-                  </a>
-                );
-              })}
-            </div>
-          )
-        }
+        <div class="subpages">
+          {
+            children.map((c) => {
+              const img = getFirstImage(c.content.rendered);
+              return (
+                <a href={`/${c.slug}`} class="subpage">
+                  {img && <img src={img} />}
+                </a>
+              );
+            })
+          }
+        </div>
       </div>
     </main>
   </div>
