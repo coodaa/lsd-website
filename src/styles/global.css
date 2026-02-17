@@ -257,9 +257,9 @@ img {
   margin: 0.5em auto;
 }
 
-.wp-block-image {
+/* .wp-block-image {
   margin-top: -.5em;
-}
+} */
 
 /* -------------------------------------
    BACK LINK (X) – an Stelle von "Menu"
@@ -359,4 +359,37 @@ body.detail-page .content {
 body.has-detail-close .menu-toggle .toggle-text {
   opacity: 0;
   pointer-events: none;
+}
+
+
+/* iOS/Safari: verhindert "blaues Menu" / Link-Färbung */
+.menu-toggle,
+.menu-toggle * {
+  color: #000 !important;
+  -webkit-text-fill-color: #000; /* iOS manchmal stärker als color */
+}
+
+/* Optional, aber hilft gegen iOS Tap-Highlight/Link-Effekte */
+.menu-toggle {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Falls Safari dem Text einen Link-Style gibt (visited/active etc.) */
+.menu-toggle:link,
+.menu-toggle:visited,
+.menu-toggle:hover,
+.menu-toggle:active,
+.menu-toggle:focus,
+.menu-toggle:focus-visible {
+  color: #000 !important;
+  outline: none;
+}
+
+/* Und falls es beim Öffnen/Schließen passiert */
+.menu-toggle.open,
+.menu-toggle.open * {
+  color: #000 !important;
+  -webkit-text-fill-color: #000;
 }
