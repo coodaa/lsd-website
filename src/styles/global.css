@@ -415,3 +415,23 @@ body.has-detail-close .menu-toggle .toggle-text {
   color: #000 !important;
   -webkit-text-fill-color: #000 !important;
 }
+
+@media (max-width: 600px) {
+  /* NICHT auf den ganzen Container paddings geben – das verschiebt Bilder */
+  .content-area {
+    padding: 0;
+         padding-top: 2rem;
+
+  }
+
+  /* Stattdessen: nur Textblöcke bekommen Seitenränder */
+  .wp-content > :where(p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote, pre, table) {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Optional: Kontakt/Datenschutz wirkt oft besser mit etwas kompakterer Zeilenhöhe */
+  .wp-content {
+    line-height: 1.7;
+  }
+}
