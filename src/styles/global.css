@@ -45,7 +45,11 @@ html,
 body {
   margin: 0;
   padding: 0;
+
+  /* Wichtig für "zu wenig Inhalt" / Layout stabil */
+  height: 100%;
   min-height: 100%;
+
   background: #fff;
   color: #000;
 
@@ -62,6 +66,9 @@ body {
 }
 
 body {
+  /* Layout stabil bei leeren/kurzen Seiten */
+  min-height: 100vh;
+
   display: flex;
   flex-direction: column;
 }
@@ -84,6 +91,9 @@ img {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+
+  /* Stabilität: Layout soll mindestens Viewport-Höhe haben */
+  min-height: 100vh;
 }
 
 .sidebar {
@@ -93,6 +103,10 @@ img {
 .content-area {
   width: 100%;
   margin-top: 0.5em;
+
+  /* Stabilität: Contentbereich füllt Resthöhe */
+  flex: 1 0 auto;
+  min-height: 60vh;
 }
 
 .content {
@@ -114,6 +128,11 @@ img {
   cursor: pointer;
   font-size: inherit;
   line-height: inherit;
+
+  /* iOS/Safari: tap/appearance quirks */
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .menu-toggle .toggle-text,
@@ -257,10 +276,6 @@ img {
   margin: 0.5em auto;
 }
 
-/* .wp-block-image {
-  margin-top: -.5em;
-} */
-
 /* -------------------------------------
    BACK LINK (X) – an Stelle von "Menu"
 -------------------------------------- */
@@ -272,7 +287,7 @@ img {
 
   z-index: 3100; /* über Menu */
 
-  background: white ;
+  background: white;
   padding: 0.02em 0 0;
   line-height: 1;
 }
@@ -284,17 +299,18 @@ img {
   display: none; /* Mobile: weg */
 }
 
-
-
+/* -------------------------------------
+   MOBILE
+-------------------------------------- */
 @media (max-width: 600px) {
 
   /* Detailseiten: wirklich volle Breite */
-body.detail-page .content {
-  width: 96vw;
-  max-width: 96vw;
-  margin-left: auto;
-  margin-right: auto;
-}
+  body.detail-page .content {
+    width: 96vw;
+    max-width: 96vw;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
   /* Bilder im WP-Content edge-to-edge */
   body.detail-page .wp-content img {
@@ -307,6 +323,11 @@ body.detail-page .content {
 
   body.detail-page .subpages img {
     max-width: 100%;
+  }
+
+  /* Extra Stabilität auf kurzen Detailseiten */
+  body.detail-page .content-area {
+    min-height: 70vh;
   }
 }
 
@@ -321,6 +342,9 @@ body.detail-page .content {
     margin: 0 auto;
     padding: 3rem 0;
     column-gap: 220px;
+
+    /* Desktop: auch hier stabil */
+    min-height: 100vh;
   }
 
   .sidebar {
@@ -333,6 +357,9 @@ body.detail-page .content {
   .content-area {
     grid-column: 2;
     max-width: 1000px;
+
+    /* Desktop: Content streckt sich mit */
+    min-height: calc(100vh - 6rem);
   }
 
   .menu-toggle {
@@ -351,9 +378,9 @@ body.detail-page .content {
 
   .desktop-footer {
     display: block; /* Desktop: sichtbar */
+    margin-top: auto; /* falls Footer im Flow ist */
   }
 }
-
 
 /* Nur wenn X existiert (has-detail-close): Menu-Text weg */
 body.has-detail-close .menu-toggle .toggle-text {
@@ -361,19 +388,13 @@ body.has-detail-close .menu-toggle .toggle-text {
   pointer-events: none;
 }
 
-
-/* iOS/Safari: verhindert "blaues Menu" / Link-Färbung */
+/* -------------------------------------
+   iOS/Safari: verhindert "blaues Menu" / Link-Färbung
+-------------------------------------- */
 .menu-toggle,
 .menu-toggle * {
   color: #000 !important;
-  -webkit-text-fill-color: #000; /* iOS manchmal stärker als color */
-}
-
-/* Optional, aber hilft gegen iOS Tap-Highlight/Link-Effekte */
-.menu-toggle {
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
-  -webkit-appearance: none;
-  appearance: none;
+  -webkit-text-fill-color: #000 !important; /* iOS manchmal stärker als color */
 }
 
 /* Falls Safari dem Text einen Link-Style gibt (visited/active etc.) */
@@ -384,6 +405,7 @@ body.has-detail-close .menu-toggle .toggle-text {
 .menu-toggle:focus,
 .menu-toggle:focus-visible {
   color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
   outline: none;
 }
 
@@ -391,5 +413,5 @@ body.has-detail-close .menu-toggle .toggle-text {
 .menu-toggle.open,
 .menu-toggle.open * {
   color: #000 !important;
-  -webkit-text-fill-color: #000;
+  -webkit-text-fill-color: #000 !important;
 }
