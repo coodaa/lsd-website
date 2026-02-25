@@ -46,7 +46,7 @@ body {
   margin: 0;
   padding: 0;
 
-  /* Wichtig für "zu wenig Inhalt" / Layout stabil */
+  /* Layout stabil */
   height: 100%;
   min-height: 100%;
 
@@ -66,9 +66,7 @@ body {
 }
 
 body {
-  /* Layout stabil bei leeren/kurzen Seiten */
   min-height: 100vh;
-
   display: flex;
   flex-direction: column;
 }
@@ -92,7 +90,6 @@ img {
   flex-direction: column;
   gap: 1.2rem;
 
-  /* Stabilität: Layout soll mindestens Viewport-Höhe haben */
   min-height: 100vh;
 }
 
@@ -104,7 +101,6 @@ img {
   width: 100%;
   margin-top: 0.5em;
 
-  /* Stabilität: Contentbereich füllt Resthöhe */
   flex: 1 0 auto;
   min-height: 60vh;
 }
@@ -129,7 +125,6 @@ img {
   font-size: inherit;
   line-height: inherit;
 
-  /* iOS/Safari: tap/appearance quirks */
   -webkit-tap-highlight-color: rgba(0,0,0,0);
   -webkit-appearance: none;
   appearance: none;
@@ -223,11 +218,11 @@ img {
 .mobile-footer-links .dot { margin: 0 0.2rem; }
 
 /* -------------------------------------
-   SUBPAGES
+   SUBPAGES (Teaser/Children)
+   Desktop wieder “schön”: max 500px zentriert
 -------------------------------------- */
-/* Teaser-Bilder (Unterseiten-Kacheln) bleiben klein/zentriert */
 .subpages img {
-  max-width: 420px;
+  max-width: 500px;
   margin: 0.5em auto;
 }
 
@@ -252,6 +247,11 @@ img {
   margin: 0;
 }
 
+/* Für lange Texte (Datenschutz) wieder Luft zwischen Absätzen */
+.wp-content p + p {
+  margin-top: 1em;
+}
+
 .wp-content ul,
 .wp-content ol {
   margin: 1em 0;
@@ -266,14 +266,27 @@ img {
 .wp-content a {
   text-decoration: underline;
   text-underline-offset: 2px;
+  word-break: break-word;
 }
 
-/* WP-Content-Bilder sollen IMMER die Content-Spalte füllen */
-.wp-content img {
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  margin: 0.5em auto;
+/* ✅ WICHTIG: WP-Bilder (und ihre Wrapper) immer auf Spaltenbreite,
+   damit “kleine” WP-Wrapper/figure nicht klein bleiben */
+.wp-content img,
+.wp-content figure img,
+.wp-content picture img,
+.wp-content .wp-block-image img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 0.5em auto !important;
+}
+
+.wp-content figure,
+.wp-content picture,
+.wp-content .wp-block-image {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0.5em auto !important;
 }
 
 /* -------------------------------------
@@ -284,16 +297,14 @@ img {
   top: 0.8rem;
   right: 0.5rem;
   left: auto;
-
-  z-index: 3100; /* über Menu */
-
+  z-index: 3100;
   background: white;
   padding: 0.02em 0 0;
   line-height: 1;
 }
 
 /* -------------------------------------
-   DESKTOP FOOTER
+   DESKTOP FOOTER (Grundzustand)
 -------------------------------------- */
 .desktop-footer {
   display: none; /* Mobile: weg */
@@ -304,7 +315,6 @@ img {
 -------------------------------------- */
 @media (max-width: 600px) {
 
-  /* Detailseiten: wirklich volle Breite */
   body.detail-page .content {
     width: 96vw;
     max-width: 96vw;
@@ -312,22 +322,32 @@ img {
     margin-right: auto;
   }
 
-  /* Bilder im WP-Content edge-to-edge */
   body.detail-page .wp-content img {
-    width: 96vw;
-    max-width: 98vw;
-    margin-left: calc(-48vw + 50%);
-    margin-right: calc(-48vw + 50%);
-    height: auto;
+    width: 96vw !important;
+    max-width: 98vw !important;
+    margin-left: calc(-48vw + 50%) !important;
+    margin-right: calc(-48vw + 50%) !important;
+    height: auto !important;
   }
 
+  /* Subpages auf Mobile dürfen groß sein */
   body.detail-page .subpages img {
     max-width: 100%;
   }
 
-  /* Extra Stabilität auf kurzen Detailseiten */
   body.detail-page .content-area {
     min-height: 70vh;
+  }
+
+  /* Text bekommt Luft – Bilder bleiben unverschoben */
+  .wp-content > :where(p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote, pre, table) {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Rechtstexte/Kontakt wirken angenehmer */
+  .wp-content {
+    line-height: 1.7;
   }
 }
 
@@ -337,28 +357,29 @@ img {
 @media (min-width: 1201px) {
   .grid-layout {
     display: grid;
-    grid-template-columns: 300px minmax(0, 1fr);
+    grid-template-columns: 400px minmax(0, 1fr);
     max-width: 1600px;
     margin: 0 auto;
     padding: 3rem 0;
-    column-gap: 220px;
-
-    /* Desktop: auch hier stabil */
+    column-gap: 100px;
     min-height: 100vh;
   }
 
+  /* Sidebar ist fixed + wird Flex-Spalte, Footer drückt nach unten */
   .sidebar {
     width: 300px;
     position: fixed;
     top: 4rem;
-    left: calc(50% - 420px);
+    left: max(1rem, calc(50% - 480px));
+
+    height: calc(100vh - 4rem);
+    display: flex;
+    flex-direction: column;
   }
 
   .content-area {
     grid-column: 2;
     max-width: 1000px;
-
-    /* Desktop: Content streckt sich mit */
     min-height: calc(100vh - 6rem);
   }
 
@@ -366,19 +387,29 @@ img {
     display: none;
   }
 
+  /* Desktop Menü ist normal im Sidebar-Flow */
   #menuList {
     position: static;
     display: block;
     padding: 0;
+
+    flex: 1 1 auto;
+    overflow: auto;
   }
 
   .mobile-footer-links {
     display: none;
   }
 
+  /* Footer: immer ganz unten, gleiche Kante wie Sidebar */
   .desktop-footer {
-    display: block; /* Desktop: sichtbar */
-    margin-top: auto; /* falls Footer im Flow ist */
+    display: block;
+    margin-top: auto;
+    padding-top: 1rem;
+  }
+
+  .desktop-footer .dot {
+    margin: 0 0.2rem;
   }
 }
 
@@ -394,10 +425,9 @@ body.has-detail-close .menu-toggle .toggle-text {
 .menu-toggle,
 .menu-toggle * {
   color: #000 !important;
-  -webkit-text-fill-color: #000 !important; /* iOS manchmal stärker als color */
+  -webkit-text-fill-color: #000 !important;
 }
 
-/* Falls Safari dem Text einen Link-Style gibt (visited/active etc.) */
 .menu-toggle:link,
 .menu-toggle:visited,
 .menu-toggle:hover,
@@ -409,29 +439,73 @@ body.has-detail-close .menu-toggle .toggle-text {
   outline: none;
 }
 
-/* Und falls es beim Öffnen/Schließen passiert */
 .menu-toggle.open,
 .menu-toggle.open * {
   color: #000 !important;
   -webkit-text-fill-color: #000 !important;
 }
 
-@media (max-width: 600px) {
-  /* NICHT auf den ganzen Container paddings geben – das verschiebt Bilder */
-  .content-area {
-    padding: 0;
-         padding-top: 2rem;
+/* =========================================================
+   FIX: Textseiten ohne Bilder (Impressum/Datenschutz/Kontakt)
+   ========================================================= */
+@media (min-width: 900px) {
 
+  .content {
+    margin-top: 1.4em;
   }
 
-  /* Stattdessen: nur Textblöcke bekommen Seitenränder */
-  .wp-content > :where(p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote, pre, table) {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
+  /* Wrapper als Lesespalte */
+  .content:has(.wp-content:not(:has(img))) {
+    max-width: 62ch !important;
+    width: 100% !important;
 
-  /* Optional: Kontakt/Datenschutz wirkt oft besser mit etwas kompakterer Zeilenhöhe */
-  .wp-content {
+    font-size: clamp(18px, 1.1vw, 22px);
     line-height: 1.7;
+
+    margin-left: auto !important;
+    margin-right: 0 !important;
+  }
+
+  .content:has(.wp-content:not(:has(img))) .wp-content {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .content:has(.wp-content:not(:has(img))) .wp-content,
+  .content:has(.wp-content:not(:has(img))) .wp-content * {
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    max-width: 100% !important;
+  }
+
+  .content:has(.wp-content:not(:has(img))) pre,
+  .content:has(.wp-content:not(:has(img))) code {
+    white-space: pre-wrap !important;
+  }
+}
+
+/* WP-Leer-Absätze raus */
+.wp-content p.wp-empty {
+  display: none !important;
+}
+
+/* =========================================================
+   Desktop: Textseiten (ohne Bilder) sollen exakt wie die Bilder-Spalte wirken
+   ========================================================= */
+@media (min-width: 1201px) {
+
+  .content-area .content {
+    max-width: 1000px;
+    width: 100%;
+  }
+
+  .wp-content,
+  .wp-content * {
+    max-width: 100%;
+  }
+
+  .wp-content {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 }

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
-import Footer from "../components/Footer.astro";
 import { fix, getFirstImage } from "../components/utils/fix.js";
 
 const baseUrl = import.meta.env.WP_API;
@@ -10,12 +9,31 @@ const res = await fetch(`${baseUrl}/pages?per_page=100`);
 const pages = await res.json();
 
 const mainPages = pages.filter((p) => p.parent === 0);
-const home = mainPages[0] ?? pages[0];
+
+// ✅ Menü immer stabil sortieren (Page Attributes → Reihenfolge in WP)
+const sortedMainPagesAll = [...mainPages].sort((a, b) => {
+  const ao = Number(a.menu_order ?? 0);
+  const bo = Number(b.menu_order ?? 0);
+  if (ao !== bo) return ao - bo;
+  return fix(a.title.rendered).localeCompare(fix(b.title.rendered), "de");
+});
+
+// ✅ Home eindeutig: erst slug "lsd", dann Titel "LSD", sonst erste nach menu_order
+const home =
+  sortedMainPagesAll.find((p) => p.slug?.toLowerCase() === "lsd") ??
+  sortedMainPagesAll.find((p) => fix(p.title.rendered).trim().toLowerCase() === "lsd") ??
+  sortedMainPagesAll[0] ??
+  pages[0];
+
 const homeSlug = home.slug;
 
-const children = pages.filter((p) => p.parent === home.id);
+// Kinder (optional auch sortieren, falls du dort Reihenfolge willst)
+const children = pages
+  .filter((p) => p.parent === home.id)
+  .sort((a, b) => Number(a.menu_order ?? 0) - Number(b.menu_order ?? 0));
 
-let sortedMainPages = mainPages.filter(
+// ✅ Mainpages fürs Sidebar-Menü, ohne Impressum/Datenschutz, aber gleiche Sortierung
+const sortedMainPages = sortedMainPagesAll.filter(
   (p) =>
     !p.title.rendered.toLowerCase().includes("impressum") &&
     !p.title.rendered.toLowerCase().includes("datenschutz"),
@@ -41,20 +59,16 @@ const footerPages = pages.filter((p) =>
         <div class="wp-content" set:html={fix(home.content.rendered)} />
 
         <div class="subpages">
-          {
-            children.map((c) => {
-              const img = getFirstImage(c.content.rendered);
-              return (
-                <a href={`/${c.slug}`} class="subpage">
-                  {img && <img src={img} />}
-                </a>
-              );
-            })
-          }
+          {children.map((c) => {
+            const img = getFirstImage(c.content.rendered);
+            return (
+              <a href={`/${c.slug}`} class="subpage">
+                {img && <img src={img} />}
+              </a>
+            );
+          })}
         </div>
       </div>
     </main>
   </div>
-
-  <Footer slot="footer" footerPages={footerPages} />
 </BaseLayout>

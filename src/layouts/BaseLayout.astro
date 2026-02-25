@@ -10,9 +10,20 @@ const title =
 const description =
   props.description ?? "LSD Berlin ist ein Künstlerkollektiv.";
 
-const image = props.image ?? "/og-default.jpg";
-const url = props.url ?? "https://www.lsd-berlin.de";
 const bodyClass = props.bodyClass ?? "";
+
+// Base URL (aus astro.config.mjs: site: "https://www.lsd-berlin.de")
+const site =
+  Astro.site?.toString().replace(/\/$/, "") || "https://www.lsd-berlin.de";
+
+// Aktuelle URL der Seite (inkl. Pfad)
+const canonical = new URL(Astro.url.pathname, site).toString();
+
+// OG image: erlaubt prop.image ("/og.jpg" oder full url)
+const imagePath = props.image ?? "/og-default.jpg";
+const ogImage = imagePath.startsWith("http")
+  ? imagePath
+  : new URL(imagePath, site).toString();
 ---
 
 <html lang="de">
@@ -24,14 +35,20 @@ const bodyClass = props.bodyClass ?? "";
 
     <meta name="description" content={description} />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href={url} />
+    <link rel="canonical" href={canonical} />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={`${url}${image}`} />
-    <meta property="og:url" content={url} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonical} />
     <meta property="og:type" content="website" />
+
+    <!-- Optional: Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
     <!-- Favicons -->
     <link rel="icon" href="/favicon.ico" sizes="any" />
