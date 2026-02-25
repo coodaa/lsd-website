@@ -4,18 +4,18 @@ const { pages = [], activeSlug = "", footerPages = [] } = Astro.props;
 ---
 
 <div class="sidebar">
+  <!-- Mobile Toggle -->
   <button
     class="menu-toggle"
     id="menuToggle"
     type="button"
     aria-label="Toggle menu"
-    aria-expanded="false"
-    aria-controls="menuList"
   >
     <span class="toggle-text">Menu</span>
     <span class="toggle-close">X</span>
   </button>
 
+  <!-- Mobile + Desktop Menu -->
   <nav id="menuList" aria-label="Main navigation">
     <ul class="menu">
       {
@@ -35,6 +35,7 @@ const { pages = [], activeSlug = "", footerPages = [] } = Astro.props;
       }
     </ul>
 
+    <!-- MOBILE: Impressum + Datenschutz unten im Overlay -->
     <div class="mobile-footer-links">
       {
         footerPages.map((p, i) => (
@@ -47,6 +48,7 @@ const { pages = [], activeSlug = "", footerPages = [] } = Astro.props;
     </div>
   </nav>
 
+  <!-- DESKTOP: Footer immer ganz unten in der Sidebar -->
   <footer class="desktop-footer" aria-label="Footer navigation">
     {
       footerPages.map((p, i) => (
@@ -60,27 +62,11 @@ const { pages = [], activeSlug = "", footerPages = [] } = Astro.props;
 </div>
 
 <script>
-  const root = document.currentScript?.closest(".sidebar");
-  const toggle = root?.querySelector("#menuToggle");
-  const menu = root?.querySelector("#menuList");
-
-  function closeMenu() {
-    toggle?.classList.remove("open");
-    menu?.classList.remove("open");
-    toggle?.setAttribute("aria-expanded", "false");
-  }
+  const toggle = document.getElementById("menuToggle");
+  const menu = document.getElementById("menuList");
 
   toggle?.addEventListener("click", () => {
     toggle.classList.toggle("open");
-    menu?.classList.toggle("open");
-    toggle.setAttribute(
-      "aria-expanded",
-      toggle.classList.contains("open") ? "true" : "false",
-    );
-  });
-
-  menu?.addEventListener("click", (e) => {
-    const a = e.target?.closest?.("a");
-    if (a && menu.classList.contains("open")) closeMenu();
+    menu.classList.toggle("open");
   });
 </script>
