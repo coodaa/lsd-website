@@ -46,7 +46,6 @@ body {
   margin: 0;
   padding: 0;
 
-  /* Layout stabil */
   height: 100%;
   min-height: 100%;
 
@@ -89,7 +88,6 @@ img {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-
   min-height: 100vh;
 }
 
@@ -217,13 +215,16 @@ img {
 .mobile-footer-links a { margin: 0 0.35rem; }
 .mobile-footer-links .dot { margin: 0 0.2rem; }
 
-/* -------------------------------------
+/* =========================================================
    SUBPAGES (Teaser/Children)
-   Desktop wieder “schön”: max 500px zentriert
--------------------------------------- */
+   ========================================================= */
+
+/* Home/Übersicht: klein & zentriert */
 .subpages img {
   max-width: 500px;
   margin: 0.5em auto;
+  height: auto;
+  display: block;
 }
 
 /* -------------------------------------
@@ -269,28 +270,8 @@ img {
   word-break: break-word;
 }
 
-/* ✅ WICHTIG: WP-Bilder (und ihre Wrapper) immer auf Spaltenbreite,
-   damit “kleine” WP-Wrapper/figure nicht klein bleiben */
-.wp-content img,
-.wp-content figure img,
-.wp-content picture img,
-.wp-content .wp-block-image img {
-  width: 100% !important;
-  max-width: 100% !important;
-  height: auto !important;
-  margin: 0.5em auto !important;
-}
-
-.wp-content figure,
-.wp-content picture,
-.wp-content .wp-block-image {
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0.5em auto !important;
-}
-
 /* -------------------------------------
-   BACK LINK (X) – an Stelle von "Menu"
+   BACK LINK (X)
 -------------------------------------- */
 .detail-close {
   position: fixed;
@@ -314,7 +295,6 @@ img {
    MOBILE
 -------------------------------------- */
 @media (max-width: 600px) {
-
   body.detail-page .content {
     width: 96vw;
     max-width: 96vw;
@@ -322,6 +302,7 @@ img {
     margin-right: auto;
   }
 
+  /* Mobile: WP-Bilder immer groß (dein gewünschter “Fullbleed”-Look) */
   body.detail-page .wp-content img {
     width: 96vw !important;
     max-width: 98vw !important;
@@ -330,7 +311,6 @@ img {
     height: auto !important;
   }
 
-  /* Subpages auf Mobile dürfen groß sein */
   body.detail-page .subpages img {
     max-width: 100%;
   }
@@ -339,33 +319,33 @@ img {
     min-height: 70vh;
   }
 
-  /* Text bekommt Luft – Bilder bleiben unverschoben */
   .wp-content > :where(p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote, pre, table) {
     padding-left: 1rem;
     padding-right: 1rem;
   }
 
-  /* Rechtstexte/Kontakt wirken angenehmer */
   .wp-content {
     line-height: 1.7;
   }
 }
 
 /* -------------------------------------
-   DESKTOP
+   DESKTOP LAYOUT
 -------------------------------------- */
 @media (min-width: 1201px) {
   .grid-layout {
     display: grid;
-    grid-template-columns: 400px minmax(0, 1fr);
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 3rem 0;
+    grid-template-columns: 700px minmax(0, 1fr);
+    max-width: 78.59vw;
+    padding: 2rem 0;
     column-gap: 100px;
     min-height: 100vh;
+
+
+
+
   }
 
-  /* Sidebar ist fixed + wird Flex-Spalte, Footer drückt nach unten */
   .sidebar {
     width: 300px;
     position: fixed;
@@ -387,12 +367,10 @@ img {
     display: none;
   }
 
-  /* Desktop Menü ist normal im Sidebar-Flow */
   #menuList {
     position: static;
     display: block;
     padding: 0;
-
     flex: 1 1 auto;
     overflow: auto;
   }
@@ -401,7 +379,6 @@ img {
     display: none;
   }
 
-  /* Footer: immer ganz unten, gleiche Kante wie Sidebar */
   .desktop-footer {
     display: block;
     margin-top: auto;
@@ -420,7 +397,7 @@ body.has-detail-close .menu-toggle .toggle-text {
 }
 
 /* -------------------------------------
-   iOS/Safari: verhindert "blaues Menu" / Link-Färbung
+   iOS/Safari: verhindert "blaues Menu"
 -------------------------------------- */
 .menu-toggle,
 .menu-toggle * {
@@ -446,15 +423,59 @@ body.has-detail-close .menu-toggle .toggle-text {
 }
 
 /* =========================================================
+   DESKTOP: WP-BILDER LOGIK (HIER IST DER FIX)
+   - Top-Level Detailseiten (ohne X): NICHT riesig
+   - Child/Detail mit X: IMMER volle Spaltenbreite, egal was WP macht
+   ========================================================= */
+
+/* 1) Auf Desktop: Standard erstmal “vernünftig” (nicht riesig) */
+@media (min-width: 900px) {
+  /* Übersichtsseiten ohne X: Bilder max 800px und zentriert */
+  body.detail-page:not(.has-detail-close) .wp-content :is(img, figure, picture, .wp-block-image) {
+    max-width: 800px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  body.detail-page:not(.has-detail-close) .wp-content :is(figure, picture, .wp-block-image) {
+    display: block !important;
+  }
+
+  /* 2) X-Seiten: wirklich hart alles auf volle Spaltenbreite zwingen */
+  body.has-detail-close .wp-content :is(
+    img,
+    figure,
+    picture,
+    .wp-block-image,
+    .wp-block-image img,
+    .wp-block-image figure,
+    figure.wp-block-image,
+    figure.is-resized,
+    .is-resized
+  ) {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Manche WP-Themes packen inline-width auf einen inneren wrapper – den killen wir auch */
+  body.has-detail-close .wp-content :is(figure, .wp-block-image, picture) > * {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* =========================================================
    FIX: Textseiten ohne Bilder (Impressum/Datenschutz/Kontakt)
    ========================================================= */
 @media (min-width: 900px) {
-
   .content {
     margin-top: 1.4em;
   }
 
-  /* Wrapper als Lesespalte */
   .content:has(.wp-content:not(:has(img))) {
     max-width: 62ch !important;
     width: 100% !important;
@@ -484,16 +505,12 @@ body.has-detail-close .menu-toggle .toggle-text {
   }
 }
 
-/* WP-Leer-Absätze raus */
 .wp-content p.wp-empty {
   display: none !important;
 }
 
-/* =========================================================
-   Desktop: Textseiten (ohne Bilder) sollen exakt wie die Bilder-Spalte wirken
-   ========================================================= */
+/* Desktop: Textseiten sollen wie Bilder-Spalte wirken */
 @media (min-width: 1201px) {
-
   .content-area .content {
     max-width: 1000px;
     width: 100%;
@@ -510,3 +527,8 @@ body.has-detail-close .menu-toggle .toggle-text {
   }
 }
 
+.detail-close {
+  top: 4.4rem;
+  right: 13rem;
+
+}

@@ -6,20 +6,20 @@ import { fix, getFirstImage } from "../components/utils/fix.js";
 const baseUrl = import.meta.env.WP_API;
 const slug = Astro.params.slug;
 
-// Hilfs-Sortierung: menu_order → fallback Titel
+// Sortierung: menu_order → fallback Titel
 const sortByMenuOrder = (a, b) => {
   const ao = Number(a?.menu_order ?? 0);
   const bo = Number(b?.menu_order ?? 0);
   if (ao !== bo) return ao - bo;
   return fix(a?.title?.rendered || "").localeCompare(
     fix(b?.title?.rendered || ""),
-    "de",
+    "de"
   );
 };
 
 // Alle Seiten (Navigation/Footer/Parent/Children)
 const allRes = await fetch(
-  `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`,
+  `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
 );
 const pages = await allRes.json();
 
@@ -28,7 +28,7 @@ const res = await fetch(`${baseUrl}/pages?slug=${slug}&status=publish`);
 const data = await res.json();
 const page = data?.[0] ?? null;
 
-// Navigation: nur Top-Level + sauber sortiert
+// Navigation (Top-Level)
 const mainPages = pages.filter((p) => p.parent === 0).sort(sortByMenuOrder);
 
 let sortedMainPages = mainPages.filter((p) => {
@@ -36,21 +36,21 @@ let sortedMainPages = mainPages.filter((p) => {
   return !t.includes("impressum") && !t.includes("datenschutz");
 });
 
-// Kontakt ans Ende (optional, wenn du das wirklich immer willst)
+// Kontakt ans Ende (optional)
 const kontaktIndex = sortedMainPages.findIndex((p) => p.slug === "kontakt");
 if (kontaktIndex > -1) {
   const [kontakt] = sortedMainPages.splice(kontaktIndex, 1);
   sortedMainPages.push(kontakt);
 }
 
-// Parent/Children
+// Parent / Children
 const parent = page ? pages.find((p) => p.id === page.parent) : null;
 
 const children = page
   ? pages.filter((p) => p.parent === page.id).sort(sortByMenuOrder)
   : [];
 
-// Footer (auch sortieren, falls du Reihenfolge willst)
+// Footer
 const footerPages = pages
   .filter((p) => {
     const t = (p.title?.rendered || "").toLowerCase();
@@ -58,7 +58,7 @@ const footerPages = pages
   })
   .sort(sortByMenuOrder);
 
-// Legal-Seiten erkennen
+// Legal Seiten
 const isLegal = slug === "impressum" || slug === "datenschutz";
 ---
 
@@ -75,43 +75,28 @@ const isLegal = slug === "impressum" || slug === "datenschutz";
 
     <main class="content-area">
       <div class="content">
-        {
-          parent && (
-            <a href={`/${parent.slug}`} class="detail-close">
-              X
-            </a>
-          )
-        }
+        {parent && (
+          <a href={`/${parent.slug}`} class="detail-close">X</a>
+        )}
 
-        {
-          page ? (
-            <div
-              class="wp-content"
-              set:html={fix(page.content?.rendered || "")}
-            />
-          ) : (
-            <div class="wp-content">
-              <p>Seite nicht gefunden.</p>
-            </div>
-          )
-        }
+        {page ? (
+          <div class="wp-content" set:html={fix(page.content?.rendered || "")} />
+        ) : (
+          <div class="wp-content"><p>Seite nicht gefunden.</p></div>
+        )}
 
-        {
-          children.length > 0 && (
-            <div class="subpages">
-              {children.map((c) => {
-                const img = getFirstImage(c.content?.rendered || "");
-                return (
-                  <a href={`/${c.slug}`} class="subpage">
-                    {img && (
-                      <img src={img} alt={fix(c.title?.rendered || "")} />
-                    )}
-                  </a>
-                );
-              })}
-            </div>
-          )
-        }
+        {children.length > 0 && (
+          <div class="subpages">
+            {children.map((c) => {
+              const img = getFirstImage(c.content?.rendered || "");
+              return (
+                <a href={`/${c.slug}`} class="subpage">
+                  {img && <img src={img} alt={fix(c.title?.rendered || "")} />}
+                </a>
+              );
+            })}
+          </div>
+        )}
       </div>
     </main>
   </div>
