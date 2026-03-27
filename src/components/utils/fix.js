@@ -36,7 +36,12 @@ export function fix(str = "") {
   );
 
   // WP umschließt Bilder oft mit <a>...</a> → entfernen
+  // Variante 1: <a><img></a> (klassisch + Gutenberg mit direktem Link)
   s = s.replace(/<a[^>]*>\s*(<img[^>]+>)\s*<\/a>/gi, "$1");
+  // Variante 2: <a><figure>...</figure></a> (Gutenberg block-level)
+  s = s.replace(/<a[^>]*>\s*(<figure[\s\S]*?<\/figure>)\s*<\/a>/gi, "$1");
+  // Variante 3: <a><picture>...</picture></a>
+  s = s.replace(/<a[^>]*>\s*(<picture[\s\S]*?<\/picture>)\s*<\/a>/gi, "$1");
 
   return s;
 }

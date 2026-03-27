@@ -10,6 +10,8 @@ const { pages = [], activeSlug = "", footerPages = [] } = Astro.props;
     id="menuToggle"
     type="button"
     aria-label="Toggle menu"
+    aria-expanded="false"
+    aria-controls="menuList"
   >
     <span class="toggle-text">Menu</span>
     <span class="toggle-close">X</span>
@@ -65,8 +67,24 @@ const { pages = [], activeSlug = "", footerPages = [] } = Astro.props;
   const toggle = document.getElementById("menuToggle");
   const menu = document.getElementById("menuList");
 
+  function closeMenu() {
+    toggle?.classList.remove("open");
+    menu?.classList.remove("open");
+    toggle?.setAttribute("aria-expanded", "false");
+  }
+
   toggle?.addEventListener("click", () => {
     toggle.classList.toggle("open");
     menu.classList.toggle("open");
+    toggle.setAttribute(
+      "aria-expanded",
+      toggle.classList.contains("open") ? "true" : "false",
+    );
+  });
+
+  // Mobile UX: beim Klick auf Link Menü schließen
+  menu?.addEventListener("click", (e) => {
+    const a = e.target.closest("a");
+    if (a && menu.classList.contains("open")) closeMenu();
   });
 </script>

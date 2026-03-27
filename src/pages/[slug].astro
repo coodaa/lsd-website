@@ -6,29 +6,25 @@ import { fix, getFirstImage } from "../components/utils/fix.js";
 const baseUrl = import.meta.env.WP_API;
 const slug = Astro.params.slug;
 
-// Sortierung: menu_order → fallback Titel
 const sortByMenuOrder = (a, b) => {
   const ao = Number(a?.menu_order ?? 0);
   const bo = Number(b?.menu_order ?? 0);
   if (ao !== bo) return ao - bo;
   return fix(a?.title?.rendered || "").localeCompare(
-    fix(b?.title?.rendered || ""),
-    "de"
+    fix(a?.title?.rendered || ""),
+    "de",
   );
 };
 
-// Alle Seiten (Navigation/Footer/Parent/Children)
 const allRes = await fetch(
-  `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`
+  `${baseUrl}/pages?per_page=100&orderby=menu_order&order=asc&status=publish`,
 );
 const pages = await allRes.json();
 
-// Seite laden
 const res = await fetch(`${baseUrl}/pages?slug=${slug}&status=publish`);
 const data = await res.json();
 const page = data?.[0] ?? null;
 
-// Navigation (Top-Level)
 const mainPages = pages.filter((p) => p.parent === 0).sort(sortByMenuOrder);
 
 let sortedMainPages = mainPages.filter((p) => {
@@ -36,21 +32,18 @@ let sortedMainPages = mainPages.filter((p) => {
   return !t.includes("impressum") && !t.includes("datenschutz");
 });
 
-// Kontakt ans Ende (optional)
 const kontaktIndex = sortedMainPages.findIndex((p) => p.slug === "kontakt");
 if (kontaktIndex > -1) {
   const [kontakt] = sortedMainPages.splice(kontaktIndex, 1);
   sortedMainPages.push(kontakt);
 }
 
-// Parent / Children
 const parent = page ? pages.find((p) => p.id === page.parent) : null;
 
 const children = page
   ? pages.filter((p) => p.parent === page.id).sort(sortByMenuOrder)
   : [];
 
-// Footer
 const footerPages = pages
   .filter((p) => {
     const t = (p.title?.rendered || "").toLowerCase();
@@ -58,20 +51,18 @@ const footerPages = pages
   })
   .sort(sortByMenuOrder);
 
-// Legal Seiten
 const isLegal = slug === "impressum" || slug === "datenschutz";
+
+// ✅ Wenn X-Seite (child), dann children-links als deep
+const childLinksGoDeep = !!parent;
 ---
 
 <BaseLayout
   title={fix(page?.title?.rendered || "LSD Berlin")}
-  bodyClass={`${parent ? "detail-page has-detail-close" : "detail-page"}${isLegal ? " legal-page" : ""}`}
+  bodyClass={`detail-page${parent ? " has-detail-close" : ""}${isLegal ? " legal-page" : ""}`}
 >
   <div class="grid-layout">
-    <Sidebar
-      pages={sortedMainPages}
-      activeSlug={slug}
-      footerPages={footerPages}
-    />
+    <Sidebar pages={sortedMainPages} activeSlug={slug} footerPages={footerPages} />
 
     <main class="content-area">
       <div class="content">
@@ -89,8 +80,10 @@ const isLegal = slug === "impressum" || slug === "datenschutz";
           <div class="subpages">
             {children.map((c) => {
               const img = getFirstImage(c.content?.rendered || "");
+              const href = childLinksGoDeep ? `/deep/${c.slug}` : `/${c.slug}`;
+
               return (
-                <a href={`/${c.slug}`} class="subpage">
+                <a href={href} class="subpage">
                   {img && <img src={img} alt={fix(c.title?.rendered || "")} />}
                 </a>
               );
