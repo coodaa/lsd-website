@@ -52,6 +52,16 @@ export function getFirstImage(html = "") {
   return match ? match[1] : null;
 }
 
+export function getDescription(html = "", maxLength = 160) {
+  if (!html) return "";
+  const text = fix(html)
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength).replace(/\s+\S*$/, "") + "…";
+}
+
 /**
  * Menü-Titel aufteilen: Bullet (z.B. "•") getrennt vom Text,
  * damit nur der Text unterstrichen werden kann.

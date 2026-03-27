@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
-import { fix, getFirstImage } from "../components/utils/fix.js";
+import { fix, getFirstImage, getDescription } from "../components/utils/fix.js";
 
 const baseUrl = import.meta.env.WP_API;
 
@@ -47,7 +47,13 @@ const footerPages = pages.filter((p) =>
 );
 ---
 
-<BaseLayout title={fix(home.title.rendered)} bodyClass="home-page">
+<BaseLayout
+  title={fix(home.title.rendered)}
+  description={getDescription(home.content.rendered)}
+  image={getFirstImage(home.content.rendered) ?? undefined}
+  pageUrl="https://lsd-berlin.de"
+  bodyClass="home-page"
+>
   <div class="grid-layout">
     <Sidebar pages={sortedMainPages} activeSlug={homeSlug} footerPages={footerPages} />
 
@@ -60,7 +66,7 @@ const footerPages = pages.filter((p) =>
             const img = getFirstImage(c.content.rendered);
             return (
               <a href={`/deep/${c.slug}`} class="subpage">
-                {img && <img src={img} alt={fix(c.title?.rendered || "")} />}
+                {img && <img src={img} alt={fix(c.title?.rendered || "")} loading="lazy" />}
               </a>
             );
           })}

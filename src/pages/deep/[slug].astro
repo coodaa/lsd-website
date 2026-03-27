@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Sidebar from "../../components/Sidebar.astro";
-import { fix } from "../../components/utils/fix.js";
+import { fix, getFirstImage, getDescription } from "../../components/utils/fix.js";
 
 const baseUrl = import.meta.env.WP_API;
 const slug = Astro.params.slug;
@@ -48,6 +48,10 @@ const footerPages = pages
 
 <BaseLayout
   title={fix(page?.title?.rendered || "LSD Berlin")}
+  description={getDescription(page?.content?.rendered || "")}
+  image={getFirstImage(page?.content?.rendered || "") ?? undefined}
+  pageUrl={`https://lsd-berlin.de/deep/${slug}`}
+  ogType="article"
   bodyClass="deep-page detail-page has-detail-close"
 >
   <div class="grid-layout">

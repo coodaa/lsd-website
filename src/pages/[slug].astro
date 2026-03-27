@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
-import { fix, getFirstImage } from "../components/utils/fix.js";
+import { fix, getFirstImage, getDescription } from "../components/utils/fix.js";
 
 const baseUrl = import.meta.env.WP_API;
 const slug = Astro.params.slug;
@@ -59,6 +59,10 @@ const childLinksGoDeep = !!parent;
 
 <BaseLayout
   title={fix(page?.title?.rendered || "LSD Berlin")}
+  description={getDescription(page?.content?.rendered || "")}
+  image={getFirstImage(page?.content?.rendered || "") ?? undefined}
+  pageUrl={`https://lsd-berlin.de/${slug}`}
+  ogType="article"
   bodyClass={`detail-page${parent ? " has-detail-close" : ""}${isLegal ? " legal-page" : ""}`}
 >
   <div class="grid-layout">
@@ -84,7 +88,7 @@ const childLinksGoDeep = !!parent;
 
               return (
                 <a href={href} class="subpage">
-                  {img && <img src={img} alt={fix(c.title?.rendered || "")} />}
+                  {img && <img src={img} alt={fix(c.title?.rendered || "")} loading="lazy" />}
                 </a>
               );
             })}

@@ -2,17 +2,29 @@
 import "../styles/global.css";
 
 const props = Astro.props ?? {};
+const siteBase = Astro.site?.href.replace(/\/$/, "") ?? "https://lsd-berlin.de";
 
 const title =
   props.title ??
   "LSD Berlin – Künstlerkollektiv für experimentelle Theater- und Performancearbeit";
 
 const description =
-  props.description ?? "LSD Berlin ist ein Künstlerkollektiv.";
+  props.description ??
+  "LSD Berlin ist ein Künstlerkollektiv für experimentelle Theater- und Performancearbeit in Berlin.";
 
 const image = props.image ?? "/og-default.jpg";
-const url = props.url ?? "https://www.lsd-berlin.de";
+const pageUrl = props.pageUrl ?? siteBase;
+const ogType = props.ogType ?? "website";
 const bodyClass = props.bodyClass ?? "";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "LSD Berlin",
+  url: siteBase,
+  description:
+    "Künstlerkollektiv für experimentelle Theater- und Performancearbeit in Berlin",
+};
 ---
 
 <html lang="de">
@@ -24,14 +36,21 @@ const bodyClass = props.bodyClass ?? "";
 
     <meta name="description" content={description} />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href={url} />
+    <link rel="canonical" href={pageUrl} />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={`${url}${image}`} />
-    <meta property="og:url" content={url} />
-    <meta property="og:type" content="website" />
+    <meta property="og:image" content={`${siteBase}${image}`} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:locale" content="de_DE" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${siteBase}${image}`} />
 
     <!-- Favicons -->
     <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -39,8 +58,11 @@ const bodyClass = props.bodyClass ?? "";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <!-- Optional PWA -->
+    <!-- PWA -->
     <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
   </head>
 
   <body class={bodyClass}>
