@@ -350,17 +350,12 @@ body.has-detail-close .menu-toggle .toggle-text {
   }
 
   .footer-credit {
-    margin-top: 0.5rem;
-    font-size: 0.75em;
+    color: inherit;
+    text-decoration: none;
     opacity: 0.45;
   }
 
-  .footer-credit a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .footer-credit a:hover {
+  .footer-credit:hover {
     opacity: 1;
     text-decoration: underline;
   }
