@@ -40,6 +40,9 @@ if (kontaktIndex > -1) {
 
 const parent = page ? pages.find((p) => p.id === page.parent) : null;
 
+// Hauptnavigation-Eintrag (parent=0) für aktiven Unterstrich finden
+const navAncestor = parent?.parent === 0 ? parent : pages.find((p) => p.id === parent?.parent && p.parent === 0);
+
 const children = page
   ? pages.filter((p) => p.parent === page.id).sort(sortByMenuOrder)
   : [];
@@ -66,7 +69,7 @@ const childLinksGoDeep = !!parent;
   bodyClass={`detail-page${parent ? " has-detail-close" : ""}${isLegal ? " legal-page" : ""}`}
 >
   <div class="grid-layout">
-    <Sidebar pages={sortedMainPages} activeSlug={slug} footerPages={footerPages} />
+    <Sidebar pages={sortedMainPages} activeSlug={navAncestor?.slug ?? slug} footerPages={footerPages} />
 
     <main class="content-area">
       <div class="content">

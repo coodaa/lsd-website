@@ -38,6 +38,11 @@ if (kontaktIndex > -1) {
   sortedMainPages.push(kontakt);
 }
 
+const parentPage = page ? pages.find((p) => p.id === page.parent) : null;
+const navAncestor = parentPage?.parent === 0
+  ? parentPage
+  : pages.find((p) => p.id === parentPage?.parent && p.parent === 0);
+
 const footerPages = pages
   .filter((p) => {
     const t = (p.title?.rendered || "").toLowerCase();
@@ -57,7 +62,7 @@ const footerPages = pages
   <div class="grid-layout">
     <Sidebar
       pages={sortedMainPages}
-      activeSlug={slug}
+      activeSlug={navAncestor?.slug ?? slug}
       footerPages={footerPages}
     />
 

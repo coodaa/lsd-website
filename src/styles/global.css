@@ -185,7 +185,7 @@ body.has-detail-close .menu-toggle .toggle-text {
 #menuList li.menu-item.active .menu-label {
   border-bottom: 2px solid currentColor;
   line-height: 1;
-  padding-bottom: 0.08em;
+  padding-bottom: 0;
 }
 
 /* -------------------------------------
@@ -380,6 +380,7 @@ body.has-detail-close .menu-toggle .toggle-text {
     padding-right: 14rem; /* rechts mehr Luft → schmälerer Content */
     min-height: 100vh;
     max-width: none;
+    line-height: 1;       /* halber Zeilenabstand des Menüs */
   }
 
   /* ----------------------------------
@@ -470,6 +471,11 @@ body.has-detail-close .menu-toggle .toggle-text {
 /* =========================================================
    SUBPAGES (Teaser-Thumbnails)
    ========================================================= */
+.subpage {
+  display: block;
+  margin-bottom: 2em;
+}
+
 .subpages img {
   width: 100%;
   max-width: 100%;
