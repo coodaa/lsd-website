@@ -447,6 +447,10 @@ body.has-detail-close .menu-toggle .toggle-text {
   margin: 0;
 }
 
+.wp-content > *:first-child {
+  margin-top: 0;
+}
+
 .wp-content p + p {
   margin-top: 1em;
 }
