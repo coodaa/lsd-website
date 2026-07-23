@@ -79,8 +79,8 @@ img {
 -------------------------------------- */
 .menu-toggle {
   position: fixed;
-  top: 1.2rem;
-  right: 1rem;
+  top: env(safe-area-inset-top, 0);
+  right: max(2vw, env(safe-area-inset-right, 0));
   z-index: 3000;
   background: transparent;
   border: none;
@@ -121,7 +121,7 @@ img {
   right: 0;
   transform: translateY(-50%);
   background: #fff;
-  padding: 0.2em 0;
+  padding: 0.05em 0.15em;
   line-height: 1;
   font-weight: lighter;
   transition: opacity 0.15s ease;
@@ -146,8 +146,8 @@ body.has-detail-close .menu-toggle .toggle-text {
   inset: 0;
   background: #fff;
   z-index: 2000;
-  padding: 5rem 2rem max(6rem, calc(4rem + env(safe-area-inset-bottom, 0px)));
-  padding-left:  max(2rem, calc(1rem + env(safe-area-inset-left,  0px)));
+  padding: calc(env(safe-area-inset-top, 0) + 3rem) 2rem max(4rem, calc(2rem + env(safe-area-inset-bottom, 0px)));
+  padding-left:  max(2vw, env(safe-area-inset-left,  0px));
   padding-right: max(2rem, calc(1rem + env(safe-area-inset-right, 0px)));
   overflow-y: auto;
   flex-direction: column;
@@ -193,18 +193,14 @@ body.has-detail-close .menu-toggle .toggle-text {
 -------------------------------------- */
 .mobile-footer-links {
   display: none;
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1rem;
-  text-align: right;
-  z-index: 2500;
+  margin-top: 2em;
 }
 
 #menuList.open .mobile-footer-links {
   display: block;
 }
 
-.mobile-footer-links a   { margin: 0 0.35rem; }
+.mobile-footer-links a   { margin-right: 0.35rem; }
 .mobile-footer-links .dot { margin: 0 0.2rem; }
 
 /* Desktop-Footer (nur sichtbar auf Desktop) */
@@ -221,7 +217,7 @@ body.has-detail-close .menu-toggle .toggle-text {
 -------------------------------------- */
 .content-area {
   width: 100%;
-  padding-top: 4rem; /* Abstand unter fixem Toggle */
+  padding-top: env(safe-area-inset-top, 0); /* Bild startet bündig mit Menü-Button */
   flex: 1 0 auto;
   min-height: 60vh;
 }
@@ -236,12 +232,12 @@ body.has-detail-close .menu-toggle .toggle-text {
 -------------------------------------- */
 .detail-close {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  top: env(safe-area-inset-top, 0);
+  right: max(2vw, env(safe-area-inset-right, 0));
   z-index: 3100;
   background: #fff;
   line-height: 1;
-  padding: 0.05em 0;
+  padding: 0.05em 0.15em;
 }
 
 /* =========================================================
@@ -290,7 +286,11 @@ body.has-detail-close .menu-toggle .toggle-text {
   }
 
   .wp-content {
-    line-height: 1.7;
+    line-height: 1.2;
+  }
+
+  .subpage {
+    margin-bottom: 2vw;
   }
 
   body.detail-page .subpages img {
