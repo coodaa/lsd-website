@@ -79,7 +79,7 @@ img {
 -------------------------------------- */
 .menu-toggle {
   position: fixed;
-  top: env(safe-area-inset-top, 0);
+  top: max(env(safe-area-inset-top, 0), 0.5rem);
   right: max(2vw, env(safe-area-inset-right, 0));
   z-index: 3000;
   background: transparent;
@@ -221,7 +221,7 @@ body.has-detail-close .menu-toggle .toggle-text {
 -------------------------------------- */
 .content-area {
   width: 100%;
-  padding-top: env(safe-area-inset-top, 0); /* Bild startet bündig mit Menü-Button */
+  padding-top: max(env(safe-area-inset-top, 0), 0.5rem); /* Bild startet bündig mit Menü-Button */
   flex: 1 0 auto;
   min-height: 60vh;
 }
@@ -236,7 +236,7 @@ body.has-detail-close .menu-toggle .toggle-text {
 -------------------------------------- */
 .detail-close {
   position: fixed;
-  top: env(safe-area-inset-top, 0);
+  top: max(env(safe-area-inset-top, 0), 0.5rem);
   right: max(2vw, env(safe-area-inset-right, 0));
   z-index: 3100;
   background: #fff;
