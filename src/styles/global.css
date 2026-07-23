@@ -117,11 +117,11 @@ img {
 .menu-toggle .toggle-text,
 .menu-toggle .toggle-close {
   position: absolute;
-  top: 50%;
+  top: 0.1em;
   right: 0;
-  transform: translateY(-50%);
+  transform: none;
   background: #fff;
-  padding: 0.05em 0.15em;
+  padding: 0 0.15em;
   line-height: 1;
   font-weight: lighter;
   transition: opacity 0.15s ease;
@@ -285,7 +285,7 @@ body.has-detail-close .menu-toggle .toggle-text {
   }
 
   .wp-content > :where(p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote, pre, table) {
-    padding-left: 1rem;
+    padding-left: 0;
     padding-right: 1rem;
   }
 
