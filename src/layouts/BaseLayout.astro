@@ -32,6 +32,10 @@ const jsonLd = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
+    <!-- Font preload: lädt Courier Prime bevor CSS ausgewertet wird → kein Schrift-Blitzen -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/CourierPrime-Regular.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/CourierPrime-Bold.woff2" crossorigin />
+
     <title>{title}</title>
 
     <meta name="description" content={description} />
