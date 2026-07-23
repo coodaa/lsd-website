@@ -442,7 +442,8 @@ body.has-detail-close .menu-toggle .toggle-text {
   margin: 1em 0;
 }
 
-.wp-content p {
+.wp-content p,
+.wp-content figure {
   margin: 0;
 }
 
