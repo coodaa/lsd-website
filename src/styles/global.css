@@ -377,7 +377,7 @@ body.has-detail-close .menu-toggle .toggle-text {
   ---------------------------------- */
   .content-area {
     grid-column: 2;
-    padding-top: 4rem;
+    padding-top: calc(4rem + 0.5em);
     padding-bottom: 4rem;
     padding-left: 0;
     margin-left: -1rem;   /* über die Mitte hinaus nach links */
@@ -391,7 +391,7 @@ body.has-detail-close .menu-toggle .toggle-text {
      X-Button: rechts oben, bündig mit Content-Start
   ---------------------------------- */
   .detail-close {
-    top: 4rem;
+    top: calc(4rem + 0.5em);
     right: 14rem; /* = padding-right der content-area */
   }
 
