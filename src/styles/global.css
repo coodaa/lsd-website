@@ -171,6 +171,10 @@ body.has-detail-close .menu-toggle .toggle-text {
   margin: 0.4em 0;
 }
 
+#menuList li.menu-item:first-child {
+  margin-top: 0;
+}
+
 #menuList .menu-link {
   display: inline-flex;
   align-items: center;
